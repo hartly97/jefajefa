@@ -1,0 +1,12 @@
+<h1><%= @record.title %></h1>
+<div><%= simple_format(@record.body) %></div>
+<% if @record.sources.exists? %>
+  <h3>Sources cited</h3>
+  <ul>
+  <% @record.sources.distinct.each do |s| %>
+      <li><%= link_to s.title, s %></li>
+    <% end %>
+  </ul>
+<% end %>
+
+

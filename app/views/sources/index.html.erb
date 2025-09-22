@@ -1,0 +1,36 @@
+<h1>Sources</h1>
+
+<p>
+  <%= link_to "New source", new_source_path, class: "btn btn-primary" %>
+</p>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Title</th>
+      # <th>Pages</th>
+      <th>Common</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @sources.each do |s| %>
+      <tr>
+        <td><%= link_to s.title, s %></td>
+        # <td><%#= s.pages.presence || "—" %></td>
+        <td><%= s.common ? "✅" : "—" %></td>
+        <td class="text-nowrap">
+          <%= link_to "Edit", edit_source_path(s), class: "btn btn-sm btn-outline-secondary" %>
+          <%= button_to (s.common ? "Unmark common" : "Mark common"),
+                        toggle_common_source_path(s),
+                        method: :patch,
+                        class: "btn btn-sm btn-outline-primary" %>
+          <%= button_to "Delete", source_path(s),
+                        method: :delete,
+                        data: { confirm: "Delete '#{s.title}'?" },
+                        class: "btn btn-sm btn-outline-danger" %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

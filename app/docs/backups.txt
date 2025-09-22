@@ -1,0 +1,775 @@
+# <h1><%= @record.try(:title) || @record.try(:name) || @record.try(:slug) %></h1>
+# <pre><%= @record.attributes %></pre>
+# <p>
+#   <%= link_to "Edit", [:edit, @record] %> |
+#   <%= link_to "Back", new_polymorphic_path(controller_name.singularize.to_sym) %>
+
+#   <%#= link_to "Back", url_for(controller: controller_name, action: :index) %>
+# </p>
+
+
+# <h1><%= @record.title %></h1>
+
+# <div class="mb-3"><%= simple_format @record.body %></div>
+
+# <h3>Citations</h3>
+# <% if @record.citations.any? %>
+#   <ul>
+#     <% @record.citations.each do |c| %>
+#       <li>
+#         <% if c.source %>
+#           <strong><%= link_to c.source.title, c.source %></strong>
+#           <% if c.pages.present? %>(pages: <%= c.pages %>)<% end %>
+#           <% if c.quote.present? %><blockquote><%= c.quote %></blockquote><% end %>
+#           <% if c.note.present? %><em><%= c.note %></em><% end %>
+#         <% else %>
+#           <em>Missing source</em>
+#         <% end %>
+#       </li>
+#     <% end %>
+#   </ul>
+# <% else %>
+#   <em>No citations yet.</em>
+# <% end %>
+
+# <p>
+#   <%= link_to "Edit", edit_article_path(@record), class: "btn btn-secondary" %>
+#   <%= link_to "Back", articles_path, class: "btn btn-light" %>
+# </p>
+
+
+# <!-- app/views/articles/show.html.erb -->
+<h1><%= @record.title %></h1>
+
+<div class="mb-3"><%= simple_format @record.body %></div>
+
+# <!-- Unique Sources (recommended primary section) -->
+<h3>Sources</h3>
+<% if @record.sources.exists? %>
+  <ul>
+    <% @record.sources.distinct.each do |src| %>
+      <li>
+        <strong><%= link_to src.title, src %></strong>
+        <%# Optional: show repository or URL if present %>
+        <% if src.repository.present? %> — <%= src.repository %><% end %>
+        <% if src.link_url.present? %> — <%= link_to "link", src.link_url, target: "_blank", rel: "noopener" %><% end %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <em>No sources cited yet.</em>
+<% end %>
+
+<!-- Detailed Citations (optional secondary section) -->
+<h3 class="mt-4">Citations (details)</h3>
+<% if @record.citations.any? %>
+  <ul>
+    <% @record.citations.includes(:source).each do |c| %>
+      <li>
+        <% if c.source %>
+          <strong><%= link_to c.source.title, c.source %></strong>
+          <% if c.pages.present? %>(pages: <%= c.pages %>)<% end %>
+          <% if c.quote.present? %><blockquote><%= c.quote %></blockquote><% end %>
+          <% if c.note.present? %><em><%= c.note %></em><% end %>
+        <% else %>
+          <em>Missing source</em>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <em>No citation details yet.</em>
+<% end %>
+
+<p class="mt-3">
+  <%= link_to "Edit", edit_article_path(@record), class: "btn btn-secondary" %>
+  <%= link_to "Back", articles_path, class: "btn btn-light" %>
+</p>
+
+
+<!-- app/views/articles/show.html.erb -->
+<h1><%= @record.title %></h1>
+
+<div class="mb-3"><%= simple_format @record.body %></div>
+
+<!-- Unique Sources (recommended primary section) -->
+<h3>Sources</h3>
+<% if @record.sources.exists? %>
+  <ul>
+    <% @record.sources.distinct.each do |src| %>
+      <li>
+#         <strong><%#= link_to src.title, src %></strong>
+#         <%# Optional: show repository or URL if present %>
+#         <% if src.repository.present? %> — <%= src.repository %><% end %>
+#         <% if src.link_url.present? %> — <%= link_to "link", src.link_url, target: "_blank", rel: "noopener" %><% end %>
+#       </li>
+#     <% end %>
+#   </ul>
+# <% else %>
+#   <em>No sources cited yet.</em>
+# <% end %>
+
+# <!-- Detailed Citations (optional secondary section) -->
+# <h3 class="mt-4">Citations (details)</h3>
+# <% if @record.citations.any? %>
+#   <ul>
+#     <% @record.citations.includes(:source).each do |c| %>
+#       <li>
+#         <% if c.source %>
+#           <strong><%= link_to c.source.title, c.source %></strong>
+#           <% if c.pages.present? %>(pages: <%= c.pages %>)<% end %>
+#           <% if c.quote.present? %><blockquote><%= c.quote %></blockquote><% end %>
+#           <% if c.note.present? %><em><%= c.note %></em><% end %>
+#         <% else %>
+#           <em>Missing source</em>
+#         <% end %>
+#       </li>
+#     <% end %>
+#   </ul>
+# <% else %>
+#   <em>No citation details yet.</em>
+# <% end %>
+
+# <p class="mt-3">
+#   <%= link_to "Edit", edit_article_path(@record), class: "btn btn-secondary" %>
+#   <%= link_to "Back", articles_path, class: "btn btn-light" %>
+# </p>
+
+
+# # <!-- app/views/articles/show.html.erb -->
+# <h1><%= @record.title %></h1>
+
+# <div class="mb-3"><%= simple_format @record.body %></div>
+# <p class="mt-3">
+#   <%= link_to "Edit", edit_article_path(@record), class: "btn btn-secondary" %>
+#   <%= link_to "Back", articles_path, class: "btn btn-light" %>
+# </p>
+
+# # <!-- Unique Sources (recommended primary section) -->
+# <h3>Sources</h3>
+# <% if @record.sources.exists? %>
+#   <ul>
+#     <% @record.sources.distinct.each do |src| %>
+#       <li>
+#         <strong><%= link_to src.title, src %></strong>
+#         # <%# Optional: show repository or URL if present %>
+#         <% if src.repository.present? %> — <%= src.repository %><% end %>
+#         <% if src.link_url.present? %> — <%= link_to "link", src.link_url, target: "_blank", rel: "noopener" %><% end %>
+#       </li>
+#     <% end %>
+#   </ul>
+# <% else %>
+#   <em>No sources cited yet.</em>
+# <% end %>
+
+# <!-- Detailed Citations (optional secondary section) -->
+# <h3 class="mt-4">Citations (details)</h3>
+# <% if @record.citations.any? %>
+#   <ul>
+#     <% @record.citations.includes(:source).each do |c| %>
+#       <li>
+#         <% if c.source %>
+#           <strong><%= link_to c.source.title, c.source %></strong>
+#           <% if c.pages.present? %>(pages: <%= c.pages %>)<% end %>
+#           <% if c.quote.present? %><blockquote><%= c.quote %></blockquote><% end %>
+#           <% if c.note.present? %><em><%= c.note %></em><% end %>
+#         <% else %>
+#           <em>Missing source</em>
+#         <% end %>
+#       </li>
+#     <% end %>
+#   </ul>
+# <% else %>
+#   <em>No citation details yet.</em>
+# <% end %>
+
+# <p class="mt-3">
+#   <%= link_to "Edit", edit_article_path(@record), class: "btn btn-secondary" %>
+#   <%= link_to "Back", articles_path, class: "btn btn-light" %>
+# </p>
+
+
+<h3>Sources</h3>
+<% if @record.citations.any? %>
+  <ul>
+    <% @record.citations.each do |c| %>
+      <li>
+        <strong><%= link_to c.source.title, c.source %></strong>
+        <% if c.pages.present? %>(pages: <%= c.pages %>)<% end %>
+        <% if c.quote.present? %><blockquote><%= c.quote %></blockquote><% end %>
+        <% if c.note.present? %><em><%= c.note %></em><% end %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <em>No sources cited yet.</em>
+<% end %>
+
+# #<%# if @record.errors.any? %>
+#   <div class="alert alert-danger">
+#     <strong>There were problems with your citations:</strong>
+#     <ul>
+#       <% @record.errors.full_messages.each do |msg| %>
+#         <li><%= msg %></li>
+#       <% end %>
+#     </ul>
+#   </div>
+# <% end %>
+
+class Relation < ApplicationRecord
+    belongs_to :from, polymorphic: true
+    belongs_to :to, polymorphic: true
+    validates :relation_type, presence: true
+    validates :from_type, uniqueness: { scope: [:from_id, :to_type, :to_id, :relation_type], message: "relationship already exists" }
+  end
+
+  class SoldiersController < ApplicationController
+  include CategoryTextAttachable
+  before_action :set_soldier, only: [:show, :edit, :update]
+
+  def index
+     @soldiers = Soldier.order(:last_name, :first_name)
+  end
+  def show
+    @record = Soldier.find_by!(slug: params[:id])
+  end
+  def new
+    @soldier = Soldier.new
+    @soldier.citations.build
+  end
+  def create
+    @record = Soldier.new(soldier_params)
+    if @record.save
+      attach_categories_from_text_unified(@record, params_scope: :soldier, field: :category_names)
+      redirect_to @record, notice: "Soldier created."
+    else
+      render :new, status: :unprocessable_entity
+    end
+  end
+ 
+  def edit
+    @record = Soldier.find_by!(slug: params[:id])
+  end
+  
+  def update
+    @record = Soldier.find_by!(slug: params[:id])
+    if @record.update(soldier_params)
+      attach_categories_from_text_unified(@record, params_scope: :soldier, field: :category_names)
+      redirect_to @record, notice: "Soldier updated."
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+  def destroy
+    @record = Soldier.find_by!(slug: params[:id])
+    @record.destroy
+    redirect_to soldiers_path, notice: "Soldier deleted."
+  end
+
+  
+
+
+
+
+
+
+
+ 
+
+  def edit
+    @soldier.citations.build if @soldier.citations.empty?
+  end
+
+  def create
+    @soldier = Soldier.new(soldier_params)
+    if @soldier.save
+      redirect_to @soldier, notice: "Soldier created."
+    else
+      render :new, status: :unprocessable_entity
+    end
+  end
+
+  def update
+    if @soldier.update(soldier_params)
+      redirect_to @soldier, notice: "Soldier updated."
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+
+  def search
+    q = params[:q].to_s.strip
+    scope = Soldier.all
+    if q.present?
+      pattern = "%%%s%%" % q
+      scope = scope.where("COALESCE(first_name,'') || ' ' || COALESCE(middle_name,'') || ' ' || COALESCE(last_name,'') ILIKE ?", pattern)
+    end
+    render json: scope.order(:last_name, :first_name).limit(10).map { |s| { id: s.id, label: (s.respond_to?(:soldier_name) ? s.soldier_name : [s.first_name, s.last_name].compact.join(' ')) + " (#%d)" % s.id } }
+  end
+
+
+  private
+
+  def set_soldier
+    @soldier = Soldier.find_by(slug: params[:id]) || Soldier.find(params[:id])
+  end
+
+  def soldier_params
+    params.require(:soldier).permit(
+      :first_name, :middle_name, :last_name,
+      :birthcity, :birthstate, :birthcountry,
+      :deathcity, :deathstate, :deathcountry,
+      :cemetery_id,
+      { category_ids: [] },
+      citations_attributes: [
+        :id, :source_id, :pages, :quote, :note, :_destroy,
+        { source_attributes: [:id, :title, :details, :repository, :link_url] }
+      ],
+      awards_attributes: [:id, :medal_id, :year, :note, :_destroy],
+      involvements_attributes: [:id, :involvable_type, :involvable_id, :role, :year, :note, :_destroy]
+    )
+  end
+end
+
+# class Source < ApplicationRecord
+#   include Sluggable
+
+#   has_many :citations, dependent: :destroy
+
+#   has_many :categorizations, as: :categorizable, dependent: :destroy
+# #   has_many :categories, through: :categorizations
+
+# #   validates :title, presence: true
+# #   def slug_source = title
+# # end
+# # # app/models/source.rb
+# # class Source < ApplicationRecord
+# #   has_many :citations, dependent: :restrict_with_error, inverse_of: :source
+
+# #   validates :title, presence: true
+# #   # add any other validations you need (author, year, etc.)
+# # end
+
+# class Source < ApplicationRecord
+#   include Sluggable
+
+#   has_many :citations, dependent: :destroy
+
+#   has_many :categorizations, as: :categorizable, dependent: :destroy, inverse_of: :categorizable
+#   has_many :categories, through: :categorizations
+
+#   validates :title, presence: true
+#   def slug_source = title
+# end
+
+# class Citation < ApplicationRecord
+#   belongs_to :citable, polymorphic: true, inverse_of: :citations
+# #   belongs_to :source,   inverse_of: :citations
+
+# #   accepts_nested_attributes_for :source,
+# #     reject_if: ->(attrs) { attrs['title'].blank? }  # adjust to your required fields
+
+# #   validates :source, presence: true
+# # end
+
+
+# class Source < ApplicationRecord
+#   include Sluggable
+#   include Categorizable
+
+#   has_many :citations, dependent: :restrict_with_error, inverse_of: :source
+
+#   validates :title, presence: true
+
+#   def slug_source = title
+# end
+
+# # app/models/source.rb
+# class Source < ApplicationRecord
+#   include Categorizable
+
+#   has_many :citations, dependent: :restrict_with_error, inverse_of: :source
+
+#   # Convenience: which articles cite this source?
+#   has_many :cited_articles,
+#            through: :citations,
+#            source:  :citable,
+# #            source_type: "Article"
+
+# #   validates :title, presence: true
+# #    def slug_source = title
+# # end
+
+
+# # app/models/source.rb
+# class Source < ApplicationRecord
+#   include Categorizable
+
+#   has_many :citations, dependent: :restrict_with_error, inverse_of: :source
+
+#   # Convenience: which articles cite this source?
+#   has_many :cited_articles,
+#            through: :citations,
+#            source:  :citable,
+#            source_type: "Article"
+
+#   validates :title, presence: true
+# end
+# app/models/source.rb
+# class Source < ApplicationRecord
+#   include Sluggable
+#   # include Sluggable  # only if you have a working concern
+#   include Categorizable
+
+#   has_many :citations, dependent: :restrict_with_error, inverse_of: :source
+
+#   validates :title, presence: true
+#   validates :slug,  presence: true, uniqueness: true
+
+#   before_validation :ensure_slug
+
+#   def slug_source = title
+
+#   private
+#   def ensure_slug
+#     self.slug = slug_source.to_s.parameterize.presence if slug.blank?
+#   end
+# end
+
+# # app/models/source.rb
+# class Source < ApplicationRecord
+#   include Sluggable          # this adds before_validation + slug validations
+#   include Categorizable
+# has_many :citations, dependent: :restrict_with_error, inverse_of: :source
+
+#   validates :title, presence: true
+
+#   # Sluggable will call this to build the slug
+#   def slug_source = title
+# end
+
+# class Source < ApplicationRecord
+#   include Sluggable
+#   include Categorizable
+
+#   has_many :citations, dependent: :restrict_with_error, inverse_of: :source
+#   validates :title, presence: true
+#   def slug_source = title
+# end
+
+# <%= form_with(model: @record, data: { turbo: false }) do |f| %>
+#   <!-- other article fields ... -->
+# <% if @record.errors.any? %>
+#     <div id="error_explanation">
+#       <h2><%= pluralize(@record.errors.count, "error") %> prohibited this article from being saved:</h2>
+#       <ul>
+#         <% @record.errors.full_messages.each do |msg| %>
+#           <li><%#= msg %></li>
+#         <% end %>
+#       </ul>
+#     </div>
+#   <% end %>
+
+#   <% if current_user&.admin? %>
+#     <div class="field">
+#       <%= f.label :category_ids, "Categories" %>
+#       <%= f.collection_select :category_ids, Category.order(:name), :id, :name, {}, multiple: true %>
+#     </div>
+#   <% end %>
+#   <div class="field">
+#     <%= f.label :title %>
+#     <%= f.text_field :title %>
+#   </div>
+
+#   <div class="field">
+#     <%= f.label :body %>
+#     <%= f.text_area :body %>
+#   </div>
+#   <h3>Sources & Citations</h3>
+#   <div data-controller="citations" data-citations-index-value="0">
+#     <div data-citations-target="list">
+#       <%= f.fields_for :citations do |cf| %>
+#         <%= render "citations/fields", f: cf, sources: @sources %>
+#       <% end %>
+#     </div>
+
+#     <p class="mt-2">
+#       <button class="btn btn-outline-primary" data-action="click->citations#add">+ Add citation</button>
+#     </p>
+
+#     <template data-citations-target="template">
+#       <%= form_fields = fields_for("#{f.object_name}[citations_attributes][NEW_RECORD]", Citation.new, child_index: "NEW_RECORD") do |cf| %>
+#         <%= j render("citations/fields", f: cf, sources: @sources) %>
+#       <% end %>
+#     </template>
+#   <div class="actions">
+#     <%= f.submit %>
+#   </div>
+# <% end %>
+
+
+#  
+#   <div><%= f.label :cemetery_id %><%= f.number_field :cemetery_id %></div>
+#   <div><%= label_tag :soldier_category_names, "Categories (comma-separated)" %><%= text_field_tag "soldier[category_names]" %></div>
+#   <h3>Citations</h3>
+#   <%= f.fields_for :citations do |cf| %>
+#     <div>
+#       <%= cf.label :source_id %><%= cf.number_field :source_id %>
+#       <%= cf.label :pages %><%= cf.text_field :pages %>
+#       <%= cf.label :quote %><%= cf.text_area :quote %>
+#       <%= cf.label :note %><%= cf.text_area :note %>
+#       <%= cf.check_box :_destroy %><%= cf.label :_destroy, "Remove" %>
+#     </div>
+#   <% end %>
+#   <%= f.submit %>
+# <% end %>
+
+
+# <%= form_with(model: @record, data: { turbo: false }) do |f| %>
+#   <% if @record.errors.any? %>
+#     <div class="alert alert-danger"><%= @record.errors.full_messages.to_sentence %></div>
+#   <% end %>
+
+#   # <div class="field">
+  #   <%= f.label :first_name %>
+  #   <%= f.text_field :first_name %>
+  #   <%= f.text_field :first_name, required: true %>
+  # </div>
+
+  # <div class="field">
+  #   <%= f.label :middle_name %>
+  #   <%= f.text_field :middle_name %>
+  # </div>
+  # <div class="field">
+  # <%= f.label :last_name %><%= f.text_field :last_name %>
+  # </div
+  #  <div class="field">
+  # <%= f.label :birthcity %>
+  # <%= f.text_field :birthcity %>    
+  # </div
+  #  <div class="field">
+  # <%= f.label :birthstate %>
+  #   <%= f.text_field :birthstate %> 
+  # </div
+  #  <div class="field">
+  # <%= f.label :birthcountry %>
+  # <%= f.text_field :birthcountry %>
+  # </div>
+
+  # <div class="field">
+  # <%= f.label :deathcity %>
+  # <%= f.text_field :deathcity %>
+  #  </div>
+  #  <div class="field">
+  #   <%= f.label :deathstate %>
+  #   <%= f.text_field :deathstate %>
+  #  </div>
+  #  <div class="field">
+  # <%= f.label :deathcountry %>
+  # <%= f.text_field :deathcountry %>
+  #  </div>
+  #   <div>
+  # <%= f.label :cemetery_id %>
+  # <%= f.number_field :cemetery_id %>
+  #  </div>
+  
+  
+#    <div><%= label_tag :soldier_category_names, "Categories (comma-separated)" %><%= text_field_tag "soldier[category_names]" %></div>
+#   # <%# Admin-only categories picker %>
+#   <% if current_user&.admin? %>
+#     <div class="field">
+#       <%= f.label :category_ids, "Categories" %>
+#       <%= f.collection_select :category_ids, Category.order(:name), :id, :name, {}, multiple: true %>
+#     </div>
+#   <% end %>
+
+#   # <%# Citations block (if you use nested citations) %>
+#   <div id="citations">
+#     <%= f.fields_for :citations do |cf| %>
+#       <%= render "citations/fields", f: cf, sources: @sources %>
+#     <% end %>
+#   </div>
+
+#   <div class="actions">
+#     <%= f.submit %>
+#   </div>
+# <% end %>
+
+# <%#= form_with(model: @soldier, data: { turbo: false }) do |f| %>
+#   <%# if @soldier.errors.any? %>
+#     <div class="alert alert-danger"><%#= @soldier.errors.full_messages.to_sentence %></div>
+#   <% end %>
+
+#   <div class="grid">
+#     <div class="field">
+#       <%= f.label :first_name %>
+#       <%= f.text_field :first_name %>
+#     </div>
+#     <div class="field">
+#       <%= f.label :middle_name %>
+#       <%= f.text_field :middle_name %>
+#     </div>
+#     <div class="field">
+#       <%= f.label :last_name %>
+#       <%= f.text_field :last_name %>
+#     </div>
+#   </div>
+
+#   <fieldset>
+#     <legend>Birth</legend>
+#     <div class="grid">
+#       <div class="field"><%= f.label :birthcity %><%= f.text_field :birthcity %></div>
+#       <div class="field"><%= f.label :birthstate %><%= f.text_field :birthstate %></div>
+#       <div class="field"><%= f.label :birthcountry %><%= f.text_field :birthcountry %></div>
+#     </div>
+#   </fieldset>
+
+#   <fieldset>
+#     <legend>Death</legend>
+#     <div class="grid">
+#       <div class="field"><%= f.label :deathcity %><%= f.text_field :deathcity %></div>
+#       <div class="field"><%= f.label :deathstate %><%= f.text_field :deathstate %></div>
+#       <div class="field"><%= f.label :deathcountry %><%= f.text_field :deathcountry %></div>
+#     </div>
+#   </fieldset>
+
+#   <div class="field">
+#     <%= f.label :cemetery_id, "Cemetery" %>
+#     <%= f.collection_select :cemetery_id, Cemetery.order(:name), :id, :name, include_blank: true %>
+#   </div>
+
+#   <% if current_user&?admin? %>
+#     <div class="field">
+#       <%= f.label :category_ids, "Categories" %>
+#       <%= f.collection_select :category_ids, Category.order(:name), :id, :name, {}, multiple: true %>
+#     </div>
+#   <% end %>
+
+#   <h3>Sources & Citations</h3>
+#   <div id="citations">
+#     <%= f.fields_for :citations do |cf| %>
+#       <%= render "citations/fields", f: cf, sources: Source.order(:title) %>
+#     <% end %>
+#   </div>
+
+#   <h3>Awards</h3>
+#   <div id="awards">
+#     <%= f.fields_for :awards do |af| %>
+#       <div class="border p-2 mb-2 rounded">
+#         <div class="field">
+#           <%= af.label :medal_id, "Medal" %>
+#           <%= af.collection_select :medal_id, Medal.order(:name), :id, :name, prompt: "Select medal…" %>
+#         </div>
+#         <div class="field">
+#           <%= af.label :year %>
+#           <%= af.number_field :year %>
+#         </div>
+#         <div class="field">
+#           <%= af.label :note %>
+#           <%= af.text_area :note %>
+#         </div>
+#         <%= af.hidden_field :_destroy %>
+#       </div>
+#     <% end %>
+#   </div>
+
+#   <h3>Service (Wars / Battles)</h3>
+#   <div id="involvements">
+#     <%= f.fields_for :involvements do |ivf| %>
+#       <div class="border p-2 mb-2 rounded">
+#         <div class="field">
+#           <%= ivf.label :involvable_type %>
+#           <%= ivf.select :involvable_type, options_for_select([["War","War"],["Battle","Battle"]]) %>
+#         </div>
+#         <div class="field">
+#           <%= ivf.label :involvable_id, "Target ID" %>
+#           <%= ivf.number_field :involvable_id %>
+#         </div>
+#         <div class="field">
+#           <%= ivf.label :role %>
+#           <%= ivf.text_field :role %>
+#         </div>
+#         <div class="field">
+#           <%= ivf.label :year %>
+#           <%= ivf.number_field :year %>
+#         </div>
+#         <div class="field">
+#           <%= ivf.label :note %>
+#           <%= ivf.text_area :note %>
+#         </div>
+#         <%= ivf.hidden_field :_destroy %>
+#       </div>
+#     <% end %>
+#   </div>
+
+#   <div class="actions">
+#     <%= f.submit %>
+#   </div>
+# <% end %>
+
+
+class SourcesController < ApplicationController
+  def index
+     @records = maybe_page(Soldier.order(:title))
+ 
+  end
+  def show
+    @record = Source.find_by!(slug: params[:id])
+    @citations = @record.citations.includes(:citable)
+  end
+  def new
+    @record = Source.new
+  end
+  def create
+    @record = Source.new(source_params)
+    if @record.save
+      redirect_to @record, notice: "Source created."
+    else
+      render :new, status: :unprocessable_entity
+    end
+  end
+  def edit
+    @record = Source.find_by!(slug: params[:id])
+  end
+  def update
+    @record = Source.find_by!(slug: params[:id])
+    if @record.update(source_params)
+      redirect_to @record, notice: "Source updated."
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+  def destroy
+    @record = Source.find_by!(slug: params[:id])
+    @record.destroy
+    redirect_to sources_path, notice: "Source deleted."
+  end
+
+  def create_citation
+    @record = Source.find_by!(slug: params[:id])
+    citable_type = params.dig(:citation, :citable_type).to_s
+    citable_id   = params.dig(:citation, :citable_id).to_i
+    pages        = params.dig(:citation, :pages)
+    quote        = params.dig(:citation, :quote)
+    note         = params.dig(:citation, :note)
+
+    klass = citable_type.safe_constantize
+    if klass && (citable = klass.find_by(id: citable_id))
+      @record.citations.create!(citable: citable, pages: pages, quote: quote, note: note)
+      redirect_to @record, notice: "Citation added."
+    else
+      redirect_to @record, alert: "Invalid citable."
+    end
+  end
+
+  private
+
+  if current_user&.admin?
+    base << { category_ids: [] }
+  end
+
+
+def source_params
+  params.require(:source).permit(:title, :detaila, :repository,category_ids: [])
+end

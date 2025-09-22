@@ -1,0 +1,35 @@
+<h1><%= [@census.country, @census.year].join(" ") %></h1>
+<p>
+  <%= [
+    @census.district,
+    @census.subdistrict,
+    @census.place,
+    ("Piece " + @census.piece.to_s if @census.piece.present?),
+    ("Folio " + @census.folio.to_s if @census.folio.present?),
+    ("Page " + @census.page.to_s if @census.page.present?)
+  ].compact.join(", ") %>
+</p>
+
+<% if (url = @census.display_image_url(self)) %>
+  <p><a href="<%= url %>" target="_blank" rel="noopener">View image</a></p>
+<% end %>
+
+<h3>Households</h3>
+<% @entries.group_by(&:householdid).each do |hid, rows| %>
+  <h4>Household <%= hid.presence || "(unknown)" %></h4>
+  <ul>
+    <% rows.each do |r| %>
+      <li>
+        <%= r.display_name %>
+        <% if r.age.present? %> — age <%= r.age %><% end %>
+        <% if r.relationshiptohead.present? %> — <%= r.relationshiptohead %><% end %>
+        <% if r.birthlikeplacetext.present? %> — born <%= r.birthlikeplacetext %><% end %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+<p class="mt-3">
+  <%= link_to "Edit", edit_censuses_path(@census), class: "btn btn-outline-secondary" %>
+  <%= link_to "Back", census_path, class: "btn btn-secondary ms-2" %>
+</p>
+

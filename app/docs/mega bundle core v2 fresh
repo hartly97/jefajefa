@@ -1,0 +1,33 @@
+📦 Download MEGA_BUNDLE_with_CORE_v2_FRESH.zip
+
+What’s inside:
+
+Full core code (from FULL_CORE_APP_BUNDLE_v2.zip)
+
+Concerns: Sluggable, Citable, Categorizable, Relatable
+
+Models: Article, Source, Citation, Category, Categorization, Relation, Soldier
+
+Controllers: ArticlesController, SourcesController, SoldiersController (+ AdminGuard)
+
+Views: minimal forms/shows for Articles/Sources/Soldiers, plus _citations/fields
+
+Sample routes: config/ROUTES_SAMPLE.rb
+
+Docs & checklists
+
+INSTALL_NOTES.md (quick start)
+
+db/RESEED_WORKFLOW.md
+
+CONSOLE_TRICKS.md
+
+docs/ARTICLE_SOURCE_CHECKLIST.md
+
+docs/SOLDIER_CHECKLIST.md
+
+docs/RELATIONS_CHECKLIST.md
+
+BUNDLE_CONTENTS.md
+
+README_UNIFIED.txt

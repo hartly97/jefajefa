@@ -1,0 +1,127 @@
+<h1><%= @record.new_record? ? "New Article" : "Edit Article" %></h1>
+<h1><%= @record.new_record? ? "New Article" : "Edit Article" %></h1>
+<%= f.fields_for :citations do |cf| %>
+  <%= render "citations/fields", f: cf, common_sources: Source.common %>
+<% end %>
+
+<template data-citations-target="template">
+  <div data-citations-wrapper>
+    <%= f.fields_for :citations, Citation.new, child_index: "NEW_RECORD" do |cf| %>
+      <%= render "citations/fields", f: cf, common_sources: Source.common %>
+    <% end %>
+  </div>
+</template>
+
+
+<h1><%= @record.new_record? ? "New Article" : "Edit Article" %></h1>
+
+<%= form_with(model: @record, data: { turbo: false }) do |f| %>
+  <div class="field"><%= f.label :title %><%= f.text_field :title %></div>
+  <div class="field"><%= f.label :body %><%= f.text_area :body %></div>
+
+  <div class="field"><%= f.label :author %><%= f.text_field :author %></div>
+  <div class="field"><%= f.label :date %><%= f.date_field :date %></div>
+
+  <% if defined?(current_user) && current_user&.admin? %>
+    <div class="field">
+      <%= f.label :category_ids, "Categories" %>
+      <%= f.collection_select :category_ids, Category.order(:name), :id, :name, {}, multiple: true %>
+    </div>
+  <% end %>
+
+#   <h3>Citations</h3>
+
+#   <div data-controller="citations"
+#        data-citations-index-value="<%= @record.citations.size %>">
+
+#     <div data-citations-target="list">
+#       <%# Render existing citations %>
+#       <%= f.fields_for :citations do |cf| %>
+#         <div data-citations-wrapper>
+#           <%= render "citations/fields", f: cf, sources: Source.order(:title) %>
+#         </div>
+#       <% end %>
+#     </div>
+
+#     <template data-citations-target="template">
+#       <div data-citations-wrapper>
+#         <%= f.fields_for :citations, Citation.new, child_index: "NEW_RECORD" do |cf| %>
+#           <%= render "citations/fields", f: cf, sources: Source.order(:title) %>
+#         <% end %>
+#       </div>
+#     </template>
+
+#     <p class="mt-2">
+#       <button type="button" data-action="citations#add">+ Add citation</button>
+#     </p>
+#   </div>
+
+#   <div class="actions"><%= f.submit %></div>
+# <% end %>
+
+
+<h1><%= @record.new_record? ? "New Article" : "Edit Article" %></h1>
+<%= form_with(model: @record, data: { turbo: false }) do |f| %>
+  <div class="field"><%= f.label :title %><%= f.text_field :title %></div>
+  <div class="field"><%= f.label :body %><%= f.text_area :body %></div>
+  <div class="field"><%= f.label :author %><%= f.text_area :body %></div>
+  <div class="field"><%= f.label :date %><%= f.text_area :date %></div>
+
+  <% if defined?(current_user) && current_user&.admin? %>
+    <div class="field">
+      <%= f.label :category_ids, "Categories" %>
+      <%= f.collection_select :category_ids, Category.order(:name), :id, :name, {}, multiple: true %>
+    </div>
+  <% end %>
+
+
+  <h1><%= @record.new_record? ? "New Article" : "Edit Article" %></h1>
+<%= form_with(model: @record, data: { turbo: false }) do |f| %>
+  <div class="field"><%= f.label :title %><%= f.text_field :title %></div>
+  <div class="field"><%= f.label :body %><%= f.text_area :body %></div>
+
+  <% if defined?(current_user) && current_user&.admin? %>
+    <div class="field">
+      <%= f.label :category_ids, "Categories" %>
+      <%= f.collection_select :category_ids, Category.order(:name), :id, :name, {}, multiple: true %>
+    </div>
+  <% end %>
+
+  <h3>Citations</h3>
+  <%= f.fields_for :citations do |cf| %>
+    <%= render "citations/fields", f: cf, sources: Source.order(:title) %>
+  <% end %>
+
+  <div class="actions"><%= f.submit %></div>
+<% end %>
+  # <h3>Citations</h3>
+  # <%= f.fields_for :citations do |cf| %>
+  #   <%= render "citations/fields", f: cf, sources: Source.order(:title) %>
+  # <% end %>
+  # <div data-controller="citations"
+  #    data-citations-index-value="<%= @record.citations.size %>">
+
+  # <div data-citations-target="list">
+  #   <% f.fields_for :citations do |cf| %>
+  #     <div data-citations-wrapper>
+  #       <%= render "citations/fields", f: cf, sources: Source.order(:title) %>
+  #     </div>
+  #   <% end %>
+  # </div>
+
+  # <template data-citations-target="template">
+  #   <div data-citations-wrapper>
+  #     <%= f.fields_for :citations, Citation.new, child_index: "NEW_RECORD" do |cf| %>
+  #       <%= render "citations/fields", f: cf, sources: Source.order(:title) %>
+  #     <% end %>
+  #   </div>
+  # </template>
+
+  # <p>
+  #   <button type="button" data-action="citations#add">Add citation</button>
+  </p>
+</div>
+
+
+  <div class="actions"><%= f.submit %></div>
+<% end %>

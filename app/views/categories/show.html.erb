@@ -1,0 +1,6 @@
+<h1><%= @record.try(:title) || @record.try(:name) || @record.try(:slug) %></h1>
+<pre><%= @record.attributes %></pre>
+<p>
+  <%= link_to "Edit", [:edit, @record] %> |
+  <%= link_to "Back", url_for(controller: controller_name, action: :index) %>
+</p>

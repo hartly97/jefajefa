@@ -1,0 +1,1 @@
+<h1>Awards</h1><ul><% @awards.each do |awards| %><li><%= link_to awards.name, awards %></li><% end %></ul><p><%= link_to 'New', new_medal_path %></p>

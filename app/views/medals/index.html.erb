@@ -1,0 +1,1 @@
+<h1>Medals</h1><ul><% @records.each do |r| %><li><%= link_to r.name, r %></li><% end %></ul><p><%= link_to 'New', new_medal_path %></p>

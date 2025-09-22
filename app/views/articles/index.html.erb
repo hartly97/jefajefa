@@ -1,0 +1,27 @@
+
+<h1>Articles</h1>
+
+<p><%= link_to "New Article", new_article_path, class: "btn btn-primary" %></p>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Created</th>
+      <th>Author</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @records.each do |article| %>
+      <tr>
+        <td><%= link_to article.title, article %></td>
+        <td><%= l(article.created_at, format: :short) rescue article.created_at %></td>
+        <td>
+          <%= link_to "Edit", edit_article_path(article), class: "btn btn-sm btn-secondary" %>
+          <%= link_to "Delete", article, data: { turbo_method: :delete, turbo_confirm: "Delete this article?" }, class: "btn btn-sm btn-danger" %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

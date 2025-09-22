@@ -1,0 +1,12 @@
+# <h3>Related records</h3>
+# <!-- Do I need this?-->
+# <%# related = @soldier.related %>
+# <%# if related.any? %>
+#   <ul>
+#     <%# related.each do |obj| %>
+#       <li><%#= link_to(obj.try(:title) || obj.try(:name) || obj.to_param, obj) %></li>
+#     <%# end %>
+#   </ul>
+# <%# else %>
+#   <em>No relations yet.</em>
+# <% end %>

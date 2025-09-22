@@ -1,0 +1,14 @@
+# config/initializers/dev_probe_filter.rb
+if Rails.env.development?
+  class DevtoolsSilencer
+    def initialize(app) = @app = app
+    def call(env)
+      if env['PATH_INFO'] == '/.well-known/appspecific/com.chrome.devtools.json'
+        return [204, { 'Content-Type' => 'application/json' }, ['{}']]
+      end
+      @app.call(env)
+    end
+  end
+
+  Rails.application.config.middleware.insert_before 0, DevtoolsSilencer
+end

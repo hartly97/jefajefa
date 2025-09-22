@@ -1,0 +1,6 @@
+<h1><%= @cemetery.try(:title) || @cemetery.try(:name) || @cemetery.try(:slug) %></h1>
+<pre><%= .attributes %></pre>
+<p>
+  <%= link_to "Edit", [:edit, @cemetery] %> |
+  <%= link_to "Back", url_for(controller: controller_name, action: :index) %>
+</p>

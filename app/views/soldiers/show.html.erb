@@ -1,0 +1,54 @@
+
+<h3>Wars</h3>
+<ul>
+  <% Array(@soldier.try(:war_categories)).sort_by { |w| w.name.to_s }.each do |war| %>
+    <li><%= link_to war.name, category_path(war) %></li>
+  <% end %>
+</ul>
+
+
+<h3>Battles</h3>
+<ul>
+  <% Array(@soldier.try(:battle_categories)).sort_by { |b| b.name.to_s }.each do |b| %>
+    <li><%= link_to b.name, category_path(b) %></li>
+  <% end %>
+</ul>
+<!-- h3>Battles</h3>
+ <ul>-->
+#   <% @soldier.battle_categories.each do |cat| %>
+#     <li><%= link_to cat.name, category_path(cat) %></li>
+#   <% end %>
+# </ul>
+
+
+<h3>Medals</h3>
+<% if @soldier.medals.exists? %>
+  <ul>
+    <% @soldier.medals.order(:name).each do |m| %>
+      <li><%= link_to m.name, m %></li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No medals recorded.</p>
+<% end %>
+
+<h3>Awards</h3>
+<% if @soldier.awards.exists? %>
+  <ul>
+    <% @soldier.awards.order(:year, :id).each do |aw| %>
+      <li>
+        <strong><%= aw.name.presence || "(Unnamed award)" %></strong>
+        <%= " (#{aw.year})" if aw.year.present? %>
+        <%= " — #{aw.country}" if aw.country.present? %>
+        <%= " — #{aw.note}"    if aw.note.present? %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p><em>No awards recorded.</em></p>
+<% end %>
+
+<h3>Cemetery</h3>
+<p>
+  <%= @soldier.cemetery ? link_to(@soldier.cemetery.name, @soldier.cemetery) : content_tag(:em, "Not recorded") %>
+</p>

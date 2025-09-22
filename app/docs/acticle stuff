@@ -1,0 +1,162 @@
+Quick checklist (do these in order)
+
+Citation model
+
+# app/models/citation.rb
+class Citation < ApplicationRecord
+  belongs_to :citable, polymorphic: true, inverse_of: :citations
+  belongs_to :source, inverse_of: :citations
+
+  accepts_nested_attributes_for :source,
+    reject_if: ->(attrs){ attrs['title'].blank? }  # adjust if your Source needs more
+
+  validates :source, presence: true
+end
+
+
+Source model (keep categorization if you tag sources)
+
+# app/models/source.rb
+class Source < ApplicationRecord
+  include Sluggable
+  has_many :citations, dependent: :restrict_with_error, inverse_of: :source
+
+  has_many :categorizations, as: :categorizable, dependent: :destroy, inverse_of: :categorizable
+  has_many :categories, through: :categorizations
+
+  validates :title, presence: true
+  def slug_source = title
+end
+
+
+ArticlesController (preload sources + build nested source for the form)
+
+# app/controllers/articles_controller.rb
+before_action :set_sources, only: [:new, :edit, :create, :update]
+
+def new
+  @record = Article.new
+  @record.citations.build
+  ensure_nested_source_builds
+end
+
+def edit
+  @record = Article.find_by!(slug: params[:id])
+  @record.citations.build if @record.citations.empty?
+  ensure_nested_source_builds
+end
+
+def create
+  @record = Article.new(article_params)
+  if @record.save
+    redirect_to @record, notice: "Article created."
+  else
+    ensure_nested_source_builds
+    render :new, status: :unprocessable_entity
+  end
+end
+
+def update
+  @record = Article.find_by!(slug: params[:id])
+  if @record.update(article_params)
+    redirect_to @record, notice: "Article updated."
+  else
+    ensure_nested_source_builds
+    render :edit, status: :unprocessable_entity
+  end
+end
+
+private
+
+def set_sources
+  @sources = Source.order(:title)
+end
+
+def ensure_nested_source_builds
+  @record.citations.each { |c| c.build_source if c.source.nil? }
+end
+
+def article_params
+  params.require(:article).permit(
+    :title, :body,
+    citations_attributes: [
+      :id, :source_id, :pages, :quote, :note, :_destroy,
+      { source_attributes: [:id, :title, :author, :publisher, :year, :url] } # tailor fields
+    ]
+  )
+end
+
+
+Article form (dropdown for existing Source + inline “new Source”)
+
+<!-- app/views/articles/_form.html.erb -->
+<h3>Sources & Citations</h3>
+
+<%= f.fields_for :citations do |cf| %>
+  <div class="citation-fields">
+    <!-- Choose existing Source -->
+    <div>
+      <%= cf.label :source_id, "Source" %>
+      <%= cf.collection_select :source_id, @sources, :id, :title,
+            { prompt: "Select a source…" },
+            { required: true } %>
+    </div>
+
+    <!-- Or create a new Source inline -->
+    <%= cf.fields_for :source do |sf| %>
+      <details class="mt-2">
+        <summary>Or create a new source</summary>
+        <div><%= sf.label :title, "Source title" %> <%= sf.text_field :title %></div>
+        <div><%= sf.label :author %> <%= sf.text_field :author %></div>
+        <div><%= sf.label :publisher %> <%= sf.text_field :publisher %></div>
+        <div><%= sf.label :year %> <%= sf.text_field :year %></div>
+        <div><%= sf.label :url %> <%= sf.url_field :url %></div>
+      </details>
+    <% end %>
+
+    <!-- Citation details -->
+    <div><%= cf.label :pages %>  <%= cf.text_field :pages, placeholder: "e.g., 41–43" %></div>
+    <div><%= cf.label :quote %>  <%= cf.text_area :quote %></div>
+    <div><%= cf.label :note  %>  <%= cf.text_area :note %></div>
+
+    <div><%= cf.check_box :_destroy %> <%= cf.label :_destroy, "Remove" %></div>
+  </div>
+<% end %>
+
+
+(Optional but recommended) unique index on categorizations
+
+# db/migrate/xxxxxx_unique_categorizations.rb
+class UniqueCategorizations < ActiveRecord::Migration[7.1]
+  def change
+    add_index :categorizations,
+      [:categorizable_type, :categorizable_id, :category_id],
+      unique: true,
+      name: "index_categorizations_on_poly_and_category"
+  end
+end
+
+Quick smoke tests (copy/paste in Rails console)
+# 1) build article with citation via existing source
+s = Source.first || Source.create!(title: "Parish Registers of Belstone")
+a = Article.create!(title: "Belstone Births", body: "…",
+      citations_attributes: [{ source_id: s.id, pages: "12–14" }])
+a.citations.first.source.title  # => "Parish Registers of Belstone"
+
+# 2) build article with citation via NEW inline source (no source_id)
+a2 = Article.create!(title: "Throwleigh Tax", body: "…",
+      citations_attributes: [{
+        pages: "1775",
+        source_attributes: { title: "Throwleigh Land Tax Assessment", year: "1775–1825" }
+      }])
+a2.citations.first.source.persisted? # => true
+
+Common “gotchas” to watch for
+
+Inline block not rendering → ensure c.build_source is called (see ensure_nested_source_builds).
+
+“Source can’t be blank” → user left dropdown on prompt and left inline fields empty (rejected by reject_if). Fill one or the other.
+
+Missing nested params → confirm source_attributes: [...] is present in article_params.
+
+If you want, I can add a tiny Stimulus “+ Add citation” button next so you can insert multiple citation blocks dynamically.

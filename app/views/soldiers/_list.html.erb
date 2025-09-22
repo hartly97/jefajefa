@@ -1,0 +1,10 @@
+<tbody>
+  <% soldiers.each do |soldier| %>
+    <tr>
+      <td><%= link_to soldier.last_name, soldier %></td>
+      <td><%= l(soldier.created_at, format: :short) rescue soldier.created_at %></td>
+    </tr>
+  <% end %>
+</tbody>
+# Then in index.html.erb:
+<%= render "list", soldiers: (@soldiers || Soldier.none) %>

@@ -1,0 +1,11 @@
+<!-- app/views/sources/_form.html.erb -->
+<%= form_with(model: @source) do |f| %>
+  <%= f.label :title %>
+  <%= f.text_field :title %>
+
+  <%= f.label :category_ids, "Categories" %>
+  <%= f.collection_select :category_ids, Category.order(:name), :id, :name,
+        {}, multiple: true %>
+
+  <%= f.submit %>
+<% end %>

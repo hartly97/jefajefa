@@ -1,0 +1,70 @@
+<h1><%= @record.name %></h1>
+
+<h2>Involvements</h2>
+<% if @involvements.any? %>
+  <ul>
+    <% @involvements.each do |inv| %>
+      <li>
+        <% if inv.participant.respond_to?(:soldier_name) %>
+          <%= link_to inv.participant.soldier_name, inv.participant %>
+        <% else %>
+          <%= link_to(inv.participant.try(:name) || inv.participant.try(:title) || inv.participant.slug, inv.participant) %>
+        <% end %>
+        <% if inv.role.present? %> — <strong><%= inv.role %></strong><% end %>
+        <% if inv.year.present? %> (<%= inv.year %>)<% end %>
+        <% if inv.note.present? %> — <em><%= inv.note %></em><% end %>
+        <%= button_to "Remove", involvement_path(inv), method: :delete, form: { data: { turbo_confirm: "Remove involvement?" } } %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No involvements yet.</p>
+<% end %>
+
+<h3>Add Soldier Involvement</h3>
+<%= form_with url: involvements_path, method: :post do |f| %>
+  <%= hidden_field_tag "involvement[involvable_type]", "Battle" %>
+  <%= hidden_field_tag "involvement[involvable_id]", @record.id %>
+  <%= hidden_field_tag "involvement[participant_type]", "Soldier" %>
+  
+  <div>
+    <%= label_tag :soldier_search, "Find Soldier" %>
+    <input type="text" id="soldier_search" placeholder="Type a name..." list="soldier_suggest">
+    <datalist id="soldier_suggest"></datalist>
+    <%= hidden_field_tag "involvement[participant_id]", "", id: "involvement_participant_id" %>
+    <small>After selecting a suggestion, the hidden ID will be set automatically.</small>
+  </div>
+
+  <div><%= label_tag :involvement_role, "Role" %><%= text_field_tag "involvement[role]" %></div>
+  <div><%= label_tag :involvement_year, "Year" %><%= number_field_tag "involvement[year]" %></div>
+  <div><%= label_tag :involvement_note, "Note" %><%= text_field_tag "involvement[note]" %></div>
+  <%= f.submit "Add" %>
+<% end %>
+
+<p><%= link_to "Edit", [:edit, @record] %> | <%= link_to "Back", url_for(controller: controller_name, action: :index) %></p>
+
+<script>
+(function(){ 
+  const input = document.getElementById('soldier_search');
+  const list  = document.getElementById('soldier_suggest');
+  const hidden = document.getElementById('involvement_participant_id');
+  if(!input) return;
+  let t; 
+  input.addEventListener('input', function(){ 
+    clearTimeout(t);
+    const q = this.value.trim();
+    if(q.length < 2) { list.innerHTML = ''; return; }
+    t = setTimeout(() => {
+      fetch('/soldiers/search?q=' + encodeURIComponent(q))
+        .then(r => r.json())
+        .then(rows => {
+          list.innerHTML = rows.map(r => `<option value="${r.label}"></option>`).join('');
+        });
+    }, 200);
+  });
+  input.addEventListener('change', function(){ 
+    const m = this.value.match(/#(\d+)\)?\s*$/);
+    if(m) hidden.value = m[1];
+  });
+})();
+</script>

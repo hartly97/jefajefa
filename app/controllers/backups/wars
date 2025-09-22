@@ -1,0 +1,79 @@
+# # app/controllers/wars_controller.rb
+# class WarsController < ApplicationController
+#   # If you’re using ApplicationController#require_admin, use that instead of AdminGuard
+#   # before_action :require_admin, only: [:regenerate_slug]
+
+#   before_action :set_war, only: [:show, :edit, :update, :destroy, :regenerate_slug]
+
+#   def index
+#     @wars = War.order(:name)
+#   end
+
+#   def show
+#     # use the instance set by set_war
+#     @involvements = @war.involvements.includes(:participant)
+#   end
+
+#   def new
+#     @war = War.new
+#     @war.citations.build
+#   end
+
+#  def create
+#     @war = War.new(war_params)
+#     if war.save
+#       attach_categories_from_text_unified(@war, params_scope: :war, field: :category_names)
+#       redirect_to @war, notice: "war created."
+#     else
+#       render :new, status: :unprocessable_entity
+#     end
+
+#   def edit
+#     @war.citations.build if @war.citations.empty?
+#   end
+
+#   def update
+#     @war = war.find_by!(slug: params[:id])
+#     if @war.update(war_params)
+    
+#       (@war, params_scope: :war, field: :category_names)
+#       redirect_to @war, notice: "War updated."
+#     else
+#       render :edit, status: :unprocessable_entity
+#     end
+
+#   def destroy
+#     @war.destroy
+#     redirect_to wars_path, notice: "War deleted."
+#   end
+
+#   def regenerate_slug
+#     # require_admin if you have it globally, else inline guard:
+#     # return redirect_back fallback_location: @war, alert: "Admins only." unless current_user&.admin?
+#     @war.regenerate_slug!
+#     redirect_to @war, notice: "Slug regenerated."
+#   end
+
+#   private
+
+#   # Try slug first, fall back to id
+#   def set_war
+#     @war = War.find_by(slug: params[:id]) || War.find(params[:id])
+#   end
+
+#   def war_params
+#     params.require(:war).permit(
+#       :name,
+#       { category_ids: [] },  # admin-only multiselect; harmless if empty
+#       citations_attributes: [
+#         :id, :source_id, :pages, :quote, :note, :_destroy,
+#         { source_attributes: [:id, :title, :author, :publisher, :year, :url, :details, :repository, :link_url] }
+#       ],
+#       involvements_attributes: [
+#         :id, :involvable_type, :involvable_id, :role, :year, :note, :_destroy
+#       ]
+#     )
+#     end
+#   end
+# end
+# end

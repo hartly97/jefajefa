@@ -1,0 +1,13 @@
+The views were included earlier in the smaller FULL_CORE_APP_BUNDLE_v2.zip — that had minimal working forms for Articles, Sources, and Soldiers, plus the _citations/fields partial.
+
+So:
+
+✅ Use MEGA_BUNDLE_UNIFIED_FINAL.zip for the code + docs/checklists (models/controllers/concerns/routes).
+
+✅ Use FULL_CORE_APP_BUNDLE_v2.zip for the starter views — just copy the app/views/ folder from that zip into your app, then merge or tweak them as needed.
+
+👉 If you’d rather not juggle two zips, I can generate you a new unified zip that includes everything together: views + controllers + models + concerns + docs/checklists. That way you’ve got one canonical bundle with nothing missing.
+
+Want me to make that full “one stop shop” bundle?
+
+You said:

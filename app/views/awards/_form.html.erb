@@ -1,0 +1,9 @@
+<%= form_with model: @award do |f| %>
+    <div><%= f.label :name %><%= f.text_field :name %></div>
+    <div><%= f.label :date %><%= f.date_field :date %>
+    </div><%= f.submit %><% end %>
+<% if defined?(current_user) && current_user&.admin? %>
+    <div class="field">
+      <%= f.label :category_ids, "Categories" %>
+      <%= f.collection_select :category_ids, Category.order(:name), :id, :name, {}, multiple: true %>
+    </div>

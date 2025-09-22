@@ -1,0 +1,20 @@
+<%= form_with model: @cemetery do |f| %>
+  <div><%= f.label :name %><%= f.text_field :name %></div>
+  <div><%= label_tag :cemetery_category_names, "Categories (comma-separated)" %><%= text_field_tag "cemetery[category_names]" %></div>
+  <h3>Citations</h3>
+  <%= f.fields_for :citations do |cf| %>
+    <div>
+      <%= cf.label :source_id %><%= cf.number_field :source_id %>
+      <%= cf.label :pages %><%= cf.text_field :pages %>
+      <%= cf.label :quote %><%= cf.text_area :quote %>
+      <%= cf.label :note %><%= cf.text_area :note %>
+      <%= cf.check_box :_destroy %><%= cf.label :_destroy, "Remove" %>
+    </div>
+  <% end %>
+  <%= f.submit %>
+<% end %>
+<% if defined?(current_user) && current_user&.admin? %>
+    <div class="field">
+      <%= f.label :category_ids, "Categories" %>
+      <%= f.collection_select :category_ids, Category.order(:name), :id, :name, {}, multiple: true %>
+    </div>

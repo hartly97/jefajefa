@@ -1,0 +1,13 @@
+# 1) build article with citation via existing source
+s = Source.first || Source.create!(title: "Parish Registers of Belstone")
+a = Article.create!(title: "Belstone Births", body: "…",
+      citations_attributes: [{ source_id: s.id, pages: "12–14" }])
+a.citations.first.source.title  # => "Parish Registers of Belstone"
+
+# 2) build article with citation via NEW inline source (no source_id)
+a2 = Article.create!(title: "Throwleigh Tax", body: "…",
+      citations_attributes: [{
+        pages: "1775",
+        source_attributes: { title: "Throwleigh Land Tax Assessment", year: "1775–1825" }
+      }])
+a2.citations.first.source.persisted? # => true

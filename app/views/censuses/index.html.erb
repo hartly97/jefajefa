@@ -1,0 +1,34 @@
+<h1><%= controller_name.titleize %></h1>
+<p><%= link_to "New Census", new_censuses_path, class: "btn btn-primary" %></p>
+<% if @censuses.any? %>
+  <table class="table table-striped mt-4">
+    <thead>
+      <tr>
+        <th>Year</th>
+        <th>District</th>
+        <th>Subdistrict</th>
+        <th>Place</th>
+        <th>Piece</th>
+        <th>Folio</th>
+        <th>Page</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @censuses.each do |c| %>
+        <tr>
+          <td><%= c.year %></td>
+          <td><%= c.district %></td>
+          <td><%= c.subdistrict %></td>
+          <td><%= c.place %></td>
+          <td><%= c.piece %></td>
+          <td><%= c.folio %></td>
+          <td><%= c.page %></td>
+          <td><%= link_to "Open", census_path(c.slug), class: "btn btn-sm btn-outline-primary" %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p class="mt-4">No results.</p>
+<% end %>
