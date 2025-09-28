@@ -1,0 +1,4 @@
+<!-- app/views/categories/_category.html.erb -->
+<%= link_to category.name,
+            soldiers_path(request.query_parameters.merge(category_id: category.id, page: 1)),
+            class: "badge rounded-pill bg-info text-dark me-1 mb-1 text-decoration-none" %>

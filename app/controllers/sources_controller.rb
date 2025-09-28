@@ -1,20 +1,14 @@
 class SourcesController < ApplicationController
-  before_action :set_source,   only: [:show, :edit, :update, :destroy, :regenerate_slug, :create_citation]
+  before_action :set_source,    only: [:show, :edit, :update, :destroy, :regenerate_slug, :create_citation]
   before_action :require_admin, only: [:regenerate_slug]
 
   def index
     @sources = Source.order(:title)
   end
 
-  def show
-  end
-
-  def new
-    @source = Source.new
-  end
-
-  def edit
-  end
+  def show; end
+  def new;  @source = Source.new; end
+  def edit; end
 
   def create
     @source = Source.new(source_params)
@@ -43,34 +37,31 @@ class SourcesController < ApplicationController
     redirect_to @source, notice: "Slug regenerated."
   end
 
-  # Placeholder to wire up later if you want to create a citation from Source page
+  # Autocomplete endpoint for the Source picker
+  def autocomplete
+    q = params[:q].to_s.strip.downcase
+    results =
+      if q.blank?
+        Source.order(:title).limit(20)
+      else
+        Source.where("LOWER(title) LIKE ?", "%#{q}%").order(:title).limit(20)
+      end
+    render json: results.pluck(:id, :title).map { |id, title| { id: id, title: title } }
+  end
+
   def create_citation
     redirect_to @source, notice: "Hook up create_citation logic as needed."
   end
 
   private
 
-  # Try slug first, fall back to id
   def set_source
     @source = Source.find_by(slug: params[:id]) || Source.find(params[:id])
   end
- 
-  def autocomplete
-    q = params[:q].to_s.strip
-    results =
-      if q.blank?
-        Source.order(:title).limit(20)
-      else
-        Source.where("LOWER(title) LIKE ?", "%#{q.downcase}%").order(:title).limit(20)
-      end
-    render json: results.pluck(:id, :title).map { |id, title| { id:, title: } }
-  end
-end
-
 
   def source_params
     base = [:title, :author, :publisher, :year, :url, :details, :pages, :common, :repository, :link_url]
     base << { category_ids: [] } if current_user&.admin?
     params.require(:source).permit(*base)
   end
-
+end

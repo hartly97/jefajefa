@@ -4,7 +4,8 @@
 include Categorizable
 include Sluggable
 include Citable
-  
+  has_many :citations, as: :citable, dependent: :destroy
+
   belongs_to :soldier, inverse_of: :awards
 
   validates :name, presence: true

@@ -8,13 +8,15 @@
     "@hotwired/stimulus": "^3.2.2",
     "@hotwired/turbo-rails": "^8.0.16",
     "@popperjs/core": "^2.11.8",
+    "@rails/actiontext": "^8.0.300",
     "autoprefixer": "^10.4.21",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
     "nodemon": "^3.1.10",
     "postcss": "^8.5.6",
     "postcss-cli": "^11.0.1",
-    "sass": "^1.92.1"
+    "sass": "^1.92.1",
+    "trix": "^2.1.15"
   },
   "scripts": {
     "build": "esbuild app/javascript/application.js --bundle --outdir=app/assets/builds --sourcemap",

@@ -1,5 +1,6 @@
 <h1><%= controller_name.titleize %></h1>
-<p><%= link_to "New Census", new_censuses_path, class: "btn btn-primary" %></p>
+<p><%#= link_to "New Census", new_censuses_path, class: "btn btn-primary" %></p>
+<%= render partial: "search_form", locals: { census: @census } %
 <% if @censuses.any? %>
   <table class="table table-striped mt-4">
     <thead>
@@ -24,7 +25,7 @@
           <td><%= c.piece %></td>
           <td><%= c.folio %></td>
           <td><%= c.page %></td>
-          <td><%= link_to "Open", census_path(c.slug), class: "btn btn-sm btn-outline-primary" %></td>
+          <!-- <td><%#= link_to "Open", census_path(c.slug), class: "btn btn-sm btn-outline-primary" %></td>-->
         </tr>
       <% end %>
     </tbody>

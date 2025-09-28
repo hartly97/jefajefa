@@ -34,9 +34,6 @@ class ApplicationController < ActionController::Base
                     alert: "Admins only."
     end
   end
+end 
 
 
-  def maybe_page(scope)
-    scope.respond_to?(:page) ? scope.page(params[:page]) : scope
-  end
-end

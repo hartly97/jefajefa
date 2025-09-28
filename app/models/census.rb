@@ -4,7 +4,7 @@ class Census < ApplicationRecord
   include Sluggable
   has_many :census_entries, dependent: :destroy
   validates :country, :year, :slug, presence: true
-
+has_many :citations, as: :citable, dependent: :destroy
   # If you ever want to store images locally too:
   # has_one_attached :image
 

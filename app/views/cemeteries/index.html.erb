@@ -1,7 +1,10 @@
-<h1><%= controller_name.titleize %></h1>
+<h1>Cemeteries</h1>
 <ul>
-  <% @records.each do |r| %>
-    <li><%= link_to(r.try(:title) || r.try(:name) || r.try(:slug), r) %></li>
-  <% end %>
-</ul>
-<p><%= link_to "New", url_for([:new, controller_name.singularize]) %></p>
+  <% @cemeteries.each do |cemetery| %>
+    <li><%= link_to cemetery.name, cemetery %>
+    </li>
+    <% end %>
+    </ul>
+    <p>
+    <%= link_to 'New', new_cemetery_path %>
+    </p>

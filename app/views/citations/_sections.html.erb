@@ -1,0 +1,5 @@
+<!-- app/views/citations/_section.html.erb -->
+<%# expects local: f %>
+<%= f.fields_for :citations do |cf| %>
+  <%= render "citations/fields", f: cf, common_sources: Source.common %>
+<% end %>

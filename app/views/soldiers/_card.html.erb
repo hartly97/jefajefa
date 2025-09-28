@@ -1,0 +1,65 @@
+<div class="card mb-3 redcard rounded shadow">
+  <div class="card-body">
+    <h4 class="card-title mb-2">
+    
+    
+      <% name_label =
+     (soldier.respond_to?(:display_name) && soldier.display_name.presence) ||
+     (soldier.respond_to?(:soldiername)   && soldier.soldiername.presence) ||
+     [soldier.first_name, soldier.last_name].compact.join(" ").presence ||
+     soldier.slug %>
+<%= link_to name_label, soldier, class: "text-color-blue" %>
+
+    </h4>
+
+    <div class="text-muted mb-2">
+      <%# Birth / Death %>
+      <p class="mb-1">
+        <strong>Birth:</strong>
+        <%= [soldier.try(:birth_day),
+             soldier.try(:birth_month_name),
+             soldier.try(:birth_year)].compact.join(" ") %>
+      </p>
+      <p class="mb-1">
+        <strong>Death:</strong>
+        <%= [soldier.try(:death_day),
+             soldier.try(:death_month_name),
+             soldier.try(:death_year)].compact.join(" ") %>
+      </p>
+
+      <%# Parents %>
+      <p class="mb-1"><strong>Father:</strong> <%= soldier.try(:fathername) %></p>
+      <p class="mb-1"><strong>Mother:</strong> <%= soldier.try(:mothername) %></p>
+
+      <%# Cemetery (only if present) %>
+      <% if soldier.respond_to?(:cemetery) && soldier.cemetery.present? %>
+        <p class="mb-1">
+          <strong>Cemetery:</strong>
+          <%= link_to soldier.cemetery.name, soldier.cemetery %>
+        </p>
+      <% end %>
+    </div>
+
+    <%# Categories (chips or comma list) %>
+    <% if soldier.respond_to?(:categories) && soldier.categories.any? %>
+      <div class="mt-2">
+        <% if lookup_context.exists?("categories/category") %>
+          <%= render soldier.categories %>
+        <% else %>
+          <small class="text-muted"><%= soldier.categories.map(&:name).join(", ") %></small>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%# Medals (optional) %>
+    <% if soldier.respond_to?(:medals) && soldier.medals.any? %>
+      <div class="mt-2">
+        <% if lookup_context.exists?("medals/medal") %>
+          <%= render soldier.medals %>
+        <% else %>
+          <small class="text-muted"><%= soldier.medals.map(&:name).join(", ") %></small>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

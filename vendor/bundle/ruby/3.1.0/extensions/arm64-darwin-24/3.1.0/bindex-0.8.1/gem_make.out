@@ -1,0 +1,16 @@
+current directory: /Users/michelleghartley/projects/jefajefa/vendor/bundle/ruby/3.1.0/gems/bindex-0.8.1/ext/skiptrace
+/Users/michelleghartley/.rbenv/versions/3.1.4/bin/ruby -I /Users/michelleghartley/.rbenv/versions/3.1.4/lib/ruby/3.1.0 extconf.rb
+creating Makefile
+
+current directory: /Users/michelleghartley/projects/jefajefa/vendor/bundle/ruby/3.1.0/gems/bindex-0.8.1/ext/skiptrace
+make DESTDIR\= sitearchdir\=./.gem.20250922-34957-ebvh93 sitelibdir\=./.gem.20250922-34957-ebvh93 clean
+
+current directory: /Users/michelleghartley/projects/jefajefa/vendor/bundle/ruby/3.1.0/gems/bindex-0.8.1/ext/skiptrace
+make DESTDIR\= sitearchdir\=./.gem.20250922-34957-ebvh93 sitelibdir\=./.gem.20250922-34957-ebvh93
+compiling cruby.c
+linking shared-object skiptrace/internal/cruby.bundle
+ld: warning: ignoring duplicate libraries: '-lruby.3.1'
+
+current directory: /Users/michelleghartley/projects/jefajefa/vendor/bundle/ruby/3.1.0/gems/bindex-0.8.1/ext/skiptrace
+make DESTDIR\= sitearchdir\=./.gem.20250922-34957-ebvh93 sitelibdir\=./.gem.20250922-34957-ebvh93 install
+/usr/bin/install -c -m 0755 cruby.bundle ./.gem.20250922-34957-ebvh93/skiptrace/internal

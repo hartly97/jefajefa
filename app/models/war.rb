@@ -4,6 +4,7 @@ class War < ApplicationRecord
   include Citable  
   include Categorizable     # has_many :citations … accepts_nested_attributes_for :citations (from the concern)
   
+has_many :involvements, as: :involvable, dependent: :destroy, inverse_of: :involvable
 
   validates :name, presence: true
 
@@ -21,3 +22,4 @@ class War < ApplicationRecord
 
   def slug_source = name
 end
+

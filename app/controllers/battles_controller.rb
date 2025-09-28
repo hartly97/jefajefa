@@ -1,62 +1,83 @@
 class BattlesController < ApplicationController
-   include AdminGuard
-   before_action :set_battle, only: [:show, :edit, :update, :destroy, :regenerate_slug]
+  include AdminGuard
+
+  before_action :set_battle, only: [:show, :edit, :update, :destroy, :regenerate_slug]
+  before_action :set_sources, only: [:new, :edit]
+  before_action :ensure_nested_source_builds, only: [:new, :edit]
+
   def index
-    @battles = Battle.order(:name).page(params[:page])
-     @battles = maybe_page(Battle.order(:name))
+    @battles = Battle.order(:name)
   end
+
   def show
-    @battle = Battle.find_by!(slug: params[:id])
     @involvements = @battle.involvements.includes(:participant)
   end
+
   def new
-     @battle = Battle.new
-     @battle.citations.build
- end
+    @battle = Battle.new
+    @battle.citations.build
+  end
+
   def create
     @battle = Battle.new(battle_params)
-   if battle.save
-    
-      redirect_to @battle, notice: "battle created."
+    if @battle.save
+      redirect_to @battle, notice: "Battle created."
     else
       render :new, status: :unprocessable_entity
     end
   end
+
   def edit
-     @battle = Battle.find_by!(slug: params[:id])
-      @battle.citations.build if @battle.citations.empty?
-    end
+    @battle.citations.build if @battle.citations.empty?
+  end
+
   def update
-    @battle = Battle.find_by!(slug: params[:id])
     if @battle.update(battle_params)
-     
       redirect_to @battle, notice: "Battle updated."
     else
       render :edit, status: :unprocessable_entity
+    end
   end
+
   def destroy
-    @battle = Battle.find_by!(slug: params[:id]); @battle.destroy
+    @battle.destroy
     redirect_to battles_path, notice: "Battle deleted."
   end
+
   def regenerate_slug
-    @war.regenerate_slug!
-    redirect_to @war, notice: "Slug regenerated."
+    @battle.regenerate_slug!
+    redirect_to @battle, notice: "Slug regenerated."
   end
+
   private
+
+  def set_battle
+    @battle = Battle.includes(involvements: :participant)
+                    .find_by(slug: params[:id]) || Battle.find(params[:id])
+  end
+
+  def set_sources
+    @sources = Source.order(:title)
+  end
+
+  def ensure_nested_source_builds
+    (@battle || @record)&.citations&.each { |c| c.build_source if c.source.nil? }
+  end
+
+  # Adjust fields if your schema differs
   def battle_params
-     params.require(:battle).permit(:name, :date)
-    def war_params
     params.require(:battle).permit(
-      :name,:date)
-      { category_ids: [] },  # admin-only multiselect; harmless if empty
+      :name, :date, :location, :war_id, :description, :notes,
       citations_attributes: [
-        :id, :source_id, :pages, :quote, :note, :_destroy,
+        :id, :_destroy, :source_id,
+        :pages, :quote, :note,
+        :volume, :issue, :folio, :page, :column, :line_number, :record_number,
+        :image_url, :image_frame, :roll, :enumeration_district, :locator,
         { source_attributes: [:id, :title, :author, :publisher, :year, :url, :details, :repository, :link_url] }
       ],
       involvements_attributes: [
-        :id, :involvable_type, :involvable_id, :role, :year, :note, :_destroy
+        :id, :participant_id, :participant_type, :role, :year, :note, :_destroy
       ]
-    
-    end
-end
+    )
+  end
 end

@@ -1,20 +1,47 @@
 <%= form_with model: @source do |f| %>
-  <div class="mb-2"><%= f.label :title %><%= f.text_field :title, class: "form-control" %></div>
+  <div class="mb-2">
+  <%= f.label :title %>
+  <%= f.text_field :title, class: "form-control" %>
+  </div>
 
   <div class="row g-3">
-    <div class="col-md-6"><%= f.label :author %><%= f.text_field :author, class: "form-control" %></div>
-    <div class="col-md-6"><%= f.label :publisher %><%= f.text_field :publisher, class: "form-control" %></div>
+    <div class="col-md-6">
+    <%= f.label :author %>
+    <%= f.text_field :author, class: "form-control" %>
+    </div>
+    <div class="col-md-6">
+    <%= f.label :publisher %>
+    <%= f.text_field :publisher, class: "form-control" %>
+    </div>
   </div>
 
   <div class="row g-3 mt-1">
-    <div class="col-md-4"><%= f.label :year %><%= f.text_field :year, class: "form-control" %></div>
-    <div class="col-md-8"><%= f.label :repository %><%= f.text_field :repository, class: "form-control" %></div>
+    <div class="col-md-4">
+    <%= f.label :year %>
+    <%= f.text_field :year, class: "form-control" %>
+    </div>
+    <div class="col-md-8">
+    <%= f.label :repository %>
+    <%= f.text_field :repository, class: "form-control" %>
+    </div>
   </div>
 
-  <div class="mb-2 mt-1"><%= f.label :url %><%= f.url_field :url, class: "form-control" %></div>
-  <div class="mb-2"><%#= f.label :page %><%= f.text_field :page, class: "form-control", placeholder: "e.g., 12–15" %></div>
-  <div class="mb-2"><%= f.label :details %><%= f.text_area :details, rows: 3, class: "form-control" %></div>
-  <div class="mb-2"><%= f.label :link_url, "Link URL (legacy)" %><%= f.url_field :link_url, class: "form-control" %></div>
+  <div class="mb-2 mt-1">
+  <%= f.label :url %>
+  <%= f.url_field :url, class: "form-control" %>
+  </div>
+  <div class="mb-2">
+  <%#= f.label :pages %>
+  <%= f.text_field :pages, class: "form-control", placeholder: "e.g., 12–15" %>
+  </div>
+  <div class="mb-2">
+  <%= f.label :details %>
+  <%= f.text_area :details, rows: 3, class: "form-control" %>
+  </div>
+  <div class="mb-2">
+  <%= f.label :link_url, "Link URL (legacy)" %>
+  <%= f.url_field :link_url, class: "form-control" %>
+  </div>
 
   <div class="form-check my-2">
     <%= f.check_box :common, class: "form-check-input", id: "src_common" %>

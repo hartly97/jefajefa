@@ -1,35 +1,56 @@
-<h1><%= [@census.country, @census.year].join(" ") %></h1>
-<p>
-  <%= [
-    @census.district,
-    @census.subdistrict,
-    @census.place,
-    ("Piece " + @census.piece.to_s if @census.piece.present?),
-    ("Folio " + @census.folio.to_s if @census.folio.present?),
-    ("Page " + @census.page.to_s if @census.page.present?)
-  ].compact.join(", ") %>
-</p>
+<fieldset class="border rounded p-3 mb-3">
+  <legend class="fw-bold small">Image (External)</legend>
 
-<% if (url = @census.display_image_url(self)) %>
-  <p><a href="<%= url %>" target="_blank" rel="noopener">View image</a></p>
-<% end %>
+  <div class="mb-3">
+    <%= f.label :external_image_url, "Image URL (SmugMug)" %>
+    <%= f.url_field :external_image_url,
+          class: "form-control",
+          placeholder: "https://photos.smugmug.com/.../image.jpg" %>
+    <div class="form-text">
+      Paste a direct image URL (jpg/png/webp). We don’t upload the file; we embed it.
+    </div>
+  </div>
 
-<h3>Households</h3>
-<% @entries.group_by(&:householdid).each do |hid, rows| %>
-  <h4>Household <%= hid.presence || "(unknown)" %></h4>
-  <ul>
-    <% rows.each do |r| %>
-      <li>
-        <%= r.display_name %>
-        <% if r.age.present? %> — age <%= r.age %><% end %>
-        <% if r.relationshiptohead.present? %> — <%= r.relationshiptohead %><% end %>
-        <% if r.birthlikeplacetext.present? %> — born <%= r.birthlikeplacetext %><% end %>
-      </li>
-    <% end %>
-  </ul>
-<% end %>
-<p class="mt-3">
-  <%= link_to "Edit", edit_censuses_path(@census), class: "btn btn-outline-secondary" %>
-  <%= link_to "Back", census_path, class: "btn btn-secondary ms-2" %>
-</p>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <%= f.label :external_image_caption, "Caption" %>
+      <%= f.text_field :external_image_caption, class: "form-control" %>
+    </div>
+    <div class="col-md-6">
+      <%= f.label :external_image_credit, "Credit / Attribution" %>
+      <%= f.text_field :external_image_credit,
+            class: "form-control",
+            placeholder: "© Your Name / SmugMug" %>
+    </div>
+  </div>
 
+  <!-- Optional live preview -->
+  <div id="image-url-preview" class="mt-3" style="<%= f.object.external_image_url.present? ? "" : "display:none" %>">
+    <strong>Preview</strong>
+    <div class="ratio ratio-16x9 border">
+      <img id="image-url-preview-img"
+           alt="Preview"
+           src="<%= f.object.external_image_url %>"
+           style="object-fit:contain; width:100%; height:100%">
+    </div>
+  </div>
+</fieldset>
+
+<script>
+document.addEventListener("turbo:load", attachCensusPreview)
+document.addEventListener("turbo:frame-load", attachCensusPreview)
+function attachCensusPreview() {
+  const input = document.querySelector('input[name="census[external_image_url]"]')
+  const box   = document.getElementById('image-url-preview')
+  const img   = document.getElementById('image-url-preview-img')
+  if (!input || !box || !img) return
+  const show = (url) => {
+    url = (url || "").trim()
+    if (!/^https?:\/\//.test(url)) { box.style.display = "none"; img.removeAttribute('src'); return }
+    img.src = url
+    box.style.display = ""
+  }
+  input.addEventListener('input', () => show(input.value))
+  show(input.value)
+}
+</script>

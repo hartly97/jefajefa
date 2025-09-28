@@ -1,0 +1,55 @@
+class InvolvementsController < ApplicationController
+  # optionally require login/authorization here
+
+  def create
+    inv = Involvement.new(safe_involvement_attrs)
+
+    begin
+      if inv.save
+        redirect_back fallback_location: root_path, notice: "Involvement added."
+      else
+        redirect_back fallback_location: root_path, alert: inv.errors.full_messages.to_sentence
+      end
+    rescue ActiveRecord::RecordNotUnique
+      # Another request created the same row between new/save.
+      # Load the existing row and update context fields.
+      existing = Involvement.find_by(
+        participant_type: inv.participant_type,
+        participant_id:   inv.participant_id,
+        involvable_type:  inv.involvable_type,
+        involvable_id:    inv.involvable_id
+      )
+      if existing&.update(role: inv.role, year: inv.year, note: inv.note)
+        redirect_back fallback_location: root_path, notice: "Involvement already existed; details updated."
+      else
+        redirect_back fallback_location: root_path, alert: (existing&.errors&.full_messages&.to_sentence || "Could not update.")
+      end
+    end
+  end
+
+  def destroy
+    Involvement.find(params[:id]).destroy
+    redirect_back fallback_location: root_path, notice: "Involvement removed."
+  end
+
+  private
+
+  # Strong params + server-side constraints
+  def safe_involvement_attrs
+    p = params.require(:involvement).permit(:participant_id, :involvable_type, :involvable_id, :role, :year, :note)
+
+    # Force participant_type; never trust the form for this.
+    p[:participant_type] = "Soldier"
+
+    # Whitelist involvable types to what your app supports today.
+    allowed = Involvement::ALLOWED_INVOLVABLE_TYPES
+    unless allowed.include?(p[:involvable_type])
+      raise ActionController::BadRequest, "Invalid involvable_type"
+    end
+
+    # Normalize year (allow blank)
+    p[:year] = p[:year].presence
+
+    p
+  end
+end

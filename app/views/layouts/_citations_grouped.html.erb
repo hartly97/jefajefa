@@ -1,0 +1,36 @@
+<%# locals: citable:, heading: "Citations" %>
+<% grouped = grouped_citations_by_source(citable) %>
+<% if grouped.present? %>
+  <h3 class="mt-4"><%= local_assigns[:heading] || "Citations" %></h3>
+  <% grouped.each do |source_title, cites| %>
+    <div class="mb-3">
+      <h4 class="mb-1">
+        <%= source_title %>
+        <small class="text-muted">(<%= cites.size %>)</small>
+      </h4>
+
+      <% src = cites.first.source %>
+      <% if src&.author.present? || src&.year.present? || src&.publisher.present? %>
+        <div class="text-muted mb-2">
+          <%= [src&.author, src&.publisher, src&.year].compact_blank.join(" • ") %>
+        </div>
+      <% end %>
+
+      <ul class="list-unstyled ms-3">
+        <% cites.each do |c| %>
+          <li class="mb-2">
+            <% if c.pages.present? || c.page.present? %>
+              <strong><%= c.pages || c.page %></strong>
+            <% end %>
+            <% if c.quote.present? %>
+              <div class="mt-1"><em>“<%= c.quote %>”</em></div>
+            <% end %>
+            <% if c.note.present? %>
+              <div class="text-muted"><%= c.note %></div>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+<% end %>

@@ -1,0 +1,30 @@
+
+<% curr_page  = params.fetch(:page, 1).to_i %>
+<% per = (params[:per_page].presence || 30).to_i %>
+
+<% q          = params[:q].presence %>
+<% medal_id   = params[:medal_category_id].presence %>
+
+
+<div class="d-flex justify-content-between align-items-center mt-3">
+  <% prev_params = { page: [curr_page - 1, 1].max, per_page: per, q: q, medal_category_id: medal_id }.compact %>
+  <% next_params = { page: curr_page + 1, per_page: per, q: q, medal_category_id: medal_id }.compact %>
+
+  <div>
+    <% if curr_page > 1 %>
+      <%= link_to "← Prev", soldiers_path(prev_params), class: "btn btn-outline-secondary" %>
+    <% else %>
+      <button class="btn btn-outline-secondary" disabled>← Prev</button>
+    <% end %>
+  </div>
+
+  <div class="text-muted">Page <%= curr_page %></div>
+
+  <div>
+    <% if @has_next %>
+      <%= link_to "Next →", soldiers_path(next_params), class: "btn btn-outline-secondary" %>
+    <% else %>
+      <button class="btn btn-outline-secondary" disabled>Next →</button>
+    <% end %>
+  </div>
+</div>

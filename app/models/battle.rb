@@ -3,6 +3,8 @@ class Battle < ApplicationRecord
   include Citable
   include Categorizable
  
+has_many :citations, as: :citable, dependent: :destroy
+
 
   has_many :involvements, as: :involvable, dependent: :destroy
   has_many :soldiers, through: :involvements, source: :participant, source_type: "Soldier"

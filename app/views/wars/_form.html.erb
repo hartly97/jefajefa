@@ -1,4 +1,14 @@
-<%= form_with model: @war do |war| %><div><%= f.label :name %><%= f.text_field :name %></div><%= f.submit %><% end %>
+<%= form_with model: @war do |f| %>
+  <div>
+  <%= f.label :name %>
+  <%= f.text_field :name %>
+  </div>
+  <div>
+    <%= f.label :date %>
+    <%= f.date_field :date %>
+    </div>
+  <%= f.submit %>
+  <% end %>
 <% if defined?(current_user) && current_user&.admin? %>
     <div class="field">
       <%= f.label :category_ids, "Categories" %>

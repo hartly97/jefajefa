@@ -1,12 +1,29 @@
-<h1><%= @record.title %></h1>
-<div><%= simple_format(@record.body) %></div>
-<% if @record.sources.exists? %>
-  <h3>Sources cited</h3>
-  <ul>
-  <% @record.sources.distinct.each do |s| %>
-      <li><%= link_to s.title, s %></li>
-    <% end %>
-  </ul>
+<h1><%= @article.title %></h1>
+
+<article class="prose">
+  <%= simple_format(@article.body) %>
+</article>
+
+<% if @article.citations.includes(:source).any? %>
+  <h3 class="mt-3">Citations</h3>
+  <% @article.citations.each do |c| %>
+    <div class="mb-2">
+      <strong><%= c.source&.title || "(no source)" %></strong>
+      <% if c.pages.present? || c.page.present? %>
+        — <%= c.pages || c.page %>
+      <% end %>
+      <% if c.note.present? %>
+        <div class="text-muted"><%= c.note %></div>
+      <% end %>
+    </div>
+  <% end %>
 <% end %>
+<%= render "shared/citations_grouped", citable: @article %>
+
+<p class="mt-3">
+  <%= link_to "Edit", edit_article_path(@article), class: "btn btn-primary" %>
+  <%= link_to "Back", articles_path, class: "btn btn-secondary" %>
+</p>
+
 
 
