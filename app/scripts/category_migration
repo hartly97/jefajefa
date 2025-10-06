@@ -1,0 +1,46 @@
+# Run with:
+# #   bin/rails runner db/data_migration/copy_old_categories_to_polymorphic.rb
+
+# puts "🚚 Starting category migration..."
+
+# MAPPINGS = [
+#   { model: 'ArticleCategory',   type: 'topic',    target: 'Article',  id_field: 'article_id' },
+#   { model: 'CemeteryCategory',  type: 'location', target: 'Cemetery', id_field: 'cemetery_id' },
+#   { model: 'CensusCategory',    type: 'source',   target: 'Census',   id_field: 'census_id' },
+#   { model: 'MedalCategory',     type: 'topic',    target: 'Medal',    id_field: 'medal_id' },
+#   { model: 'ResourceCategory',  type: 'source',   target: 'Resource', id_field: 'resource_id' },
+#   { model: 'SoldierCategory',   type: 'topic',    target: 'Soldier',  id_field: 'soldier_id' },
+#   { model: 'SourceCategory',    type: 'source',   target: 'Source',   id_field: 'source_id' },
+#   { model: 'BattleCategory',    type: 'topic',    target: 'Battle',   id_field: 'battle_id' },
+#   { model: 'WarCategory',       type: 'topic',    target: 'War',      id_field: 'war_id' }
+# ]
+
+# total_created = 0
+
+# MAPPINGS.each do |cfg|
+#   next unless Object.const_defined?(cfg[:model])
+#   model_klass  = cfg[:model].constantize
+#   target_klass = cfg[:target].constantize
+#   type         = cfg[:type]
+#   id_field     = cfg[:id_field]
+
+#   puts "🔄 Migrating #{cfg[:model]} → #{cfg[:target]} (as #{type})"
+#   before = Categorization.count
+#   rows = model_klass.count
+#   migrated = 0
+
+#   model_klass.find_each do |record|
+#     next unless record.respond_to?(:category_name) && record.respond_to?(id_field)
+#     category = Category.find_or_create_by!(name: record.category_name, category_type: type, slug: record.category_name.parameterize)
+#     target   = target_klass.find_by(id: record.send(id_field))
+#     next unless target
+#     cat = Categorization.find_or_create_by!(category: category, categorizable: target)
+#     migrated += 1 if cat.persisted?
+#   end
+
+#   delta = Categorization.count - before
+#   total_created += delta
+#   puts "   ✅ #{migrated}/#{rows} processed; +#{delta} categorizations created"
+# end
+
+# puts "🎉 Done. Total new categorizations created: #{total_created}"

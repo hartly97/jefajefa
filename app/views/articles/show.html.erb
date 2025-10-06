@@ -1,29 +1,57 @@
-<h1><%= @article.title %></h1>
+<div class="container my-5">
 
-<article class="prose">
-  <%= simple_format(@article.body) %>
-</article>
+  <!-- Breadcrumb / back -->
+  <div class="mb-3">
+    <%= link_to "← All Articles", articles_path, class: "btn btn-outline-secondary btn-primary" %>
+  </div>
+  <%= link_to   "New Article", new_article_path, class: "btn btn-primary" %>
 
-<% if @article.citations.includes(:source).any? %>
-  <h3 class="mt-3">Citations</h3>
-  <% @article.citations.each do |c| %>
-    <div class="mb-2">
-      <strong><%= c.source&.title || "(no source)" %></strong>
-      <% if c.pages.present? || c.page.present? %>
-        — <%= c.pages || c.page %>
+  <!-- Title + subtitle -->
+  <header class="mb-4">
+    <h1 class="display-5 mb-2"><%= @article.title %></h1>
+
+    <% if @article.description.present? %>
+      <p class="lead text-muted"><%= @article.description %></p>
+    <% end %>
+
+    <!-- Meta row -->
+    <div class="small text-secondary d-flex flex-wrap align-items-center gap-2">
+      <% if @article.author.present? %>
+        <span><strong>By</strong> <%= @article.author %></span>
       <% end %>
-      <% if c.note.present? %>
-        <div class="text-muted"><%= c.note %></div>
+      <% if @article.date.present? %>
+        <span>• <%= @article.date.to_date.strftime("%b %-d, %Y") rescue @article.date %></span>
+      <% end %>
+      <% if @article.categories.any? %>
+        <span>•</span>
+        <div class="d-inline-flex flex-wrap gap-1">
+          <% @article.categories.each do |cat| %>
+            <%= link_to cat.name, category_path(cat),
+                  class: "badge rounded-pill text-bg-light border" %>
+          <% end %>
+        </div>
       <% end %>
     </div>
+  </header>
+
+  <!-- Optional lead image -->
+  <% if @article.respond_to?(:lead_image) && @article.lead_image.attached? %>
+    <div class="mb-4">
+      <%= image_tag @article.lead_image.variant(resize_to_limit: [1600, 900]),
+                    class: "img-fluid rounded shadow-sm", alt: "" %>
+    </div>
   <% end %>
-<% end %>
-<%= render "shared/citations_grouped", citable: @article %>
 
-<p class="mt-3">
-  <%= link_to "Edit", edit_article_path(@article), class: "btn btn-primary" %>
-  <%= link_to "Back", articles_path, class: "btn btn-secondary" %>
-</p>
+  <!-- Body -->
+  <article class="mb-5 prose">
+    <% body_html = @article.body.to_s %>
+    <%= (body_html =~ /<\w/ ? raw(body_html) : simple_format(body_html)) %>
+  </article>
 
+  <!-- Citations (grouped by Source) -->
+  <%= render "shared/citations_grouped", grouped: grouped_citations_by_source(@record) %>
 
-
+  <%= render "shared/citations_grouped",
+             citable: @article,
+             heading: "Citations" %>
+</div>

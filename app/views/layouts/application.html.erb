@@ -24,8 +24,11 @@
       <% if alert %>
         <p class="alert alert-danger"><%= alert %></p>
       <% end %>
+  <%#= render 'layouts/navigation' %>
 
+      <%#= render 'shared/notification' %>
       <%= yield %>
+      <%= render 'layouts/footer' %>
     </div>
 
   

@@ -1,0 +1,11 @@
+<% categories = (local_assigns[:categories] || []) %>
+<% if categories.any? %>
+  <div class="d-flex flex-wrap gap-2">
+    <% categories.sort_by(&:name).each do |cat| %>
+      <%= link_to category_path(cat),
+        class: "badge rounded-pill text-decoration-none #{helpers.category_badge_class(cat)}" do %>
+        <%= cat.name %>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

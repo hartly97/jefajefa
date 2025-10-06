@@ -8,7 +8,7 @@ class Involvement < ApplicationRecord
 
 # Mirrors DB rules: app-level validation matches your check constraints so errors show nicely in the UI
   ALLOWED_PARTICIPANT_TYPES = %w[Soldier].freeze
-  ALLOWED_INVOLVABLE_TYPES  = %w[Battle War Cemetery Article].freeze
+  ALLOWED_INVOLVABLE_TYPES  = %w[Battle War Cemetery].freeze
   # app/models/involvement.rb
 
   belongs_to :participant, polymorphic: true, inverse_of: :involvements

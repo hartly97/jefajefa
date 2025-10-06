@@ -1,0 +1,53 @@
+<%# if @book.name == 'a_front_page_001' %>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-8 pt-5">
+      <center>
+        <h5 class="text-center pt-2">
+          <span><i class="fas fa-arrow-left text-info"></i>
+             <%= link_to "Prev Page", @book.prev, class:"text-color-blue" %>  |
+             <%= link_to "Next Page", @book.next, class:"text-color-blue" %> <i class="fas fa-arrow-right text-info"></i>
+        <% if @book.image.present? %>
+        <%#= image_tag @book.image.variant(resize_to_limit: [1000, nil]) %></center>
+        <%= image_tag @book.image, class:'pt-1' %>
+        <h5 class="pt-3 text-center text-color-blue">page <%= @book.page_number %></h5>
+        <div class="row justify-content-around">
+          <div class="col-4">
+            <p class="text-break"> <%= @book.transcription %></p>
+          </div>
+          <div class="col-4">
+            <p class="text-break"> <%= @book.transcriptiontwo %></p>
+          </div>
+        </div>
+        <h5 class="text-center"><i class="fas fa-arrow-left text-info"></i> <%= link_to "Prev Page", @book.prev, class:"text-color-blue" %>  | <%= link_to "Next Page", @book.next, class:"text-color-blue" %> <i class="fas fa-arrow-right text-info"></i>
+      </h5>
+        <% end %>
+      </div>
+      <%= render 'apothecarysymbols' %>
+    </div>
+
+
+  <div class="row ml-3 pb-3">
+    <% if user_signed_in? && (current_user.role == 'admin') %>
+    <p><%= link_to "Delete", book_path(@book), method: :delete, class: 'btn btn-sm btn-danger', data: {confirm: 'Are you sure you want to delete this book?'} %></p>
+    <p class="pl-2"><%= link_to "Edit", edit_book_path(@book), class: 'btn btn-sm btn-info' %></p>
+    <p class="pl-2"><%= link_to "← Back", books_path, class: 'btn btn-sm btn-info' %></p>
+    <% else %>
+    <p class="pb-3"><%= link_to "← Back", books_path, class: 'btn btn-sm btn-info' %></p>
+    <% end %>
+  </div>
+</div>
+
+
+
+
+  <%# unless  @book.id == Book.first.id   %>
+  <!--  Hide 'Previous' link once we reach to first record %> -->
+    <%#= link_to 'Previous', Book.get_previous_book(@book)  %>
+  <%# end %>
+
+   <%# unless  @book.id == Book.last.id   %>
+   <!-- Hide 'Next' link once we reach to last record %> -->
+    <%#= link_to  'Next', Book.get_next_book(@book) %>
+   <%# end %>

@@ -12,7 +12,7 @@ module Categorizable
   end
 
   # Convenience helpers: available on any model that includes Categorizable
-  %w[battle war medal].each do |t|
+  %w[battle war medal cemetery article award ].each do |t|
     define_method("#{t}_categories") { categories_of(t) }
   end
 end

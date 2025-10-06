@@ -7,7 +7,7 @@ class Citation < ApplicationRecord
     scope: [:citable_type, :citable_id],
     message: "already cited for this record"
   }
-  # app/models/citation.rb
+
 accepts_nested_attributes_for :source,
   reject_if: ->(attrs) { attrs['title'].blank? && attrs['id'].blank? }
 

@@ -1,0 +1,45 @@
+  <%# If you use Kaminari/WillPaginate, show pagination %>
+  <% if respond_to?(:paginate) %>
+    <%= paginate @burials %>
+  <% end %>
+<% else %>
+  <p><em>No matching burials.</em></p>
+<% end %>
+<%= form_with url: cemetery_path(@cemetery), method: :get, local: true,
+              class: "row g-2 align-items-end mb-2" do %>
+  <div class="col-md-6">
+    <%= label_tag :q, "Search burials" %>
+    <%= text_field_tag :q, params[:q], class: "form-control", placeholder: "Search by name…" %>
+  </div>
+  <div class="col-md-2">
+    <%= submit_tag "Search", class: "btn btn-primary w-100" %>
+  </div>
+  <% if params[:q].present? %>
+    <div class="col-md-2">
+      <%= link_to "Clear", cemetery_path(@cemetery), class: "btn btn-link w-100" %>
+    </div>
+  <% end %>
+<% end %>
+
+    <%# If you use Kaminari/WillPaginate, show pagination %>
+  <% if respond_to?(:paginate) %>
+    <%= paginate @burials %>
+  <% end %>
+<% else %>
+  <p><em>No matching burials.</em></p>
+<% end %>
+<%= form_with url: cemetery_path(@cemetery), method: :get, local: true,
+              class: "row g-2 align-items-end mb-2" do %>
+  <div class="col-md-6">
+    <%= label_tag :q, "Search burials" %>
+    <%= text_field_tag :q, params[:q], class: "form-control", placeholder: "Search by name…" %>
+  </div>
+  <div class="col-md-2">
+    <%= submit_tag "Search", class: "btn btn-primary w-100" %>
+  </div>
+  <% if params[:q].present? %>
+    <div class="col-md-2">
+      <%= link_to "Clear", cemetery_path(@cemetery), class: "btn btn-link w-100" %>
+    </div>
+  <% end %>
+<% end %>

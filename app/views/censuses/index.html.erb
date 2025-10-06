@@ -1,6 +1,9 @@
 <h1><%= controller_name.titleize %></h1>
-<p><%#= link_to "New Census", new_censuses_path, class: "btn btn-primary" %></p>
-<%= render partial: "search_form", locals: { census: @census } %
+
+<p><%= link_to "New Census", new_census_path, class: "btn btn-primary" %></p>
+
+<%= render partial: "search_form" %>
+
 <% if @censuses.any? %>
   <table class="table table-striped mt-4">
     <thead>
@@ -16,16 +19,18 @@
       </tr>
     </thead>
     <tbody>
-      <% @censuses.each do |c| %>
+      <% @censuses.each do |f| %>
         <tr>
-          <td><%= c.year %></td>
-          <td><%= c.district %></td>
-          <td><%= c.subdistrict %></td>
-          <td><%= c.place %></td>
-          <td><%= c.piece %></td>
-          <td><%= c.folio %></td>
-          <td><%= c.page %></td>
-          <!-- <td><%#= link_to "Open", census_path(c.slug), class: "btn btn-sm btn-outline-primary" %></td>-->
+          <td><%= f.year %></td>
+          <td><%= f.district %></td>
+          <td><%= f.subdistrict %></td>
+          <td><%= f.place %></td>
+          <td><%= f.piece %></td>
+          <td><%= f.folio %></td>
+          <td><%= f.page %></td>
+          <td class="text-end">
+            <%= link_to "View", census_path(f), class: "btn btn-sm btn-outline-secondary" %>
+          </td>
         </tr>
       <% end %>
     </tbody>

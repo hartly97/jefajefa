@@ -11,10 +11,8 @@ end
 
 # app/jobs/census_ingest_image_job.rb
 require "open-uri"
-
-class CensusIngestImageJob < ApplicationJob
-  queue_as :default
-
+ queue_as :default
+ 
   retry_on OpenURI::HTTPError, Net::OpenTimeout, Net::ReadTimeout,
            wait: :exponentially_longer, attempts: 5
   discard_on ActiveRecord::RecordNotFound

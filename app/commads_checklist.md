@@ -1,1 +1,0 @@
-bundle exec erblint app/views/soldiers

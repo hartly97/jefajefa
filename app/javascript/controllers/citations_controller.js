@@ -31,3 +31,4 @@ export default class extends Controller {
     return this.listTarget.querySelectorAll("[data-citations-wrapper]").length
   }
 }
+

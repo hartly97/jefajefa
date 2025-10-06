@@ -1,30 +1,66 @@
+<!-- app/views/soldiers/_pager.html.erb -->
+<% curr_page   = (params[:page].presence || 1).to_i %>
+<% per         = (params[:per_page].presence || 30).to_i.clamp(1, 200) %>
+<% total_pages = (defined?(@total_pages) && @total_pages.to_i > 0) ? @total_pages.to_i : nil %>
+<% base_params = request.query_parameters.except(:page, :per_page) %>
 
-<% curr_page  = params.fetch(:page, 1).to_i %>
-<% per = (params[:per_page].presence || 30).to_i %>
-
-<% q          = params[:q].presence %>
-<% medal_id   = params[:medal_category_id].presence %>
-
-
-<div class="d-flex justify-content-between align-items-center mt-3">
-  <% prev_params = { page: [curr_page - 1, 1].max, per_page: per, q: q, medal_category_id: medal_id }.compact %>
-  <% next_params = { page: curr_page + 1, per_page: per, q: q, medal_category_id: medal_id }.compact %>
-
-  <div>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3">
+  <div class="btn-group" role="group" aria-label="Pagination">
+    <%# « First %>
     <% if curr_page > 1 %>
-      <%= link_to "← Prev", soldiers_path(prev_params), class: "btn btn-outline-secondary" %>
+      <%= link_to "« First", soldiers_path(base_params.merge(page: 1, per_page: per)), class: "btn btn-outline-secondary" %>
     <% else %>
-      <button class="btn btn-outline-secondary" disabled>← Prev</button>
+      <button class="btn btn-outline-secondary" disabled aria-disabled="true">« First</button>
+    <% end %>
+
+    <%# ‹ Prev %>
+    <% if curr_page > 1 %>
+      <%= link_to "‹ Prev", soldiers_path(base_params.merge(page: curr_page - 1, per_page: per)), class: "btn btn-outline-secondary" %>
+    <% else %>
+      <button class="btn btn-outline-secondary" disabled aria-disabled="true">‹ Prev</button>
+    <% end %>
+
+    <%# Next › %>
+    <% if @has_next %>
+      <%= link_to "Next ›", soldiers_path(base_params.merge(page: curr_page + 1, per_page: per)), class: "btn btn-outline-secondary" %>
+    <% else %>
+      <button class="btn btn-outline-secondary" disabled aria-disabled="true">Next ›</button>
+    <% end %>
+
+    <%# Last » %>
+    <% if total_pages && curr_page < total_pages %>
+      <%= link_to "Last »", soldiers_path(base_params.merge(page: total_pages, per_page: per)), class: "btn btn-outline-secondary" %>
+    <% else %>
+      <button class="btn btn-outline-secondary" disabled aria-disabled="true">Last »</button>
     <% end %>
   </div>
 
-  <div class="text-muted">Page <%= curr_page %></div>
-
   <div>
-    <% if @has_next %>
-      <%= link_to "Next →", soldiers_path(next_params), class: "btn btn-outline-secondary" %>
+    <%= form_with url: soldiers_path, method: :get, local: true, html: { class: "d-inline-flex align-items-center gap-2" } do %>
+      <%# preserve current filters %>
+      <% base_params.each do |k,v| %>
+        <% Array(v).each do |vv| %>
+          <%= hidden_field_tag k, vv %>
+        <% end %>
+      <% end %>
+      <%= hidden_field_tag :page, 1 %>
+
+      <label for="perPageSelect" class="form-label mb-0 me-2">Per page</label>
+      <%= select_tag :per_page,
+            options_for_select([10, 20, 30, 50, 100], per),
+            id: "perPageSelect",
+            class: "form-select form-select-sm",
+            onchange: "this.form.submit();" %>
+    <% end %>
+  </div>
+
+  <div class="text-muted ms-auto">
+    <% if defined?(@total_count) && @total_count.to_i > 0 %>
+      <% start_i = ((curr_page - 1) * per) + 1 %>
+      <% end_i   = start_i + @soldiers.length - 1 %>
+      Showing <%= start_i %>–<%= end_i %> of <%= @total_count %>
     <% else %>
-      <button class="btn btn-outline-secondary" disabled>Next →</button>
+      No found
     <% end %>
   </div>
 </div>

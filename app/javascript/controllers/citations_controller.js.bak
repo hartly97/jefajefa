@@ -1,34 +1,61 @@
+// app/javascript/controllers/citations_controller.js
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["list", "template"]
-  static values = { index: Number }
+  static targets = ["list", "template", "wrapper"]
+  static values  = { index: Number }
 
   connect() {
-    if (this.indexValue == null) this.indexValue = this._nextIndex()
+    // if no index provided, infer it from existing fields
+    if (this.indexValue == null || Number.isNaN(this.indexValue)) {
+      this.indexValue = this._nextIndex()
+    }
   }
 
   add(event) {
     event.preventDefault()
+    if (!this.hasTemplateTarget || !this.hasListTarget) return
+
     const html = this.templateTarget.innerHTML.replaceAll("NEW_RECORD", this.indexValue)
     this.listTarget.insertAdjacentHTML("beforeend", html)
     this.indexValue++
+
+    // optional: tell others something was added
+    this.dispatch("added", { bubbles: true })
   }
 
   remove(event) {
     event.preventDefault()
-    const wrapper = event.currentTarget.closest("[data-citations-wrapper]")
-    const destroyField = wrapper?.querySelector("input[name*='[_destroy]']")
+    const wrapper = event.currentTarget.closest("[data-citations-wrapper]") || null
+    if (!wrapper) return
+
+    const destroyField = wrapper.querySelector("input[name*='[_destroy]']")
     if (destroyField) {
+      // soft-delete persisted records
       destroyField.value = "1"
       wrapper.style.display = "none"
     } else {
-      wrapper?.remove()
+      // brand-new record, just remove the DOM
+      wrapper.remove()
     }
+
+    this.dispatch("removed", { bubbles: true })
   }
 
   _nextIndex() {
-    return this.listTarget.querySelectorAll("[data-citations-wrapper]").length
+    if (!this.hasListTarget) return 0
+    // find the highest existing index from nested attribute names
+    const nodes = this.listTarget.querySelectorAll(
+      "input[name*='[citations_attributes]'], textarea[name*='[citations_attributes]'], select[name*='[citations_attributes]']"
+    )
+    let max = -1
+    nodes.forEach(el => {
+      const m = el.name.match(/\[citations_attributes\]\[(\d+|NEW_RECORD)\]/)
+      if (m && m[1] !== "NEW_RECORD") {
+        const n = parseInt(m[1], 10)
+        if (!Number.isNaN(n) && n > max) max = n
+      }
+    })
+    return max + 1
   }
 }
-

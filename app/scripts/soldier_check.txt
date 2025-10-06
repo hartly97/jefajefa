@@ -1,0 +1,34 @@
+Helvetica; Menlo-Regular; Menlo-Italic;
+
+;;;;;
+;
+\*;;;;;
+;
+
+
+
+  soldier_check\
+
+
+   
+  bin/rails r ' \
+ bad_for_non_soldiers = Categorization \
+   .joins(:category) \
+   .where.not(categorizable_type   :    "Soldier") \
+   .where(categories   :    \ category_type   :    Category::SOLDIER_ONLY_TYPES \) \
+ puts "Non-Soldiers with soldier-only categories   :      #
+ \bad_for_non_soldiers.count\"
+    \
+\
+
+   bad_for_soldiers       =       Categorization   \
+
+       .joins(:category)   \
+      .where(categorizable_type:       "Soldier")   \
+      .where.not(categories:       \       category_type:       Category::SOLDIER_ONLY_TYPES       \)   \
+
+   puts       "Soldiers       with       non-soldier       categories:      #
+ \bad_for_soldiers.count\"
+    \
+   '   \
+\

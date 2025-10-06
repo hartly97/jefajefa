@@ -1,40 +1,21 @@
-<%# locals: citable:, heading: "Citations" %>
-<% groups = grouped_citations_by_source(citable) %>
-<% if groups.present? %>
-  <h3 class="mt-4"><%= local_assigns[:heading] || "Citations" %></h3>
-
-  <% groups.each do |src, cites| %>
-    <div class="mb-3">
-      <h4 class="mb-1">
-        <% if src.present? %>
-          <%= link_to src.title.presence || "(Untitled source)", src %>
-        <% else %>
-          (Source missing)
-        <% end %>
-        <small class="text-muted">(<%= cites.size %>)</small>
-      </h4>
-
-      <% if src&.author.present? || src&.publisher.present? || src&.year.present? %>
-        <div class="text-muted mb-2">
-          <%= [src&.author, src&.publisher, src&.year].compact_blank.join(" • ") %>
-        </div>
+<% grouped_citations_by_source(@record).each do |src, cites| %>
+  <div class="p-3 rounded border bg-light mb-3">
+    <h3 class="h5 mb-2 d-flex align-items-center gap-2">
+      <% title = src&.title.presence || "(no source)" %>
+      <% if src %>
+        <%= link_to title, src, class: "text-decoration-none" %>
+      <% else %>
+        <%= title %>
       <% end %>
+    </h3>
 
-      <ul class="list-unstyled ms-3">
-        <% cites.each do |c| %>
-          <li class="mb-2">
-            <% if c.pages.present? || c.page.present? %>
-              <strong><%= c.pages || c.page %></strong>
-            <% end %>
-            <% if c.quote.present? %>
-              <div class="mt-1"><em>“<%= c.quote %>”</em></div>
-            <% end %>
-            <% if c.note.present? %>
-              <div class="text-muted"><%= c.note %></div>
-            <% end %>
-          </li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+    <ul class="mb-0">
+      <% cites.each do |c| %>
+        <li>
+          <%= [c.pages.presence || c.page.presence, c.locator.presence].compact.join(" · ") %>
+          <% if c.quote.present? %><br><em><%= c.quote %></em><% end %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
 <% end %>

@@ -1,0 +1,71 @@
+Helvetica; Menlo-Regular; Menlo-Italic;
+
+;;;;;
+;;;;;
+;
+\*;;;;;
+;;;;;
+;
+
+
+
+  check_assets\
+
+
+  
+  \
+
+   GREEN  =  "  \\033[0;32m  "   \
+   RED  =  "  \\033[0;31m  "   \
+   RESET  =  "  \\033[0m  "   \
+\
+   TIMESTAMP  =  $(  date   +  "  %Y%m%d_%H%M%S  "  ) \
+   REPORT_DIR  =  "  tmp/deploy_reports  "   \
+   REPORT_FILE  =  "  $REPORT_DIR  /pre_deploy_  $TIMESTAMP  .log  "   \
+\
+
+   mkdir     -p     "  $REPORT_DIR  "   \
+\
+
+   echo     -e     "     Running pre-deploy checklist...  "     |     tee     "  $REPORT_FILE  "   \
+\
+
+   #
+  1. Run Webpacker cleanup
+    \
+
+   echo     -e     "  \  Running Webpacker cleanup...  "     |     tee     -a     "  $REPORT_FILE  "   \
+
+   bin/webpacker_cleanup     |     tee     -a     "  $REPORT_FILE  "   \
+\
+
+   #
+  2. Check for missing ActiveStorage blobs
+    \
+
+   echo     -e     "  \  Checking orphaned ActiveStorage blobs...  "     |     tee     -a     "  $REPORT_FILE  "   \
+
+   bin/check_active_storage_blobs     |     tee     -a     "  $REPORT_FILE  "   \
+\
+
+   #
+  3. Scan for missing images
+    \
+
+   echo     -e     "  \  Checking for missing images in views...  "     |     tee     -a     "  $REPORT_FILE  "   \
+
+   bin/check_missing_images     |     tee     -a     "  $REPORT_FILE  "   \
+\
+
+   #
+  4. Lint ERB files
+    \
+
+   echo     -e     "  \  Checking ERB syntax...  "     |     tee     -a     "  $REPORT_FILE  "   \
+
+   bin/check_erb_syntax     |     tee     -a     "  $REPORT_FILE  "   \
+\
+
+   echo     -e     "  \=======================================  "     |     tee     -a     "  $REPORT_FILE  "   \
+   echo     -e     "  $\  GREEN  \  Pre-deploy checklist complete.$\  RESET  \  "     |     tee     -a     "  $REPORT_FILE  "   \
+   echo     -e     "  Report saved to:   $REPORT_FILE  "     |     tee     -a     "  $REPORT_FILE  "   \

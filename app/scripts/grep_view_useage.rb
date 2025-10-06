@@ -1,0 +1,86 @@
+Helvetica; Menlo-Regular; Menlo-Italic;
+
+;;;;;
+;;;;;
+;;;
+\*;;;;;
+;;;;;
+;;;
+
+
+
+  grep_view_aseage\
+
+
+   
+  #!
+ /usr/bin/env bash
+    \
+
+   set     -e   \
+\
+
+   if   [   -z     "   $1   "   ];   then   \
+
+      echo     "  Usage: bin/grep_view_usage <search_term>  "   \
+     exit      1   \
+
+   fi   \
+\
+
+   SEARCH_TERM  =  "   $1   "   \
+   VIEW_DIR  =  "  app/views  "   \
+\
+
+   echo     "     Searching for '  $SEARCH_TERM  ' in   $VIEW_DIR  ...  "   \
+\
+
+   grep     -R     --color=always     -n     "  $SEARCH_TERM  "     "  $VIEW_DIR  "     ||     echo     "      No matches found.  "   \
+\
+   Grep_view-checker   \
+   glob_checker_script   =   """  #!/usr/bin/env ruby   \
+
+   # bin/check:import-meta-glob   \
+   # Verifies your main app/javascript/application.js has import.meta.glob   \
+\
+   main_js =   "  app/javascript/application.js  "   \
+\
+   unless File.exist?(main_js)   \
+     puts   "      Could not find   #
+ \main_js\"
+    \
+
+      exit      1   \
+
+   end   \
+\
+
+   contents   = File.read(  main_js  ) \
+
+   if     contents.include?("import.meta.glob(   \\"   ./images/**   \\"   )"  ) \
+
+      puts     "    import.meta.glob(   \\"   ./images/**   \\"   ) is present in application.js  "   \
+
+   else   \
+
+      puts     "    Missing import.meta.glob(   \\"   ./images/**   \\"   ) in application.js  "   \
+     exit      1   \
+
+   end   \
+
+   """   \
+\
+   # Save scripts to bin/   \
+   bin_path = "/mnt/data/bin"   \
+   os.makedirs(bin_path, exist_ok=True)   \
+\
+   with open(os.path.join(bin_path, "check-broken-imports"), "w") as f:   \
+       f.write(broken_imports_script)   \
+\
+   with open(os.path.join(bin_path, "check-import-meta-glob"), "w") as f:   \
+       f.write(glob_checker_script)   \
+\
+   # Make them executable   \
+   os.chmod(os.path.join(bin_path, "check-broken-imports"), 0o755)   \
+   os.chmod(os.path.join(bin_path, "check-import-meta-glob"), 0o755)   \
+\

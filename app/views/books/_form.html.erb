@@ -1,0 +1,62 @@
+<div class="container mt-3">
+    <div class="row justify-content-center">
+      <div class="col-10">
+          <%= form_with(model: @newsletter, class: "shadow  p-3 mb-3 rounded", local: true) do |f| %>
+        <div class="form-group row">
+          <p>title</p>
+          <%= f.label :title, class: "col-1 col-form-label text-light" %>
+          <div class="col-6">
+            <%= f.text_field :title, class: 'form-control', placeholder: "Enter resource title", autofocus: true %>
+          </div>
+        </div>
+          <div class="form-group row">
+            <p>version</p>
+            <%= f.label :version, class: "col-1 col-form-label text-light" %>
+            <div class="col-12">
+            <%= f.select :version, options_for_select(["", "01", "02", "03", "04" ,"05"]) %>
+          </div>
+        </div>
+        <div class="form-group row">
+          <p>month</p>
+          <%= f.label :month, class: "col-1 col-form-label text-light" %>
+          <div class="col-12">
+            <%= f.select :month, options_for_select(["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]), placeholder: "month" %>
+          </div>
+        </div>
+        <div class="form-group row">
+          <p>year</p>
+          <%= f.label :year, class: "col-1 col-form-label text-light" %>
+          <div class="col-6">
+            <%= f.select :year, options_for_select(["2005","2006","2007","2008","2009","2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020","2021", "2022",  "2023", "2024", "2025", "2026", "2027", "2028"]) %>
+          </div>
+        </div>
+        <div class="form-group row">
+          <%= f.label :content, class: "col-1 col-form-label text-light" %>
+          <div class="col-6">
+            <%= f.rich_text_area :content, class: 'form-control' %>
+          </div>
+        </div>
+        <div class="form-group row">
+          <%= f.label :image, class: "col-1 col-form-label text-light" %>
+          <div class="col-6">
+            <%= f.file_field :image, class: 'form-control'%>
+          </div>
+        </div>
+        <div class="form-group row">
+          <%= f.label :file_name, class: "col-1 col-form-label text-light" %>
+          <div class="col-6">
+            <%= f.file_field :file_name, class: 'form-control' %>
+          </div>
+        </div>
+          <div class="form-group row">
+            <div class="actions">
+              <%= f.submit "Save", class:'btn btn-info ml-3' %>
+            </div>
+          </div>
+          <% end %>
+         <div class="mb-3">
+            <%= link_to 'Cancel', articles_path, class: "btn btn-info" %>
+         </div>
+      </div>
+    </div>
+</div>

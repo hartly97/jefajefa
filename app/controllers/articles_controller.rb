@@ -7,9 +7,46 @@ class ArticlesController < ApplicationController
   before_action :set_sources,   only: [:new, :edit]
   before_action :require_admin, only: [:regenerate_slug]
 
-  def index
-    @articles = Article.order(created_at: :desc)
-  end
+  # def index
+  #   @articles = Article.order(created_at: :desc)
+  #   # app/controllers/articles_controller.rb
+# def index
+#   @articles = Article.includes(:categories).order(created_at: :desc)
+# end
+
+# def index
+#   scope = Article.includes(:categories).order(created_at: :desc)
+
+#   if params[:q].present?
+#     q = "%#{params[:q].strip}%"
+#     scope = scope.where("title ILIKE ? OR body ILIKE ?", q, q)
+#   end
+
+#   case params[:sort]
+#   when "new" then scope = scope.order(date: :desc).order(created_at: :desc)
+#   when "az"  then scope = scope.reorder(title: :asc)
+#   end
+
+def index
+    scope = Article.includes(:categories)
+
+    if params[:q].present?
+      q = "%#{params[:q].strip}%"
+      scope = scope.where("title ILIKE ? OR body ILIKE ?", q, q)
+    end
+
+    case params[:sort]
+    when "new" then scope = scope.order(date: :desc).order(created_at: :desc)
+    when "az"  then scope = scope.reorder(title: :asc)
+    else             scope = scope.order(created_at: :desc)
+    end
+
+    @articles = scope.paginate(page: params[:page], per_page: items_per_page)
+  # @articles = scope.page(params[:page]) # Kaminari
+  # @articles = scope.paginate(page: params[:page], per_page: items_per_page)
+
+end
+
 
   def show
   end

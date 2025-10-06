@@ -3,6 +3,28 @@
  *= require trix/dist/trix
  *= require actiontext
 */
+/* app/assets/stylesheets/pagination.css */
+.pagination .page-link { padding: .375rem .6rem; }
+.pagination .page-item + .page-item { margin-left: .125rem; }
+
+//Dna section
+/* app/assets/stylesheets/dna.css */
+.card ol { padding-left: 1.25rem; }
+.card ul { padding-left: 1.25rem; margin-bottom: .5rem; }
+/* app/assets/stylesheets/dna.css */
+.card ol, .card ul { padding-left: 1.25rem; }
+.card h4.h6 { margin-top: 1rem; }
+/* Scope all tweaks to this page only */
+.dna .card-body { text-align: left; }       /* kill any inherited text-center */
+.dna ol, .dna ul { padding-left: 1.25rem; margin-left: 0; list-style-position: outside; }
+.dna li { margin-bottom: .25rem; }
+
+/* Pricing table: turn off sticky first column + keep it tidy */
+.dna .dna-pricing { width: 100%; table-layout: auto; }
+.dna .dna-pricing th,
+.dna .dna-pricing td { white-space: nowrap; }
+.dna .dna-pricing th { position: static !important; }  /* defeats site-wide sticky col */
+
 
 // CURRENTLY USING
 html {

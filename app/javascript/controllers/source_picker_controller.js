@@ -12,11 +12,12 @@ export default class extends Controller {
   }
 
   autocomplete() {
+    if (!this.hasQueryTarget || !this.hasResultsTarget) return
     const q = this.queryTarget.value.trim()
     clearTimeout(this._t)
     if (q.length < 2) { this.resultsTarget.innerHTML = ""; return }
     this._t = setTimeout(async () => {
-      const res = await fetch(`/sources/autocomplete?q=${encodeURIComponent(q)}`)
+      const res = await fetch(`/sources/autocomplete?q=${encodeURIComponent(q)}`, { headers: { "Accept": "application/json" } })
       if (!res.ok) return
       const items = await res.json()
       this.resultsTarget.innerHTML = items.map(i =>
@@ -26,7 +27,8 @@ export default class extends Controller {
         li.addEventListener("click", () => {
           this._setSelected(li.dataset.id, li.dataset.title)
           this.resultsTarget.innerHTML = ""
-          this.queryTarget.value = li.dataset.title
+          if (this.hasQueryTarget) this.queryTarget.value = li.dataset.title
+          if (this.hasNewFormTarget) this.newFormTarget.style.display = "none"
         })
       })
     }, 200)
@@ -36,6 +38,9 @@ export default class extends Controller {
     if (!this.hasNewFormTarget) return
     const el = this.newFormTarget
     el.style.display = (el.style.display === "none" || !el.style.display) ? "block" : "none"
+    if (this.hasSelectTarget && el.style.display === "block") {
+      this.selectTarget.value = ""
+    }
   }
 
   clearSelectIfTyped() {

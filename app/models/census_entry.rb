@@ -1,9 +1,8 @@
-# app/models/census_entry.rb
 class CensusEntry < ApplicationRecord
-    self.table_name = "censuses" 
-  include Citable
-  include Categorizable
-  include Sluggable
+  
+  # include Citable
+  # include Categorizable
+  # include Sluggable
 
   # has_one_attached :image
 
@@ -39,3 +38,4 @@ def slug_source = display_name.presence || "entry-#{id || SecureRandom.hex(2)}"
       q: like
     )
   }
+end

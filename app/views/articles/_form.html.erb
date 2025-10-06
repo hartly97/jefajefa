@@ -1,8 +1,11 @@
-<h1>
-# <%#= link_to edit_Article? ? "New Article" : "Edit Article" %>
-# </h1>
-<%= link_to "Edit", [:edit, @article] %> |
-  <%= link_to "Back", url_for(controller: controller_name, action: :index) %>
+
+  <h1>Articles</h1>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+  <h1>Articles</h1>
+  <%= link_to "New Article", new_article_path, class: "btn btn-primary" %>
+</div>
+
+  <%#= link_to "Back", url_for(controller: controller_name, action: :index) %>
 </h1>
 <%= form_with model: @article, data: { turbo: false } do |f| %>
   <div class="field">
@@ -25,17 +28,22 @@
     <%= f.date_field :date %>
   </div>
 
-  <%# if defined?(current_user) && current_user&.admin? %>
+  <% if defined?(current_user) && current_user&.admin? %>
     <div class="field">
       <%= f.label :category_ids, "Categories" %>
       <%= f.collection_select :category_ids, Category.order(:name), :id, :name, {}, multiple: true %>
     </div>
-  <%# end %>
+  <% end %>
 
   <hr>
  
-
   <div class="actions mt-3">
     <%= f.submit %>
   </div>
 <% end %>
+<div class="d-flex justify-content-between align-items-center mb-3">
+
+  <%#= link_to "New Article", new_article_path, class: "btn btn-primary" %>
+</div>
+
+<%= link_to "New Article", new_article_path, class: "btn btn-primary" %>

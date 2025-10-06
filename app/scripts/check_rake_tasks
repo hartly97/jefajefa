@@ -1,0 +1,1 @@
+find lib/tasks -type f -name "*.rake" -print0 | xargs -0 -n1 ruby -cw

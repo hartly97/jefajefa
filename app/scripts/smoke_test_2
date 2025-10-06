@@ -1,0 +1,285 @@
+bin/rails c
+Article.first.sources.pluck(:title)        # => includes "NEHGS Register"
+Soldier.first.categories.pluck(:name)      # => includes "England" (seed)
+War.first.soldiers.pluck(:last_name)       # => includes "Endicott" after involvement
+Source.first.citations.map(&:citable_type) # => ["Article", ...]
+Category.locations.pluck(:name)            # => ["England"]
+
+-------------Mine--------------------
+bin/rails r 's=Soldier.create!(first_name:"Jane", last_name:"Doe"); src=Source.first || Source.create!(name:"Regimental History"); s.citations.create!(source: src, page:"12", note:"Roster"); puts [s.name, s.sources.pluck(:name), s.citations.count].inspect'
+expected output should be
+["Jane Doe", ["Regimental History"], 1]
+
+
+bin/rails r 's=Soldier.create!(first_name:"Jane", last_name:"Doe"); src=Source.first || Source.create!(name:"Regimental History"); s.citations.create!(source: src, page:"12", note:"Roster"); puts [s.id, s.sources.pluck(:name), s.citations.count].inspect'
+
+
+# any Source form fields still using :title or :description?
+grep -RInE 'f\.(text_field|text_area)\s+:title|f\.(text_field|text_area)\s+:description' app/views/sources || true
+
+# any controller code still touching params[:source][:title] or :description?
+grep -RIn "params.dig(:source, :title)|params.dig(:source, :description)" app/controllers || true
+
+# any code calling source.title/source.description directly?
+grep -RInE '\bsource\.title\b|\bsource\.description\b' app || true
+
+
+bin/rails r 's=Soldier.create!(first_name:"Jane", last_name:"Doe"); src=Source.first || Source.create!(name:"Regimental History"); s.citations.create!(source: src, page:"12", note:"Roster"); puts [s.name, s.sources.pluck(:name), s.citations.count].inspect'
+
+["Jane Doe", ["Regimental History"], 1]
+
+bin/rails r 'puts [Citation.count, Soldier.first&.citations&.count].inspect'
+
+
+s  = Soldier.create!(first_name: "Test", last_name: "Person")
+a  = Article.create!(title: "Hello")
+src = Source.create!(name: "Sample Source")
+s.citations.create!(source: src, page: "12", note: "from bundle")
+a.citations.create!(source: src, page: "88", note: "article cite")
+[s.sources.pluck(:name), a.sources.pluck(:name)]
+
+bin/rails runner '
+s  = Soldier.create!(first_name: "Test", last_name: "Person")
+m  = Medal.create!(name: "Test Medal")
+aw = Award.create!(name: "Test Award")
+c  = Cemetery.create!(name: "Test Cemetery")
+
+# simulate controller text attach
+params = ActionController::Parameters.new(
+  soldier:  { topic_list: "Civil War, DNA", location_list: "Devon" },
+  medal:    { source_list: "Massachusetts Archives" },
+  award:    { topic_list: "Bravery" },
+  cemetery: { location_list: "Salem, MA\nEngland" }
+)
+
+include CategoryTextAttachable
+attach_categories_from_text(s,  params_scope: :soldier)
+attach_categories_from_text(m,  params_scope: :medal)
+attach_categories_from_text(aw, params_scope: :award)
+attach_categories_from_text(c,  params_scope: :cemetery)
+
+pp [:soldier,  s.categories.pluck(:name, :category_type)]
+pp [:medal,    m.categories.pluck(:name, :category_type)]
+pp [:award,    aw.categories.pluck(:name, :category_type)]
+pp [:cemetery, c.categories.pluck(:name, :category_type)]
+'
+# “Find or create” patterns
+src = Source.where("lower(name)=?", "england birth records").first_or_create!(name: "England Birth Records")
+
+# Show all models cited by a Source (distinct)
+src.citations.includes(:citable).map(&:citable).uniq
+
+# Deduplicate categories by lowercase name
+Category.group("lower(name)").having("count(*) > 1").count
+# …then decide which to keep and re-point categorizations.
+
+# Backfill category slugs
+Category.find_each do |c|
+  next if c.slug.present?
+  c.update!(slug: c.name.parameterize)
+end
+
+# Manually assert the unique index exists (rough check)
+ActiveRecord::Base.connection.indexes(:citations).map(&:columns)
+
+# Attach a source to an article and a soldier (polymorphic Citation)
+src = Source.first || Source.create!(name: "England Birth Records")
+art = Article.first || Article.create!(title: "Test", slug: "test")
+sol = Soldier.first || Soldier.create!(first_name: "Jane", last_name: "Doe")
+
+art.citations.create!(source: src, page: "1", note: "example")
+sol.citations.create!(source: src, page: "2", note: "example")
+
+puts art.sources.distinct.pluck(:name).inspect
+puts sol.sources.distinct.pluck(:name).inspect
+
+# Category attach sanity (categorizations polymorphic join)
+cat = Category.where(name: "DNA", category_type: "topic").first_or_create!(slug: "dna")
+art.categories << cat unless art.categories.exists?(cat.id)
+puts art.categories.pluck(:name).inspect
+
+3) If the unique CI index fails due to existing dupes
+
+Before running the CI index, check for duplicates ignoring case:
+                                                             bin/rails r 'dups = Category.select("LOWER(name) AS lname,
+ category_type, COUNT(*) AS c")
+                            .group("lname, category_type").having("COUNT(*) > 1")
+                            .order("c DESC");
+             puts dups.map{|d| [d.lname, d.category_type, d.c] }.inspect'
+
+
+bin/rails r 'Category.find_each do |c|
+               key = [c.category_type, c.name.downcase]
+               (@seen ||= Hash.new{ |h,k| h[k]=[] })[key] << c.id
+             end; (@seen || {}).each{ |k,ids| puts "#{k.inspect}: #{ids.inspect}" if ids.size>1 }'
+
+
+
+bin/rails r 'Category.find_each do |c|
+               key = [c.category_type, c.name.downcase]
+               (@seen ||= Hash.new{ |h,k| h[k]=[] })[key] << c.id
+             end; (@seen || {}).each{ |k,ids| puts "#{k.inspect}: #{ids.inspect}" if ids.size>1 }'
+
+
+bin/rails r 's=Soldier.create!(first_name:"Jane", last_name:"Doe"); src=Source.first || Source.create!
+(name:"Regimental History"); s.citations.create!(source: src, page:"12", note:"Roster"); puts
+[s.name, s.sources.pluck(:name), s.citations.count].inspect'
+Expected example:
+
+           ["Jane Doe", ["Regimental History"], 1]
+
+# 1) Look for Rake tasks by name/pattern
+find ~/projects -type f \( -name '*.rake' -o -name '*.rb' \) -print |
+  grep -Ei 'soldier|battle|medal|award|backfill|categor'
+
+# 2) Ripgrep (fast content search). Install with: brew install ripgrep
+rg -n --hidden -S 'soldier_battle|Backfill|insert_all|categorizations' ~/projects
+
+# 3) If you have zips in Downloads, list their contents without extracting:
+unzip -l ~/Downloads/*.zip | grep -Ei 'tasks|rake|soldier|backfill|categor'
+
+# Lists repos and greps their history for keywords
+for repo in ~/projects/*/.git; do
+  dir=$(dirname "$repo")
+  echo "=== $dir ==="
+  git -C "$dir" log --oneline -- lib/tasks || true
+git -C "$dir" log -S 'soldier_battle' -- '**/*.rake' '**/*.rb' || true
+done
+
+
+bin/rails r 's=Soldier.create!(first_name:"Jane", last_name:"Doe"); src=Source.first || Source.create!(name:"Regimental History"); s.citations.create!(source: src, page:"12", note:"Roster"); puts [s.name, s.sources.pluck(:name), s.citations.count].inspect'
+expected output should be
+["Jane Doe", ["Regimental History"], 1]
+
+
+bin/rails r 's=Soldier.create!(first_name:"Jane", last_name:"Doe"); src=Source.first || Source.create!(name:"Regimental History"); s.citations.create!(source: src, page:"12", note:"Roster"); puts [s.id, s.sources.pluck(:name), s.citations.count].inspect'
+
+
+# any Source form fields still using :title or :description?
+grep -RInE 'f\.(text_field|text_area)\s+:title|f\.(text_field|text_area)\s+:description' app/views/sources || true
+
+# any controller code still touching params[:source][:title] or :description?
+grep -RIn "params.dig(:source, :title)|params.dig(:source, :description)" app/controllers || true
+
+# any code calling source.title/source.description directly?
+grep -RInE '\bsource\.title\b|\bsource\.description\b' app || true
+
+
+bin/rails r 's=Soldier.create!(first_name:"Jane", last_name:"Doe"); src=Source.first || Source.create!(name:"Regimental History"); s.citations.create!(source: src, page:"12", note:"Roster"); puts [s.name, s.sources.pluck(:name), s.citations.count].inspect'
+
+["Jane Doe", ["Regimental History"], 1]
+
+bin/rails r 'puts [Citation.count, Soldier.first&.citations&.count].inspect'
+
+
+s  = Soldier.create!(first_name: "Test", last_name: "Person")
+a  = Article.create!(title: "Hello")
+src = Source.create!(name: "Sample Source")
+s.citations.create!(source: src, page: "12", note: "from bundle")
+a.citations.create!(source: src, page: "88", note: "article cite")
+[s.sources.pluck(:name), a.sources.pluck(:name)]
+
+bin/rails runner '
+s  = Soldier.create!(first_name: "Test", last_name: "Person")
+m  = Medal.create!(name: "Test Medal")
+aw = Award.create!(name: "Test Award")
+c  = Cemetery.create!(name: "Test Cemetery")
+
+# simulate controller text attach
+params = ActionController::Parameters.new(
+  soldier:  { topic_list: "Civil War, DNA", location_list: "Devon" },
+  medal:    { source_list: "Massachusetts Archives" },
+  award:    { topic_list: "Bravery" },
+  cemetery: { location_list: "Salem, MA\nEngland" }
+)
+
+include CategoryTextAttachable
+attach_categories_from_text(s,  params_scope: :soldier)
+attach_categories_from_text(m,  params_scope: :medal)
+attach_categories_from_text(aw, params_scope: :award)
+attach_categories_from_text(c,  params_scope: :cemetery)
+
+pp [:soldier,  s.categories.pluck(:name, :category_type)]
+pp [:medal,    m.categories.pluck(:name, :category_type)]
+pp [:award,    aw.categories.pluck(:name, :category_type)]
+pp [:cemetery, c.categories.pluck(:name, :category_type)]
+'
+# “Find or create” patterns
+src = Source.where("lower(name)=?", "england birth records").first_or_create!(name: "England Birth Records")
+
+# Show all models cited by a Source (distinct)
+src.citations.includes(:citable).map(&:citable).uniq
+
+# Deduplicate categories by lowercase name
+Category.group("lower(name)").having("count(*) > 1").count
+# …then decide which to keep and re-point categorizations.
+
+# Backfill category slugs
+Category.find_each do |c|
+  next if c.slug.present?
+  c.update!(slug: c.name.parameterize)
+end
+
+# Manually assert the unique index exists (rough check)
+ActiveRecord::Base.connection.indexes(:citations).map(&:columns)
+
+# Attach a source to an article and a soldier (polymorphic Citation)
+src = Source.first || Source.create!(name: "England Birth Records")
+art = Article.first || Article.create!(title: "Test", slug: "test")
+sol = Soldier.first || Soldier.create!(first_name: "Jane", last_name: "Doe")
+
+art.citations.create!(source: src, page: "1", note: "example")
+sol.citations.create!(source: src, page: "2", note: "example")
+
+puts art.sources.distinct.pluck(:name).inspect
+puts sol.sources.distinct.pluck(:name).inspect
+
+# Category attach sanity (categorizations polymorphic join)
+cat = Category.where(name: "DNA", category_type: "topic").first_or_create!(slug: "dna")
+art.categories << cat unless art.categories.exists?(cat.id)
+puts art.categories.pluck(:name).inspect
+
+3) If the unique CI index fails due to existing dupes
+
+Before running the CI index, check for duplicates ignoring case:
+                                                             bin/rails r 'dups = Category.select("LOWER(name) AS lname, category_type, COUNT(*) AS c")
+                            .group("lname, category_type").having("COUNT(*) > 1")
+                            .order("c DESC");
+             puts dups.map{|d| [d.lname, d.category_type, d.c] }.inspect'
+
+
+bin/rails r 'Category.find_each do |c|
+               key = [c.category_type, c.name.downcase]
+               (@seen ||= Hash.new{ |h,k| h[k]=[] })[key] << c.id
+             end; (@seen || {}).each{ |k,ids| puts "#{k.inspect}: #{ids.inspect}" if ids.size>1 }'
+
+
+
+bin/rails r 'Category.find_each do |c|
+               key = [c.category_type, c.name.downcase]
+               (@seen ||= Hash.new{ |h,k| h[k]=[] })[key] << c.id
+             end; (@seen || {}).each{ |k,ids| puts "#{k.inspect}: #{ids.inspect}" if ids.size>1 }'
+
+
+bin/rails r 's=Soldier.create!(first_name:"Jane", last_name:"Doe"); src=Source.first || Source.create!(name:"Regimental History"); s.citations.create!(source: src, page:"12", note:"Roster"); puts [s.name, s.sources.pluck(:name), s.citations.count].inspect'
+Expected example:
+
+           ["Jane Doe", ["Regimental History"], 1]
+
+# 1) Look for Rake tasks by name/pattern
+find ~/projects -type f \( -name '*.rake' -o -name '*.rb' \) -print |
+  grep -Ei 'soldier|battle|medal|award|backfill|categor'
+
+# 2) Ripgrep (fast content search). Install with: brew install ripgrep
+rg -n --hidden -S 'soldier_battle|Backfill|insert_all|categorizations' ~/projects
+
+# 3) If you have zips in Downloads, list their contents without extracting:
+unzip -l ~/Downloads/*.zip | grep -Ei 'tasks|rake|soldier|backfill|categor'
+
+# Lists repos and greps their history for keywords
+for repo in ~/projects/*/.git; do
+  dir=$(dirname "$repo")
+  echo "=== $dir ==="
+  git -C "$dir" log --oneline -- lib/tasks || true
+git -C "$dir" log -S 'soldier_battle' -- '**/*.rake' '**/*.rb' || true
+done
