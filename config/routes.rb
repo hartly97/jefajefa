@@ -79,6 +79,9 @@ end
   get :burials, on: :member
 end
 
+# config/routes.rb
+resources :involvements, only: [:create, :destroy]
+get "soldiers/search", to: "soldiers#search", defaults: { format: :json }
 
 
 # get "censuses/search", to: "censuses#search"

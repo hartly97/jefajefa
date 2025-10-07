@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_10_05_023705) do
+ActiveRecord::Schema[7.1].define(version: 2025_10_07_002511) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -71,7 +71,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_05_023705) do
     t.bigint "soldier_id", null: false
     t.integer "year"
     t.text "note"
+    t.string "slug"
     t.index "soldier_id, lower((name)::text), year", name: "index_awards_on_soldier_name_year", unique: true, where: "((name IS NOT NULL) AND (btrim((name)::text) <> ''::text))"
+    t.index ["slug"], name: "index_awards_on_slug", unique: true
     t.index ["soldier_id"], name: "index_awards_on_soldier_id"
   end
 

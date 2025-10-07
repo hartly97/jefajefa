@@ -16,9 +16,14 @@ class WarsController < ApplicationController
     @war.citations.build if @war.citations.empty?
   end
 
+  
+
   def show
-    @involvements = @war.involvements
-  end
+  @war = War.includes(citations: :source).find(params[:id])
+  @involvements = @war.involvements.includes(:participant).order(:year, :id)
+end
+
+
 
   def create
     @war = War.new(war_params)

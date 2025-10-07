@@ -40,3 +40,6 @@
            cemetery: @cemetery,
            soldiers: @burials,
            total_count: @burials_count %>
+<!-- app/views/cemeteries/show.html.erb -->
+<h1><%= @cemetery.name %></h1>
+<%= render "shared/involvements_panel", involvable: @cemetery %>
