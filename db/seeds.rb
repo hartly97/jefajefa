@@ -1,175 +1,182 @@
 # db/seeds.rb
-# Idempotent seeds for Endicott bundles.
-# Safe to run multiple times.
-require "date"
+# Idempotent seeds for dev/test. Safe to run multiple times.
+# bin/rails db:seed
 
-# parse an ISO string to Date, or nil if bad
-def d(iso)
-  Date.iso8601(iso)
-rescue ArgumentError, TypeError
-  nil
+require "securerandom"
+
+def ensure_slug!(record, base)
+  return if !record.respond_to?(:slug) || record.slug.present?
+  record.slug = base.to_s.parameterize.presence || SecureRandom.hex(4)
+  record.save!(validate: false)
 end
 
-
-puts "== Seeding Endicott sample data =="
-
-def attr?(record, name)
-  record.respond_to?(:has_attribute?) ? record.has_attribute?(name) : false
+def involvement!(soldier:, type:, inv:, role: nil, year: nil, note: nil)
+  inv_rec = Involvement.find_or_initialize_by(
+    participant_type: "Soldier",
+    participant_id:   soldier.id,
+    involvable_type:  type,
+    involvable_id:    inv.id
+  )
+  inv_rec.role = role
+  inv_rec.year = year
+  inv_rec.note = note
+  inv_rec.save!
+  inv_rec
 end
 
-def assign_if(record, attrs)
-  attrs.each do |k, v|
-    record[k] = v if attr?(record, k)
+ActiveRecord::Base.transaction do
+  puts "Seeding…"
+
+  # --- Cemeteries ---
+  evergreen = Cemetery.find_or_create_by!(name: "Evergreen Cemetery")
+  oak_hill  = Cemetery.find_or_create_by!(name: "Oak Hill Cemetery")
+  [evergreen, oak_hill].each { |c| ensure_slug!(c, c.name) }
+
+  # --- Wars & Battles ---
+  civil_war = War.find_or_create_by!(name: "American Civil War")
+  rev_war   = War.find_or_create_by!(name: "American Revolutionary War")
+  gettysburg = Battle.find_or_create_by!(name: "Battle of Gettysburg")
+  bunker_hill = Battle.find_or_create_by!(name: "Battle of Bunker Hill")
+  [civil_war, rev_war, gettysburg, bunker_hill].each { |r| ensure_slug!(r, r.name) }
+
+  # Optional categories (flat; works even if you don’t use parent/children)
+  cat_military = Category.find_or_create_by!(name: "Military")
+  cat_civil    = Category.find_or_create_by!(name: "American Civil War")
+  cat_rev      = Category.find_or_create_by!(name: "Revolutionary War")
+
+  # --- Medals ---
+  moh = Medal.find_or_create_by!(name: "Medal of Honor")
+  ph  = Medal.find_or_create_by!(name: "Purple Heart")
+  [moh, ph].each { |m| ensure_slug!(m, m.name) }
+
+  # --- Soldiers ---
+  john = Soldier.find_or_create_by!(first_name: "John", last_name: "Smith") do |s|
+    s.cemetery = evergreen
+    s.birth_date = Date.new(1840, 5, 2) rescue nil
+    s.death_date = Date.new(1905, 11, 3) rescue nil
   end
-end
-
-# -- Categories (optional) --------------------------------------------------
-if Object.const_defined?("Category")
-  %w[Military Genealogy Newspaper].each do |name|
-    Category.where(name: name).first_or_create!
+  mary = Soldier.find_or_create_by!(first_name: "Mary", last_name: "Johnson") do |s|
+    s.cemetery = oak_hill
+    s.birth_date = Date.new(1757, 3, 14) rescue nil
+    s.death_date = Date.new(1820, 8, 9) rescue nil
   end
-  puts "Categories: #{Category.count} total"
+  [john, mary].each { |s| ensure_slug!(s, [s.first_name, s.last_name].compact.join(" ")) }
+
+  # Attach some categories (polymorphic Categorizable)
+  [john, mary, civil_war, rev_war, gettysburg, bunker_hill].each do |rec|
+    rec.categories << cat_military unless rec.categories.include?(cat_military) rescue nil
+  end
+  civil_war.categories << cat_civil unless civil_war.categories.include?(cat_civil) rescue nil
+  rev_war.categories   << cat_rev   unless rev_war.categories.include?(cat_rev)   rescue nil
+
+  # --- Awards (not medals) ---
+  # john.awards.find_or_create_by!(name: "Community Service Award", year: 1870) do |a|
+  #   a.country = "USA"
+  #   a.note    = "Town recognition"
+  # end
+
+  # --- Awards (not medals) ---
+award = john.awards.where(name: "Community Service Award", year: 1870).first_or_initialize
+award.country = "USA"
+award.note    = "Town recognition"
+
+# If Award has a slug column, set it. If not, save without validations.
+if award.respond_to?(:slug)
+  award.slug = "community-service-award" if award.slug.blank?
+  award.save!  # validates slug presence via Sluggable
 else
-  puts "Category model not found — skipping category seeds"
+  award.save!(validate: false) # no slug column → skip validations
 end
 
-# -- Sources ----------------------------------------------------------------
-sources_data = [
-  { title: "Parish Registers of St. Mary's", author: "J. Clarke", year: "1849", common: true },
-  { title: "The National Archives — Census Collection", publisher: "TNA", url: "https://nationalarchives.gov.uk", common: true },
-  { title: "Regimental Muster Roll, 1863", publisher: "War Office" },
-  { title: "Endicott Daily Herald", year: "1902", publisher: "EDH" },
-  { title: "Family Bible of the Hartley Family", details: "Notes on births & deaths" }
-]
 
-sources = sources_data.map do |attrs|
-  Source.where(title: attrs[:title]).first_or_initialize.tap do |r|
-    assign_if(r, attrs)
-    r.save!
+  # --- SoldierMedals ---
+  john.soldier_medals.find_or_create_by!(medal: moh) do |sm|
+    sm.year = 1864
+    sm.note = "Gallantry in action"
   end
+  mary.soldier_medals.find_or_create_by!(medal: ph) do |sm|
+    sm.year = 1777
+    sm.note = "Wartime wound"
+  end
+
+  # --- Involvements (role/year/note) ---
+  involvement!(soldier: john, type: "War",    inv: civil_war,   role: "Private, Infantry", year: 1863, note: "Mustered PA")
+  involvement!(soldier: john, type: "Battle", inv: gettysburg,  role: "Color bearer",      year: 1863, note: "Day 2")
+  involvement!(soldier: mary, type: "War",    inv: rev_war,     role: "Nurse",             year: 1776, note: "Boston area")
+  # Cemetery involvement (optional; you already have belongs_to :cemetery)
+  # involvement!(soldier: john, type: "Cemetery", inv: evergreen, role: "Interred", year: 1905)
+
+  # --- Sources & Citations ---
+  src1 = Source.find_or_create_by!(title: "Official Records of the War of the Rebellion") do |s|
+    s.author = "U.S. War Department"
+    s.year   = "1880–1901"
+    s.url    = "https://example.org/or/"
+    s.details = "Primary source compilation"
+  end
+  src2 = Source.find_or_create_by!(title: "Regimental History: 20th Maine") do |s|
+    s.author = "J. Doe"
+    s.year   = "1885"
+    s.publisher = "Augusta Press"
+  end
+  [src1, src2].each { |s| ensure_slug!(s, s.title) }
+
+  john.citations.find_or_create_by!(source: src1) do |c|
+    c.pages = "12–13"
+    c.quote = "Enlisted among the volunteers…"
+    c.note  = "Company B muster roll"
+  end
+
+  gettysburg.citations.find_or_create_by!(source: src2) do |c|
+    c.pages = "201"
+    c.note  = "Order of battle"
+  end
+
+  # --- An Article ---
+  article = Article.find_or_create_by!(title: "Local Heroes of the Civil War") do |a|
+    a.body = "A brief account of notable service from our town."
+    a.description = "Profiles of local participants"
+    a.author = "Staff Writer"
+    a.date = Date.new(2024,7,4) rescue nil
+  end
+  ensure_slug!(article, article.title)
+  article.citations.find_or_create_by!(source: src1) { |c| c.pages = "55"; c.note = "Context" }
+
+  # --- A Census + Entries (light) ---
+  census = Census.find_or_create_by!(country: "USA", year: 1860, district: "Suffolk", subdistrict: "Boston", place: "Ward 6") do |c|
+    c.folio = "12"
+    c.page  = "3"
+    c.external_image_url = "https://example.org/images/census1860_boston_ward6_p3.jpg"
+  end
+  ensure_slug!(census, [census.country, census.year, census.district, census.subdistrict, census.place].compact.join("-"))
+
+  hid = "H001"
+  CensusEntry.find_or_create_by!(census: census, householdid: hid, linenumber: 1, firstname: "John",  lastname: "Smith") do |e|
+    e.age = "20"
+    e.relationshiptohead = "Head"
+    e.birthlikeplacetext = "Massachusetts"
+    e.soldier = john
+  end
+  CensusEntry.find_or_create_by!(census: census, householdid: hid, linenumber: 2, firstname: "Mary", lastname: "Smith") do |e|
+    e.age = "19"
+    e.relationshiptohead = "Wife"
+    e.birthlikeplacetext = "Massachusetts"
+  end
+
+  puts "Done."
+  puts({
+    soldiers: Soldier.count,
+    wars: War.count,
+    battles: Battle.count,
+    cemeteries: Cemetery.count,
+    medals: Medal.count,
+    awards: Award.count,
+    soldier_medals: SoldierMedal.count,
+    involvements: Involvement.count,
+    sources: Source.count,
+    citations: Citation.count,
+    categories: Category.count,
+    censuses: Census.count,
+    census_entries: CensusEntry.count,
+    articles: Article.count
+  }.map { |k,v| "#{k}=#{v}" }.join(" | "))
 end
-puts "Sources: #{Source.count} total"
-
-# Tag a couple of sources if Category exists
-if Object.const_defined?("Category") && Object.const_defined?("Categorization")
-  military = Category.find_by(name: "Military")
-  news     = Category.find_by(name: "Newspaper")
-  if military
-    [sources[2]].each { |s| s.categories << military unless s.categories.include?(military) }
-  end
-  if news
-    [sources[3]].each { |s| s.categories << news unless s.categories.include?(news) }
-  end
-end
-
-# -- Cemetery ---------------------------------------------------------------
-cemetery = if Object.const_defined?("Cemetery")
-  Cemetery.where(name: "Oakwood Cemetery").first_or_initialize.tap do |c|
-    assign_if(c, {
-      city: "Endicott",
-      county: "Broome County",
-      state: "New York",
-      country: "USA",
-      description: "Historic cemetery with Civil War burials."
-    })
-    c.save!
-  end
-else
-  nil
-end
-puts "Cemetery: #{cemetery&.id ? "created/updated" : "skipped"}"
-
-# -- Soldiers ---------------------------------------------------------------
-soldier = if Object.const_defined?("Soldier")
-  Soldier.where(first_name: "Thomas", last_name: "Hartley").first_or_initialize.tap do |s|
-    assign_if(s, {
-      branch_of_service: "Army",
-      unit: "54th Regiment",
-      first_enlisted_start_date: Date.new(1863,5,1) rescue "1863-05-01",
-      first_enlisted_end_date: Date.new(1865,6,1) rescue "1865-06-01",
-      birth_day: Date.new(1845,2,3) rescue "1845-02-03",
-      birthplace: "Yorkshire, England",
-      death_day: Date.new(1912,8,12) rescue "1912-08-12",
-      deathplace: "Endicott, NY"
-    })
-    s.cemetery = cemetery if s.respond_to?(:cemetery=) && cemetery
-    s.save!
-  end
-else
-  nil
-end
-puts "Soldier: #{soldier&.id ? "created/updated" : "skipped"}"
-
-# -- Articles ---------------------------------------------------------------
-article = if Object.const_defined?("Article")
-  Article.where(title: "Early Endicott Settlers").first_or_initialize.tap do |a|
-    assign_if(a, {
-      body: "A brief history of the families who established the town in the late 19th century."
-    })
-    a.save!
-  end
-else
-  nil
-end
-puts "Article: #{article&.id ? "created/updated" : "skipped"}"
-
-# -- Census + Entries -------------------------------------------------------
-census = if Object.const_defined?("Census")
-  Census.where(country: "UK", year: 1851, district: "Middlesex").first_or_initialize.tap do |c|
-    assign_if(c, {
-      subdistrict: "Kensington",
-      place: "Brompton",
-      piece: "HO107/1469",
-      folio: "23",
-      page: "7",
-      external_image_url: "https://photos.smugmug.com/sample-census/photo.jpg",
-      external_image_caption: "1851 Census page sample",
-      external_image_credit: "via SmugMug"
-    })
-    c.save!
-  end
-else
-  nil
-end
-
-if census && Object.const_defined?("CensusEntry")
-  # Clear any existing demo entries for this census (optional & safe for demo)
-  CensusEntry.where(census_id: census.id).delete_all
-
-  rows = [
-    { householdid: "100", linenumber: 1, firstname: "George", lastname: "Fowler", age: 42, relationshiptohead: "Head",   birthlikeplacetext: "Middlesex" },
-    { householdid: "100", linenumber: 2, firstname: "Anne",   lastname: "Fowler", age: 40, relationshiptohead: "Wife",   birthlikeplacetext: "Surrey" },
-    { householdid: "100", linenumber: 3, firstname: "Mary",   lastname: "Fowler", age: 12, relationshiptohead: "Daughter", birthlikeplacetext: "Middlesex" },
-    { householdid: "100", linenumber: 4, firstname: "John",   lastname: "Fowler", age: 9,  relationshiptohead: "Son",    birthlikeplacetext: "Middlesex" }
-  ]
-  rows.each do |r|
-    CensusEntry.create!(r.merge(census_id: census.id))
-  end
-  puts "Census + entries: created (#{rows.size} entries)"
-else
-  puts "Census: #{census ? "created" : "skipped"}; entries skipped"
-end
-
-# -- Citations (polymorphic) -----------------------------------------------
-def cite!(citable, src, attrs = {})
-  return unless citable && src
-  citable.citations.where(source_id: src.id, pages: attrs[:pages]).first_or_initialize.tap do |cit|
-    attrs.each { |k,v| cit[k] = v if cit.has_attribute?(k) rescue nil }
-    cit.source = src
-    cit.save!
-  end
-end
-
-s1, s2, s3, s4, s5 = sources
-
-cite!(soldier, s3, pages: "14", note: "Listed on muster roll")
-cite!(soldier, s4, pages: "1",  note: "Obituary mention in local paper")
-
-cite!(article, s1, pages: "112–113", note: "Register entries for key families")
-cite!(article, s4, pages: "A3",      note: "Newspaper article reference")
-
-cite!(census,  s2, pages: "folio 23 / page 7", locator: "HO107/1469")
-cite!(census,  s5, note: "Family Bible confirms names/ages")
-
-puts "Citations seeded (where applicable)."
-puts "== Done =="

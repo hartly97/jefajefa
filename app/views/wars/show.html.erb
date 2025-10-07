@@ -2,6 +2,9 @@
 
 <%= render "shared/citations", citable: @war, heading: "War Citations" %>
 
+<%= render "shared/involvements_panel", involvable: @war %>
+
+
 <h2>Involvements</h2>
 <% if @involvements.present? %>
   <ul>
