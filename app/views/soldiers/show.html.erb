@@ -1,24 +1,62 @@
+<h1><%= @soldier.respond_to?(:display_name) ? @soldier.display_name : [@soldier.first_name, @soldier.last_name].compact.join(" ") %></h1>
+<h2><% @soldier.birth_date%><h2>
+<h2><% @soldier.birthplace %><h2>
+<h2><% @soldier.death_date %><h2>
+<h2><% @soldier.deathplace %><h2>
+<h2><% @soldier.branch_of_service %><h2>
 
-<h3>Wars</h3>
-<ul>
-  <% Array(@soldier.try(:war_categories)).sort_by { |w| w.name.to_s }.each do |war| %>
-    <li><%= link_to war.name, category_path(war) %></li>
-  <% end %>
-</ul>
+<h2><% @soldier.unit %><h2>
+<h2<%# @soldier.%><h2>
+
+<h2><% @soldier.first_enlisted_start_date %><h2>
+<h2><% @soldier.first_enlisted_end_date %><h2>
 
 
-<h3>Battles</h3>
-<ul>
-  <% Array(@soldier.try(:battle_categories)).sort_by { |b| b.name.to_s }.each do |b| %>
-    <li><%= link_to b.name, category_path(b) %></li>
-  <% end %>
-</ul>
-<!-- h3>Battles</h3>
- <ul>-->
-#   <% @soldier.battle_categories.each do |cat| %>
-#     <li><%= link_to cat.name, category_path(cat) %></li>
+<%= render "shared/citations", citable: @soldier, heading: "Soldier Citations" %>
+
+# <h3>Wars</h3>
+# <ul>
+#   <%# Array(@soldier.try(:wars)).sort_by { |w| w.name.to_s }.each do |war| %>
+#     <li><%#= link_to war.name, war %></li>
+#   <%# end %>
+# </ul>
+
+# <h3>Battles</h3>
+# <ul>
+#   <%# Array(@soldier.try(:battles)).sort_by { |b| b.name.to_s }.each do |b| %>
+#     <li><%#= link_to b.name, b %></li>
 #   <% end %>
 # </ul>
+
+<% wars = @soldier.involvements.where(involvable_type: "War").includes(:involvable).order(:year, :id) %>
+<% if wars.any? %>
+  <h3>Wars</h3>
+  <ul>
+    <% wars.each do |inv| %>
+      <li>
+        <%= link_to inv.involvable.name, inv.involvable %>
+        <%= " (#{inv.year})" if inv.year.present? %>
+        <%= " — #{inv.role}" if inv.role.present? %>
+        <%= " — #{inv.note}" if inv.note.present? %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+
+<% battles = @soldier.involvements.where(involvable_type: "Battle").includes(:involvable).order(:year, :id) %>
+<% if battles.any? %>
+  <h3>Battles</h3>
+  <ul>
+    <% battles.each do |inv| %>
+      <li>
+        <%= link_to inv.involvable.name, inv.involvable %>
+        <%= " (#{inv.year})" if inv.year.present? %>
+        <%= " — #{inv.role}" if inv.role.present? %>
+        <%= " — #{inv.note}" if inv.note.present? %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
 
 
 <h3>Medals</h3>
@@ -29,7 +67,7 @@
     <% end %>
   </ul>
 <% else %>
-  <p>No medals recorded.</p>
+  <p><em>No medals recorded.</em></p>
 <% end %>
 
 <h3>Awards</h3>
@@ -52,3 +90,5 @@
 <p>
   <%= @soldier.cemetery ? link_to(@soldier.cemetery.name, @soldier.cemetery) : content_tag(:em, "Not recorded") %>
 </p>
+
+<%= render "shared/involvements_for_participant", participant: @soldier, involvements: @soldier.involvements.includes(:involvable) %>

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+cd "$ROOT"
+echo "Scanning for import/url() statements…"
+JS_MATCHES=$(grep -RInE "from ['\"][^'\"]+['\"]|import\((['\"][^'\"]+['\"])\)" app/javascript 2>/dev/null || true)
+CSS_MATCHES=$(grep -RInE "url\((['\"][^'\"]+['\"])\)" app/assets stylesheets 2>/dev/null || true)
+check_path () { local base="$1" ; local ref="$2" ; local src="$3" ; if [[ "$ref" =~ ^(https?:)?// ]] || [[ ! "$ref" =~ ^(\.|/) ]]; then return 0; fi ; ref="${ref#url(}" ; ref="${ref%)}" ; ref="${ref%\"}" ; ref="${ref#\"}" ; ref="${ref%\'}" ; ref="${ref#\'}" ; local full="$(dirname "$base")/$ref" ; if [[ -f "$full" ]] || [[ -f "$full.js" ]] || [[ -f "$full.ts" ]] || [[ -f "$full.jsx" ]] || [[ -f "$full.tsx" ]]; then return 0; fi ; echo "❌ Missing: $ref  (referenced from $base, source: $src)" ; return 1; }
+STATUS=0
+while IFS= read -r line; do file=$(echo "$line" | cut -d: -f1); ref=$(echo "$line"  | sed -E "s/.*from ['\"]([^'\"]+)['\"].*/\1/; t; s/.*import\((['\"]([^'\"]+)['\"])\).*/\2/; t; d"); [[ -z "$ref" ]] && continue; check_path "$file" "$ref" "JS" || STATUS=1; done <<< "$JS_MATCHES"
+while IFS= read -r line; do file=$(echo "$line" | cut -d: -f1); ref=$(echo "$line"  | sed -E "s/.*url\(([^)]+)\).*/\1/; t; d"); [[ -z "$ref" ]] && continue; check_path "$file" "$ref" "CSS" || STATUS=1; done <<< "$CSS_MATCHES"
+[[ $STATUS -eq 0 ]] && echo "✅ No broken relative imports found." || echo "⚠️  Broken paths detected." 
+exit $STATUS

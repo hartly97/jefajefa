@@ -1,0 +1,14 @@
+<div class="border p-3 mb-3 rounded citation-fields"
+
+# <%# expects local: f %>
+# <%#= f.fields_for :citations do |cf| %>
+#   <%#= render "citations/fields", f: cf, sources: Source %>
+# <%# end %>
+
+<%# locals: f:, sources: %>
+<%= f.fields_for :citations do |cf| %>
+  <%= render "citations/fields",
+             cf: cf,
+             sources: (sources.presence || Source.order(:title)) %>
+<% end %>
+

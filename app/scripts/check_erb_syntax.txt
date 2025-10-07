@@ -1,0 +1,155 @@
+Menlo-Regular; Menlo-Italic;
+;;;;;
+;;;;;
+;;;
+\*;;;;;
+;;;;;
+;;;
+
+
+
+
+   
+  check_erb_syntax\
+#!
+ /usr/bin/env bash
+    \
+   #
+  Checks Ruby and ERB syntax and writes reports into THIS app's tmp/
+    \
+
+   set     -euo   pipefail \
+\
+
+   #
+  Resolve app root based on this script's location (bin/ -> app root)
+    \
+
+   APP_ROOT  =  "  $(  cd     "  $(  dirname     "   $0   "  )  "  /..   &&   pwd  )  "   \
+   RUBY_REPORT  =  "  $APP_ROOT  /tmp/ruby_syntax_report.txt  "   \
+   ERB_REPORT  =  "  $APP_ROOT  /tmp/erb_syntax_report.txt  "   \
+\
+
+   mkdir     -p     "  $APP_ROOT  /tmp  "   \
+
+   :     >     "  $RUBY_REPORT  "   \
+   :     >     "  $ERB_REPORT  "   \
+\
+   echo     "     App root:   $APP_ROOT  "   \
+\
+
+   #
+ ###############################
+    \
+   #
+  Ruby (.rb) files
+    \
+   #
+ ###############################
+    \
+
+   echo     "     Checking Ruby syntax...  "    \
+
+   ruby_errors  =  0 \
+\
+   DIRS  =  (app config lib spec test) \
+
+   while     IFS  =     read     -r     -d     ''   file;   do   \
+
+      if     !     out  =  $(  ruby     -c     "  $file  "     2>&1  );   then   \
+     ((  ruby_errors  ++  )) \
+     \ \
+         echo   \
+         echo     "    Syntax error in: $\  file  #  $APP_ROOT  /  \  "   \
+         echo     "  $out  "   \
+         echo     "  --------------------------------------------------  "   \
+     \   >>     "  $RUBY_REPORT  "   \
+     fi   \
+
+   done     <     <(   \
+
+       for     d     in     "  $\  DIRS  [  @  ]  \  "  ;   do   \
+       [   -d     "  $APP_ROOT  /  $d  "   ] &&    \\   \
+           find     "  $APP_ROOT  /  $d  "     -type     f     -name     '  *.rb  '      \\   \
+             !     -path     '  */tmp/*  '     !     -path     '  */vendor/*  '     !     -path     '  */node_modules/*  '     -print0   \
+       done   \
+
+   )   \
+\
+
+   #
+ ###############################
+    \
+   #
+  ERB (.erb) templates
+    \
+   #
+ ###############################
+    \
+
+   echo     "     Checking ERB syntax...  "   \
+
+   erb_errors  =  0 \
+\
+
+   while     IFS  =     read     -r     -d     ''   file;   do   \
+
+      if     !     out  =  $(  erb     -P     -x     -T     '  -  '     "  $file  "     |     ruby     -c     2>&1  );   then   \
+     ((  erb_errors  ++  )) \
+     \ \
+         echo   \
+         echo     "    Syntax error in: $\  file  #  $APP_ROOT  /  \  "   \
+         echo     "  $out  "   \
+         echo     "  --------------------------------------------------  "   \
+     \   >>     "  $ERB_REPORT  "   \
+     fi   \
+
+   done     <     <(  find     "  $APP_ROOT  /app/views  "     -type     f     -name     '  *.erb  '     -print0  )   \
+\
+
+   #
+ ###############################
+    \
+   #
+  Summary
+    \
+   #
+ ###############################
+    \
+
+   echo   \
+
+   if   [[   $ruby_errors     -eq      0    ]];   then   \
+
+      echo     "    Ruby: OK  "   \
+
+   else   \
+
+      echo     "    Ruby errors:   $ruby_errors         $RUBY_REPORT  "   \
+
+   fi   \
+\
+   if   [[   $erb_errors     -eq      0    ]];   then   \
+
+      echo     "    ERB: OK  "   \
+
+   else   \
+
+      echo     "    ERB errors:   $erb_errors         $ERB_REPORT  "   \
+
+   fi   \
+\
+
+   #
+  Exit non-zero if any errors so CI/pre-commit can fail
+    \
+
+   if   [[   $ruby_errors     -gt      0      ||     $erb_errors     -gt      0    ]];   then   \
+
+      exit      1   \
+
+   fi   \
+\
+
+   echo     "   saved to temp/check_erb_syntax.txt  "   \
+\

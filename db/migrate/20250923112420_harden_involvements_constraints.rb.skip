@@ -1,0 +1,23 @@
+class HardenInvolvementsConstraints < ActiveRecord::Migration[7.1]
+  def change
+    # Limit polymorphic types to what you actually use today
+    add_check_constraint :involvements,
+      "participant_type IN ('Soldier')",
+      name: "chk_inv_participant_type"
+
+    add_check_constraint :involvements,
+      "involvable_type IN ('Battle','War','Cemetery')",
+      name: "chk_inv_involvable_type"
+
+    # Reasonable year range
+    add_check_constraint :involvements,
+      "year IS NULL OR (year > 0 AND year < 3000)",
+      name: "chk_inv_year_range"
+
+    # Mirror the 100-char validation on role
+    add_check_constraint :involvements,
+      "char_length(coalesce(role,'')) <= 100",
+      name: "chk_inv_role_length"
+  end
+end
+

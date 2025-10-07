@@ -1,0 +1,19 @@
+class TightenInvolvableCheck < ActiveRecord::Migration[7.1]
+  def up
+    remove_check_constraint :involvements, name: "chk_inv_involvable_type" rescue nil
+    add_check_constraint :involvements,
+      "involvable_type IN ('Battle','War','Cemetery')",
+      name: "chk_inv_involvable_type",
+      validate: false
+  end
+
+  def down
+    remove_check_constraint :involvements, name: "chk_inv_involvable_type" rescue nil
+    add_check_constraint :involvements,
+      "involvable_type IN ('Battle','War','Cemetery','Article')",
+      name: "chk_inv_involvable_type",
+      validate: false
+  end
+end
+
+  

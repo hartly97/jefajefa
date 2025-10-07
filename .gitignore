@@ -6,7 +6,7 @@
 
 # Ignore bundler config.
 /.bundle
-
+/app/docs/
 # Ignore all environment files (except templates).
 /.env*
 !/.env*.erb
@@ -30,7 +30,7 @@
 !/tmp/storage/.keep
 
 /public/assets
-
+/controllers/backup
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 

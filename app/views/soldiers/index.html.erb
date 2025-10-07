@@ -1,25 +1,27 @@
-<h1><%= controller_name.titleize %></h1>
-<%= render "list", soldiers: (@soldiers || Soldier.none) %>
-<p><%= link_to "New Soldier", new_soldier_path, class: "btn btn-primary" %></p>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th>Soldier Name</th>
-      <th>Created</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @soldiers.each do |soldier| %>
-      <tr>
-        <td><%= link_to soldier.last_name, soldier %></td>
-        <td><%= l(soldier.created_at, format: :short) rescue soldier.created_at %></td>
-        <td>
-          <%= link_to "Edit", edit_soldier_path(soldier), class: "btn btn-sm btn-secondary" %>
-          <%= link_to "Delete", soldier, data: { turbo_method: :delete, turbo_confirm: "Delete this soldier?" }, class: "btn btn-sm btn-danger" %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<h1>Soldiers</h1>
+
+<%= render "search_form", soldier: @soldier %>
+<%= render "pager" %>
+<div class="container-fluid">
+  <div class="row justify-content-start">
+    <div class="col-12 col-md-10">
+      <% Array(@soldiers).each_slice(3) do |row| %>
+        <div class="row">
+          <% row.each do |soldier| %>
+            <div class="col mb-3">
+              <%= render partial: "card", locals: { soldier: soldier } %>
+              
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <%= render "pager" %>
+    </div>
+
+    <div class="col-12 col-md-2">
+      <%= render "sidebar" %>
+    </div>
+  </div>
+</div>

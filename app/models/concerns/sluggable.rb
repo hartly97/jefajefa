@@ -11,9 +11,10 @@ module Sluggable
   end
 
   # Avoid endless methods for older Ruby versions
-  def to_param
-    slug
-  end
+  # def to_param
+  #   slug
+  # end
+  
   def regenerate_slug!
       base = slug_source.to_s.parameterize if respond_to?(:slug_source)
       base = base.presence || SecureRandom.hex(4)

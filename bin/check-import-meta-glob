@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+# Verifies your app/javascript/application.js includes import.meta.glob("./images/**")
+main = "app/javascript/application.js"
+unless File.exist?(main)
+  warn "⚠️  Not found: #{main}"
+  exit 1
+end
+contents = File.read(main)
+if contents.include?('import.meta.glob("./images/**")') || contents.include?("import.meta.glob('./images/**')")
+  puts "✅ import.meta.glob(\"./images/**\") is present in #{main}"
+else
+  puts "❌ Missing import.meta.glob(\"./images/**\") in #{main}"
+  exit 1
+end

@@ -1,0 +1,2 @@
+spring stop 2>/dev/null || true
+bin/rails r 'puts :booted'

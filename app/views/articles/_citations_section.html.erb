@@ -1,0 +1,25 @@
+<%# app/views/articles/_citations_section.html.erb %>
+<h3>Citations</h3>
+
+<div data-controller="citations"
+     data-citations-index-value="<%= @article.citations.size %>">
+
+  <div data-citations-target="list">
+    <%= f.fields_for :citations do |cf| %>
+      <div data-citations-wrapper>
+        <%= render "citations/fields", f: cf, sources: sources %>
+      </div>
+    <% end %>
+  </div>
+
+  <template data-citations-target="template">
+    <div data-citations-wrapper>
+      <%= f.fields_for :citations, Citation.new, child_index: "NEW_RECORD" do |cf| %>
+        <%= render "citations/fields", f: cf, sources: sources %>
+      <% end %>
+    </div>
+  </template>
+
+  <button type="button" class="btn btn-outline-primary mt-2"
+          data-action="citations#add">+ Add citation</button>
+</div>

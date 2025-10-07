@@ -11,6 +11,8 @@
     <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
   </head>
 
+
+
   
 
   <body>
@@ -22,10 +24,14 @@
       <% if alert %>
         <p class="alert alert-danger"><%= alert %></p>
       <% end %>
+  <%#= render 'layouts/navigation' %>
 
+      <%#= render 'shared/notification' %>
       <%= yield %>
+      <%= render 'layouts/footer' %>
     </div>
 
   
   </body>
 </html>
+

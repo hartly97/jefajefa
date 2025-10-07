@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+if [[ -z "${1:-}" ]]; then
+  echo "Usage: bin/grep_view_usage <search_term>"
+  exit 1
+fi
+echo "Searching for '$1' in app/views…"
+grep -R --color=always -n "$1" app/views || echo "No matches found."

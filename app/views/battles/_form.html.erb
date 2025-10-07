@@ -1,6 +1,26 @@
-<%= form_with model: @record do |f| %><div><%= f.label :name %><%= f.text_field :name %></div><div><%= f.label :date %><%= f.date_field :date %></div><%= f.submit %><% end %>
+<%= form_with model: @battle do |f| %>
+    <div>
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+    </div>
+    <div>
+    <%= f.label :date %>
+    <%= f.date_field :date %>
+    </div>
+    <%= f.submit %>
+    <% end %>
 <% if defined?(current_user) && current_user&.admin? %>
     <div class="field">
       <%= f.label :category_ids, "Categories" %>
       <%= f.collection_select :category_ids, Category.order(:name), :id, :name, {}, multiple: true %>
     </div>
+    <%= f.fields_for :involvements do |ivf| %>
+  <%= ivf.hidden_field :_destroy %>
+  <!-- fields: participant_type, participant_id, role, year, note -->
+<% end %>
+<fieldset>
+  <legend>Citations</legend>
+  <% f.fields_for :citations do |cf| %>
+    <%= render "citations/fields", f: cf, sources: @sources %>
+  <% end %>
+</fieldset>

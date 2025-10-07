@@ -1,0 +1,81 @@
+Helvetica; Menlo-Regular; Menlo-Italic;
+
+;;;;;
+;;;;;
+;
+\*;;;;;
+;;;;;
+;
+
+
+
+  glob_checker_script\
+
+
+   
+  #!
+ /usr/bin/env bash
+    \
+
+   glob_checker_script   =   """  #!/usr/bin/env ruby   \
+
+   # bin/check:import-meta-glob   \
+   # Verifies your main app/javascript/application.js has import.meta.glob   \
+\
+   main_js =   "  app/javascript/application.js  "   \
+\
+   unless File.exist?(main_js)   \
+     puts   "      Could not find   #
+ \main_js\"
+    \
+
+      exit      1   \
+
+   end   \
+\
+
+   contents   = File.read(  main_js  ) \
+
+   if     contents.include?("import.meta.glob(   \\"   ./images/**   \\"   )"  ) \
+
+      puts     "    import.meta.glob(   \\"   ./images/**   \\"   ) is present in application.js  "   \
+
+   else   \
+
+      puts     "    Missing import.meta.glob(   \\"   ./images/**   \\"   ) in application.js  "   \
+     exit      1   \
+
+   end   \
+
+   """   \
+\
+   # Save scripts to bin/   \
+   bin_path = "/mnt/data/bin"   \
+   os.makedirs(bin_path, exist_ok=True)   \
+\
+   with open(os.path.join(bin_path, "check-broken-imports"), "w") as f:   \
+       f.write(broken_imports_script)   \
+\
+   with open(os.path.join(bin_path, "check-import-meta-glob"), "w") as f:   \
+       f.write(glob_checker_script)   \
+\
+   # Make them executable   \
+   os.chmod(os.path.join(bin_path, "check-broken-imports"), 0o755)   \
+   os.chmod(os.path.join(bin_path, "check-import-meta-glob"), 0o755)   \
+\
+   import pandas as pd   \
+   import ace_tools as tools; tools.display_dataframe_to_user(name="Generated   Scripts  "  , dataframe=pd.DataFrame([   \
+
+       \  "  Script  "  :   "  check-broken-imports  "  ,   "  Path  "  : f  "  \bin_path\/check-broken-imports  "  ,   "  Purpose  "  :   "  Finds broken JS/CSS import paths  "  \,   \
+       \  "  Script  "  :   "  check-import-meta-glob  "  ,   "  Path  "  : f  "  \bin_path\/check-import-meta-glob  "  ,   "  Purpose  "  :   "  Verifies image glob import in application.js  "  \   \
+   ]))   \
+\
+   Result   \
+\
+                      Script                                  Path     \\   \
+   0    check-broken-imports    /mnt/data/bin/check-broken-imports      \
+   1  check-import-meta-glob  /mnt/data/bin/check-import-meta-glob      \
+\
+                                           Purpose     \
+   0              Finds broken JS/CSS import paths     \
+   1  Verifies image glob import in application.js     \

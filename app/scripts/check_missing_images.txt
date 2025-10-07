@@ -1,0 +1,50 @@
+Helvetica; Menlo-Regular; Menlo-Italic;
+
+;;;;;
+;;;;;
+;;;
+\*;;;;;
+;;;;;
+;;;
+
+
+
+  check_missing_images\
+\
+
+
+   
+  #
+ !/usr/bin/env ruby
+    \
+\
+   #
+  bin/check_fonts: Verifies that expected Font Awesome glyph fonts exist after build
+    \
+\
+
+   expected_fonts     =   %w[ \
+
+     fa-solid-900.woff2   \
+     fa-regular-400.woff2   \
+     fa-brands-400.woff2   \
+     fa-v4compatibility.woff2   \
+
+  ] \
+\
+
+   build_fonts_dir     =     "  app/assets/builds/assets/webfonts  "   \
+   missing     =   expected_fonts.  reject   \ |  font  |   File  .  exist?  (  File  .  join  (build_fonts_dir, font)) \ \
+\
+
+   if   missing.  empty?   \
+
+      puts     "    All expected Font Awesome fonts found in    #\   build_fonts_dir   \   "   \
+
+   else   \
+
+      puts     "    Missing font files:  "   \
+   missing.  each   \ |  font  |   puts     "    -    #\   font   \   "   \ \
+     exit      1   \
+
+   end   \

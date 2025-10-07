@@ -1,0 +1,13 @@
+bin/rails zeitwerk:check
+
+# Create one by hand:
+bin/rails runner '
+t = Category.find_or_create_by!(name:"DNA", category_type:"topic"){_1.slug="dna"}
+a = Article.create!(title:"DNA Primer", body:"Hello genome")
+puts a.categories.count             # 0
+# Simulate controller call:
+params = ActionController::Parameters.new(article: { topic_list: "DNA, Family History", location_list: "Devon" })
+include CategoryTextAttachable
+attach_categories_from_text(a, params_scope: :article)
+puts a.categories.pluck(:name,:category_type)
+'

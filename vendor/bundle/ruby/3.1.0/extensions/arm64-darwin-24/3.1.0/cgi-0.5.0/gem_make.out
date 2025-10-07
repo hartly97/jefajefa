@@ -1,0 +1,16 @@
+current directory: /Users/michelleghartley/projects/jefajefa/vendor/bundle/ruby/3.1.0/gems/cgi-0.5.0/ext/cgi/escape
+/Users/michelleghartley/.rbenv/versions/3.1.4/bin/ruby -I /Users/michelleghartley/.rbenv/versions/3.1.4/lib/ruby/3.1.0 extconf.rb
+creating Makefile
+
+current directory: /Users/michelleghartley/projects/jefajefa/vendor/bundle/ruby/3.1.0/gems/cgi-0.5.0/ext/cgi/escape
+make DESTDIR\= sitearchdir\=./.gem.20250922-34957-t5iwde sitelibdir\=./.gem.20250922-34957-t5iwde clean
+
+current directory: /Users/michelleghartley/projects/jefajefa/vendor/bundle/ruby/3.1.0/gems/cgi-0.5.0/ext/cgi/escape
+make DESTDIR\= sitearchdir\=./.gem.20250922-34957-t5iwde sitelibdir\=./.gem.20250922-34957-t5iwde
+compiling escape.c
+linking shared-object cgi/escape.bundle
+ld: warning: ignoring duplicate libraries: '-lruby.3.1'
+
+current directory: /Users/michelleghartley/projects/jefajefa/vendor/bundle/ruby/3.1.0/gems/cgi-0.5.0/ext/cgi/escape
+make DESTDIR\= sitearchdir\=./.gem.20250922-34957-t5iwde sitelibdir\=./.gem.20250922-34957-t5iwde install
+/usr/bin/install -c -m 0755 escape.bundle ./.gem.20250922-34957-t5iwde/cgi

@@ -1,0 +1,42 @@
+
+
+<%= form_with url: censuses_path, method: :get, local: true, class: "row g-3 align-items-end" do %>
+  <div class="col-md-4">
+    <%= label_tag :q, "Search (district / subdistrict / place / slug)", class: "form-label" %>
+    <%= text_field_tag :q, params[:q].to_s, class: "form-control", placeholder: "Type to search…" %>
+  </div>
+
+  <div class="col-auto">
+    <%= label_tag :year, "Year", class: "form-label" %>
+    <%= select_tag :year,
+        options_for_select([["— Any —",""]] + @years.map { |y| [y, y] }, params[:year]),
+        class: "form-select" %>
+  </div>
+
+  <div class="col-auto">
+    <%= label_tag :district, "District", class: "form-label" %>
+    <%= select_tag :district,
+        options_for_select([["— Any —",""]] + @districts.map { |d| [d, d] }, params[:district]),
+        class: "form-select" %>
+  </div>
+
+  <div class="col-auto">
+    <%= label_tag :piece, "Piece", class: "form-label" %>
+    <%= text_field_tag :piece, params[:piece], class: "form-control", placeholder: "e.g., 1234" %>
+  </div>
+
+  <div class="col-auto">
+    <%= label_tag :folio, "Folio", class: "form-label" %>
+    <%= text_field_tag :folio, params[:folio], class: "form-control" %>
+  </div>
+
+  <div class="col-auto">
+    <%= label_tag :page, "Page", class: "form-label" %>
+    <%= text_field_tag :page, params[:page], class: "form-control" %>
+  </div>
+
+  <div class="col-auto">
+    <%= submit_tag "Filter", class: "btn btn-primary mt-4" %>
+    <%= link_to "Reset", censuses_path, class: "btn btn-link mt-4" %>
+  </div>
+<% end %>

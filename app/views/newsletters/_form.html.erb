@@ -1,0 +1,69 @@
+<%= form_with model: @newsletter, local: true, html: { multipart: true }, data: { turbo: false } do |f| %>
+  <% if @newsletter.errors.any? %>
+    <div class="alert alert-danger">
+      <strong><%= pluralize(@newsletter.errors.count, "error") %> prevented saving:</strong>
+      <ul class="mb-0">
+        <% @newsletter.errors.full_messages.each { |m| %><li><%= m %></li><% } %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= f.label :title, class: "form-label" %>
+    <%= f.text_field :title, class: "form-control", autofocus: true %>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-md-4">
+      <%= f.label :volume, class: "form-label" %>
+      <%= f.text_field :volume, class: "form-control" %>
+    </div>
+    <div class="col-md-4">
+      <%= f.label :number, class: "form-label" %>
+      <%= f.text_field :number, class: "form-control" %>
+    </div>
+    <div class="col-md-4">
+      <%= f.label :version, class: "form-label" %>
+      <%= f.select :version, [["",""],["01","01"],["02","02"],["03","03"],["04","04"],["05","05"]], {}, class: "form-select" %>
+    </div>
+  </div>
+
+  <div class="row g-3 mt-0">
+    <div class="col-md-4">
+      <%= f.label :month, class: "form-label" %>
+      <%= f.select :month,
+            [["",""],["Jan","Jan"],["Feb","Feb"],["Mar","Mar"],["Apr","Apr"],["May","May"],["Jun","Jun"],
+             ["Jul","Jul"],["Aug","Aug"],["Sep","Sep"],["Oct","Oct"],["Nov","Nov"],["Dec","Dec"]],
+            {}, class: "form-select" %>
+    </div>
+    <div class="col-md-4">
+      <%= f.label :day, class: "form-label" %>
+      <%= f.number_field :day, in: 1..31, class: "form-control" %>
+    </div>
+    <div class="col-md-4">
+      <%= f.label :year, class: "form-label" %>
+      <%= f.select :year, (2005..(Time.zone.today.year + 3)).map { |y| [y, y] }, {}, class: "form-select" %>
+    </div>
+  </div>
+
+  <div class="mt-3">
+    <%= f.label :content, class: "form-label" %>
+    <%= f.rich_text_area :content %>
+  </div>
+
+  <div class="mt-3">
+    <%= f.label :pdf, "Newsletter PDF", class: "form-label" %>
+    <%= f.file_field :pdf, class: "form-control", accept: "application/pdf" %>
+
+    <% if (att = @newsletter.try(:pdf)) && att.respond_to?(:attached?) && att.attached? %>
+      <div class="mt-2">
+        <%= link_to "View current PDF", url_for(att), target: "_blank", rel: "noopener" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mt-4 d-flex gap-2">
+    <%= f.submit "Save", class: "btn btn-primary"  %>
+    <%= link_to "Cancel", newsletters_path, class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>

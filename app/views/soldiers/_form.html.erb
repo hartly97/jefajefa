@@ -1,49 +1,47 @@
-<%= form_with model: @soldier do |f| %>
-   <fieldset>
-    <%= render "list", soldiers: (@soldiers || Soldier.none) %>
-  #   <legend>Soldier
-  </legend>
-  #   <div>
-  #     <%= f.label :first_name %>
-  #     <%#= f.text_field :first_name %>
-  #   </div>
-  #   <div>
-  #     <%= f.label :last_name %>
-  #     <%= f.text_field :last_name %>
-  #   </div>
-   </fieldset>
+<%= form_with model: @soldier, local: true do |f| %>
 
-  <fieldset>
-    <legend>Cemetery</legend>
-    <%= f.collection_select :cemetery_id, Cemetery.order(:name), :id, :name, include_blank: true %>
+  
+
+  <fieldset class="mb-3">
+    <legend>Soldier</legend>
+    <div class="mb-2">
+      <%= f.label :first_name %>
+      <%= f.text_field :first_name, class: "form-control" %>
+    </div>
+    <div class="mb-2">
+      <%= f.label :last_name %>
+      <%= f.text_field :last_name, class: "form-control" %>
+    </div>
   </fieldset>
 
-  <fieldset>
+  <fieldset class="mb-3">
+    <legend>Cemetery</legend>
+    <%= f.collection_select :cemetery_id, Cemetery.order(:name), :id, :name,
+          { include_blank: true }, class: "form-select" %>
+  </fieldset>
+
+  <fieldset class="mb-3">
     <legend>Awards (not medals)</legend>
     <%= f.fields_for :awards do |af| %>
       <div class="border p-2 mb-3 rounded">
-        <%= af.label :name %>
-        <%= af.text_field :name, placeholder: "e.g., Community Service Award" %>
-        <%= af.label :country %>
-        <%= af.text_field :country %>
-        <%= af.label :year %>
-        <%= af.number_field :year, in: 1000..3000, step: 1 %>
-        <%= af.label :note %>
-        <%= af.text_area :note, rows: 2 %>
-        <label><%= af.check_box :_destroy %> Remove</label>
+        <div class="row g-2">
+          <div class="col-md-5"><%= af.label :name %><%= af.text_field :name, class: "form-control", placeholder: "e.g., Community Service Award" %></div>
+          <div class="col-md-3"><%= af.label :country %><%= af.text_field :country, class: "form-control" %></div>
+          <div class="col-md-2"><%= af.label :year %><%= af.number_field :year, in: 1000..3000, step: 1, class: "form-control" %></div>
+          <div class="col-12"><%= af.label :note %><%= af.text_area :note, rows: 2, class: "form-control" %></div>
+          <div class="col-12 form-check mt-1"><label class="form-check-label"><%= af.check_box :_destroy, class: "form-check-input" %> Remove</label></div>
+        </div>
       </div>
     <% end %>
   </fieldset>
 
-  <fieldset>
+  <fieldset class="mb-3">
     <legend>Citations</legend>
-    <div data-controller="citations"
-         data-citations-index-value="<%= @soldier.citations.size %>">
-
+    <div data-controller="citations" data-citations-index-value="<%= @soldier.citations.size %>">
       <div data-citations-target="list">
         <% f.fields_for :citations do |cf| %>
           <div data-citations-wrapper>
-            <%= render "citations/fields", f: cf, sources: @sources %>
+            <%= render "citations/fields", cf: cf, sources: (@sources || Source.order(:title)) %>
           </div>
         <% end %>
       </div>
@@ -51,50 +49,77 @@
       <template data-citations-target="template">
         <div data-citations-wrapper>
           <%= f.fields_for :citations, Citation.new, child_index: "NEW_RECORD" do |cf| %>
-            <%= render "citations/fields", f: cf, sources: @sources %>
+            <%= render "citations/fields", cf: cf, sources: (@sources || Source.order(:title)) %>
           <% end %>
         </div>
       </template>
 
-      <p>
-        <button type="button"
-                class="btn btn-sm btn-outline-primary"
-                data-action="citations#add">Add citation</button>
+      <p class="mt-2">
+        <button type="button" class="btn btn-sm btn-outline-primary" data-action="citations#add">
+          Add citation
+        </button>
       </p>
     </div>
   </fieldset>
 
-  <fieldset>
+  <fieldset class="mb-3">
     <legend>Medals</legend>
     <%= f.fields_for :soldier_medals do |mf| %>
       <div class="border p-2 mb-3 rounded">
-        <%= mf.label :medal_id, "Medal" %>
-        <%= mf.collection_select :medal_id, Medal.order(:name), :id, :name, include_blank: true %>
-        <%= mf.label :year %>
-        <%= mf.number_field :year, in: 1000..3000, step: 1 %>
-        <%= mf.label :note %>
-        <%= mf.text_area :note, rows: 2 %>
-        <label><%= mf.check_box :_destroy %> Remove</label>
+        <div class="row g-2">
+          <div class="col-md-6">
+            <%= mf.label :medal_id, "Medal" %>
+            <%= mf.collection_select :medal_id, Medal.order(:name), :id, :name, { include_blank: true }, class: "form-select" %>
+          </div>
+          <div class="col-md-2"><%= mf.label :year %><%= mf.number_field :year, in: 1000..3000, step: 1, class: "form-control" %></div>
+          <div class="col-12"><%= mf.label :note %><%= mf.text_area :note, rows: 2, class: "form-control" %></div>
+          <div class="col-12 form-check mt-1"><label class="form-check-label"><%= mf.check_box :_destroy, class: "form-check-input" %> Remove</label></div>
+        </div>
       </div>
     <% end %>
   </fieldset>
 
-  <fieldset>
+  <fieldset class="mb-3">
     <legend>Wars</legend>
     <%= f.collection_select :category_ids,
           Category.wars.order(:name), :id, :name,
           { include_hidden: false },
-          { multiple: true, size: 6 } %>
+          { multiple: true, size: 6, class: "form-select" } %>
   </fieldset>
 
-  <fieldset>
+  <fieldset class="mb-4">
     <legend>Battles</legend>
     <%= f.collection_select :category_ids,
           Category.battles.order(:name), :id, :name,
           { include_hidden: false },
-          { multiple: true, size: 8 } %>
+          { multiple: true, size: 8, class: "form-select" } %>
   </fieldset>
-  
+  <fieldset class="mb-3">
+  <legend>Involvements</legend>
 
-  <%= f.submit %>
+  <div data-controller="involvements" data-involvements-index-value="<%= @soldier.involvements.size %>">
+    <div data-involvements-target="list">
+      <% f.fields_for :involvements do |ivf| %>
+        <div data-involvements-wrapper>
+          <%= render "soldiers/involvement_fields", ivf: ivf %>
+        </div>
+      <% end %>
+    </div>
+
+    <template data-involvements-target="template">
+      <div data-involvements-wrapper>
+        <%= f.fields_for :involvements, Involvement.new, child_index: "NEW_RECORD" do |ivf| %>
+          <%= render "soldiers/involvement_fields", ivf: ivf %>
+        <% end %>
+      </div>
+    </template>
+
+    <p class="mt-2">
+      <button type="button" class="btn btn-sm btn-outline-primary" data-action="involvements#add">Add involvement</button>
+    </p>
+  </div>
+</fieldset>
+
+
+  <%= f.submit "Save", class: "btn btn-primary" %>
 <% end %>

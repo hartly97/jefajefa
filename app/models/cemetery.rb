@@ -1,13 +1,12 @@
-
- class Cemetery < ApplicationRecord
+class Cemetery < ApplicationRecord
   include Sluggable
   include Categorizable
-  # include Relatable
   include Citable
 
-  has_many :soldiers
+  has_many :citations, as: :citable, dependent: :destroy
+  has_many :involvements, as: :involvable, dependent: :destroy, inverse_of: :involvable
+  has_many :soldiers, through: :involvements, source: :participant, source_type: "Soldier"
 
   validates :name, presence: true
-
   def slug_source = name
 end

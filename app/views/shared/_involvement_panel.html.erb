@@ -1,0 +1,68 @@
+<!-- app/views/shared/_involvements_panel.html.erb -->
+<%# locals: involvable:, inv_label: "Soldier" (optional) %>
+<% type    = involvable.class.name %>
+<% dom_key = dom_id(involvable, :soldier_suggest) %>
+
+<section data-controller="involvement-form" class="my-3">
+  <form
+    data-involvement-form-target="form"
+    data-involvable-type="<%= type %>"
+    data-involvable-id="<%= involvable.id %>"
+    class="row g-2 align-items-end mb-3">
+
+    <div class="col-md-5">
+      <label class="form-label"><%= local_assigns[:inv_label] || "Soldier" %></label>
+      <input type="text"
+             class="form-control"
+             list="<%= dom_key %>"
+             placeholder="Type to search soldiers…"
+             data-involvement-form-target="search">
+      <datalist id="<%= dom_key %>" data-involvement-form-target="suggest"></datalist>
+      <input type="hidden" data-involvement-form-target="participantId">
+    </div>
+
+    <div class="col-md-2">
+      <label class="form-label">Role</label>
+      <input type="text" class="form-control" data-involvement-form-target="role">
+    </div>
+
+    <div class="col-md-2">
+      <label class="form-label">Year</label>
+      <input type="number" min="1" max="3000" step="1" class="form-control" data-involvement-form-target="year">
+    </div>
+
+    <div class="col-md-3">
+      <label class="form-label">Note</label>
+      <input type="text" class="form-control" data-involvement-form-target="note">
+    </div>
+
+    <div class="col-12 mt-2">
+      <button type="button"
+              class="btn btn-sm btn-outline-primary"
+              data-action="click->involvement-form#add">
+        Add
+      </button>
+    </div>
+  </form>
+
+  <ul class="list-unstyled" data-involvement-form-target="list">
+    <% involvable.involvements.includes(:participant).order(:year, :id).each do |inv| %>
+      <li class="mb-2" data-involvement-row="<%= inv.id %>">
+        <%= link_to(
+              (inv.participant.try(:display_name) ||
+               [inv.participant.try(:first_name), inv.participant.try(:last_name)].compact.join(" ").presence ||
+               "Soldier ##{inv.participant_id}"),
+              inv.participant
+            ) %>
+        <%= " — " + content_tag(:strong, inv.role) if inv.role.present? %>
+        <%= " (#{inv.year})" if inv.year.present? %>
+        <%= " — " + content_tag(:em, inv.note) if inv.note.present? %>
+        <button class="btn btn-sm btn-outline-danger ms-2"
+                data-action="click->involvement-form#remove"
+                data-involvement-form-id-param="<%= inv.id %>">
+          Remove
+        </button>
+      </li>
+    <% end %>
+  </ul>
+</section>

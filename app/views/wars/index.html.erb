@@ -1,6 +1,11 @@
 <h1>Wars</h1>
-<ul><% @wars.each do |war| %>
-    <li><%= link_to war.name, war%></li>
+<ul>
+<% @wars.each do |war| %>
+    <li>
+    <%= link_to war.name, war %>
+    </li>
     <% end %>
     </ul>
-    <p><%= link_to 'New', new_war_path %></p>
+    <p>
+    <%= link_to 'New', new_war_path %>
+    </p>

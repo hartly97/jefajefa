@@ -1,0 +1,21 @@
+<% grouped_citations_by_source(@record).each do |src, cites| %>
+  <div class="p-3 rounded border bg-light mb-3">
+    <h3 class="h5 mb-2 d-flex align-items-center gap-2">
+      <% title = src&.title.presence || "(no source)" %>
+      <% if src %>
+        <%= link_to title, src, class: "text-decoration-none" %>
+      <% else %>
+        <%= title %>
+      <% end %>
+    </h3>
+
+    <ul class="mb-0">
+      <% cites.each do |c| %>
+        <li>
+          <%= [c.pages.presence || c.page.presence, c.locator.presence].compact.join(" · ") %>
+          <% if c.quote.present? %><br><em><%= c.quote %></em><% end %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

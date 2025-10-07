@@ -1,0 +1,25 @@
+module CitationsHelper
+  # Works with any record that responds to `citations`
+  # (e.g., Article, Soldier, Battle, Cemetery).
+  # def grouped_citations_by_source(citable)
+  #   scope = citable.citations
+  #   scope = scope.includes(:source) if scope.respond_to?(:includes)
+
+  #   scope
+  #     .sort_by { |c| [c.source&.title.to_s.downcase, (c.pages || c.page).to_s, c.id] }
+  #     .group_by { |c| c.source&.title.presence || "(no source)" }
+  # end
+# end
+module CitationsHelper
+  # Returns [[source, [citations...]], ...] with eager loading
+  def grouped_citations_by_source(citable)
+    return [] unless citable.respond_to?(:citations)
+
+    citable.citations
+           .includes(:source)
+           .group_by { |c| c.source }              # group by Source object
+           .sort_by { |src, _| src&.title.to_s.downcase }
+           .map { |src, cites| [src, cites] }
+  end
+end
+

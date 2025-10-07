@@ -10,10 +10,48 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_09_19_164020) do
+ActiveRecord::Schema[7.1].define(version: 2025_10_05_023705) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
+
+  create_table "action_text_rich_texts", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "body"
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
+  end
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
 
   create_table "articles", force: :cascade do |t|
     t.string "title", null: false
@@ -22,8 +60,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_19_164020) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "description"
-    t.date "posteddate"
     t.string "author"
+    t.datetime "date"
     t.index ["slug"], name: "index_articles_on_slug", unique: true
   end
 
@@ -48,6 +86,17 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_19_164020) do
     t.index ["war_id"], name: "index_battles_on_war_id"
   end
 
+  create_table "books", force: :cascade do |t|
+    t.string "name"
+    t.string "page_number"
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "transcription"
+    t.string "transcriptiontwo"
+    t.index ["name"], name: "index_books_on_name"
+  end
+
   create_table "categories", force: :cascade do |t|
     t.string "name", null: false
     t.string "category_type"
@@ -55,7 +104,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_19_164020) do
     t.string "slug", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index "lower((name)::text)", name: "idx_categories_lower_name"
     t.index ["category_type", "name"], name: "index_categories_on_category_type_and_name"
+    t.index ["name", "category_type"], name: "index_categories_on_name_and_category_type", unique: true
     t.index ["slug"], name: "index_categories_on_slug", unique: true
   end
 
@@ -197,6 +248,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_19_164020) do
     t.bigint "source_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "external_image_url"
+    t.string "external_image_caption"
+    t.string "external_image_credit"
     t.index ["country", "year", "district", "subdistrict", "piece", "folio", "page"], name: "idx_censuses_locator"
     t.index ["slug"], name: "index_censuses_on_slug", unique: true
     t.index ["source_id"], name: "index_censuses_on_source_id"
@@ -240,8 +294,12 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_19_164020) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["involvable_type", "involvable_id"], name: "index_involvements_on_involvable_type_and_involvable_id"
-    t.index ["participant_type", "participant_id", "involvable_type", "involvable_id"], name: "index_involvements_unique_link", unique: true
+    t.index ["participant_type", "participant_id", "involvable_type", "involvable_id"], name: "idx_involvements_unique_link", unique: true
     t.index ["participant_type", "participant_id"], name: "index_involvements_on_participant_type_and_participant_id"
+    t.check_constraint "char_length(COALESCE(role, ''::character varying)::text) <= 100", name: "chk_inv_role_length"
+    t.check_constraint "involvable_type::text = ANY (ARRAY['War'::character varying, 'Battle'::character varying, 'Cemetery'::character varying]::text[])", name: "chk_inv_involvable_type"
+    t.check_constraint "participant_type::text = 'Soldier'::text", name: "chk_inv_participant_type"
+    t.check_constraint "year IS NULL OR year > 0 AND year < 3000", name: "chk_inv_year_range"
   end
 
   create_table "medals", force: :cascade do |t|
@@ -251,6 +309,21 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_19_164020) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["slug"], name: "index_medals_on_slug", unique: true
+  end
+
+  create_table "newsletters", force: :cascade do |t|
+    t.string "volume", null: false
+    t.string "number", null: false
+    t.string "day", null: false
+    t.string "month", null: false
+    t.string "year", null: false
+    t.string "title", null: false
+    t.string "slug", null: false
+    t.string "version"
+    t.string "content"
+    t.string "image"
+    t.string "file_name"
+    t.index ["slug"], name: "index_newsletters_on_slug", unique: true
   end
 
   create_table "or_patch_soldier_medals", force: :cascade do |t|
@@ -297,6 +370,15 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_19_164020) do
     t.string "slug", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "birth_date"
+    t.string "death_date"
+    t.string "deathplace"
+    t.string "birthplace"
+    t.string "first_enlisted_start_date"
+    t.string "first_enlisted_end_date"
+    t.string "first_enlisted_place"
+    t.string "branch_of_service"
+    t.string "unit"
     t.index ["cemetery_id"], name: "index_soldiers_on_cemetery_id"
     t.index ["last_name", "first_name"], name: "index_soldiers_on_last_name_and_first_name"
     t.index ["slug"], name: "index_soldiers_on_slug", unique: true
@@ -331,10 +413,12 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_19_164020) do
     t.index ["slug"], name: "index_wars_on_slug", unique: true
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "awards", "soldiers"
   add_foreign_key "battles", "wars"
   add_foreign_key "categorizations", "categories"
-  add_foreign_key "census_entries", "censuses", column: "census_id"
+  add_foreign_key "census_entries", "censuses"
   add_foreign_key "census_entries", "soldiers"
   add_foreign_key "censuses", "sources"
   add_foreign_key "citations", "sources"

@@ -1,0 +1,61 @@
+<!-- app/views/soldiers/_involvement_fields.html.erb -->
+<div class="border p-2 mb-3 rounded" data-controller="involvement-picker">
+  <%# Hidden polymorphic fields the picker will maintain %>
+  <%= ivf.hidden_field :involvable_type, data: { "involvement-picker-target": "typeField" } %>
+  <%= ivf.hidden_field :involvable_id,   data: { "involvement-picker-target": "idField" } %>
+
+  <div class="row g-2">
+    <div class="col-md-3">
+      <%= label_tag nil, "Type" %>
+      <%= select_tag :_involvable_type,
+            options_for_select([["War","War"],["Battle","Battle"],["Cemetery","Cemetery"]],
+                               ivf.object.involvable_type.presence || "War"),
+            class: "form-select",
+            data: { action: "change->involvement-picker#changeType",
+                    "involvement-picker-target": "typeSelect" } %>
+    </div>
+
+    <div class="col-md-5">
+      <%= label_tag nil, "Choose War/Battle/Cemetery" %>
+      <% wars    = War.order(:name) %>
+      <% battles = Battle.order(:name) %>
+      <% cemets  = Cemetery.order(:name) %>
+      <%= select_tag :_war_select,
+            options_from_collection_for_select(wars, :id, :name, ivf.object.involvable_type == "War" ? ivf.object.involvable_id : nil),
+            include_blank: "— Pick a war —",
+            class: "form-select",
+            data: { action: "change->involvement-picker#pick",
+                    "involvement-picker-target": "warSelect" } %>
+      <%= select_tag :_battle_select,
+            options_from_collection_for_select(battles, :id, :name, ivf.object.involvable_type == "Battle" ? ivf.object.involvable_id : nil),
+            include_blank: "— Pick a battle —",
+            class: "form-select mt-1",
+            data: { action: "change->involvement-picker#pick",
+                    "involvement-picker-target": "battleSelect" } %>
+      <%= select_tag :_cemetery_select,
+            options_from_collection_for_select(cemets, :id, :name, ivf.object.involvable_type == "Cemetery" ? ivf.object.involvable_id : nil),
+            include_blank: "— Pick a cemetery —",
+            class: "form-select mt-1",
+            data: { action: "change->involvement-picker#pick",
+                    "involvement-picker-target": "cemeterySelect" } %>
+    </div>
+
+    <div class="col-md-2">
+      <%= ivf.label :year %>
+      <%= ivf.number_field :year, in: 1000..3000, step: 1, class: "form-control" %>
+    </div>
+    <div class="col-md-2">
+      <%= ivf.label :role %>
+      <%= ivf.text_field :role, class: "form-control" %>
+    </div>
+    <div class="col-12">
+      <%= ivf.label :note %>
+      <%= ivf.text_area :note, rows: 2, class: "form-control" %>
+    </div>
+    <div class="col-12 mt-1">
+      <label class="form-check-label">
+        <%= ivf.check_box :_destroy, class: "form-check-input" %> Remove
+      </label>
+    </div>
+  </div>
+</div>
