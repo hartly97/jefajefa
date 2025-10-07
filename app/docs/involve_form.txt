@@ -1,0 +1,19 @@
+Quick Stimulus cheatsheet (for your future self)
+
+Controller identifier = file name without _controller.js, snake_case → hyphen-case.
+involvement_form_controller.js → involvement-form.
+
+data-controller = attach a controller instance to an element.
+Descendants can call its methods with data-action.
+
+data-action = “on EVENT, call CONTROLLER#METHOD”.
+Always write the event explicitly: click->involvement-form#add.
+
+Targets = named handles to elements inside the controller’s scope.
+data-involvement-form-target="list" → this.listTarget.
+
+Params = tiny values attached to the eventing element.
+data-involvement-form-id-param="42" → event.params.id === "42".
+
+Make sure it’s registered (Importmap):
+run bin/rails stimulus:manifest:update once after adding new controllers, then hard refresh.

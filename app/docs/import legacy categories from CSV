@@ -1,0 +1,87 @@
+# Import Legacy Categories from CSV
+
+This script imports old join-table category data (e.g., `article_categories.csv`, `cemetery_categories.csv`) into the **new polymorphic category system**.
+
+## Location of CSVs
+Place all legacy category CSVs inside:
+```
+data/legacy/
+```
+
+Each CSV must have at least:
+- `category_name`
+- the foreign key to the target model (e.g., `article_id`, `cemetery_id`, etc.)
+
+Example: `article_categories.csv`
+```csv
+category_name,article_id
+DNA,1
+Genealogy,2
+```
+
+## File Naming Rules
+The script tries to **infer** the target model, category type, and foreign key based on file name.
+
+Default mapping:
+| File pattern                | Target model | Category type | Foreign key    |
+|-----------------------------|--------------|---------------|----------------|
+| article_categories.csv      | Article      | topic         | article_id     |
+| cemetery_categories.csv     | Cemetery     | location      | cemetery_id    |
+| census_categories.csv       | Census       | source        | census_id      |
+| medal_categories.csv        | Medal        | topic         | medal_id       |
+| resource_categories.csv     | Resource     | source        | resource_id    |
+| soldier_categories.csv      | Soldier      | topic         | soldier_id     |
+| source_categories.csv       | Source       | source        | source_id      |
+| battle_categories.csv       | Battle       | topic         | battle_id      |
+| war_categories.csv          | War          | topic         | war_id         |
+
+## Overrides for Odd File Names
+If your CSVs have unusual names, add them to the `OVERRIDES` hash in:
+```
+scripts/import_legacy_categories_from_csv.rb
+```
+Example:
+```ruby
+OVERRIDES = {
+  "weird_file.csv" => { target: "Article", type: "topic", id_field: "article_id" }
+}
+```
+
+## Running the Import
+From your Rails app root:
+```bash
+bin/rails runner scripts/import_legacy_categories_from_csv.rb
+```
+
+## What the Script Does
+For each row in each CSV:
+1. Finds or creates a `Category` with the given `name` and `category_type`.
+2. Fills in the `slug` if blank.
+3. Finds the target record (Article, Cemetery, etc.) by the foreign key.
+4. Creates a `Categorization` linking them (if not already linked).
+
+## Output Example
+```
+→ Importing article_categories.csv → Article (topic), id_field=article_id
+   ✅ rows: 123, +categorizations: 120, missing_name: 0, missing_target: 3
+```
+
+## Safety Notes
+- **Backup** your database before running:
+  ```bash
+  pg_dump your_db > backup.sql
+  ```
+  or  
+  ```bash
+  mysqldump your_db > backup.sql
+  ```
+- The script is idempotent — running it again will not create duplicates.
+- It skips rows without `category_name` or without a valid target record.
+
+## After Import
+You can verify results:
+```bash
+bin/rails r "puts Category.count"
+bin/rails r "puts Categorization.count"
+bin/rails r "pp Category.find_by(name: 'DNA')&.articles&.pluck(:id, :title)"
+```

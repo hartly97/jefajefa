@@ -1,0 +1,19 @@
+I'm not really familiar with Stimulus yet. what does this mean? data-action points to involvement-form#add
+
+Totally fair question! In Stimulus, data-action="click->involvement-form#add" means:
+
+“When this element is clicked, call the add method on the Stimulus controller whose identifier is involvement-form.”
+
+Here’s the 10-second map from files → HTML:
+
+File name: app/javascript/controllers/involvement_form_controller.js
+
+Controller identifier: involvement-form (file snake_case → hyphenated)
+
+Attach the controller: data-controller="involvement-form" on some container
+
+Call a method on an event: data-action="click->involvement-form#add"
+
+Expose elements as “targets”: data-involvement-form-target="form" → this.formTarget
+
+Pass small params from HTML: data-involvement-form-id-param="123" → event.params.id
