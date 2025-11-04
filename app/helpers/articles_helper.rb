@@ -12,3 +12,4 @@ module ArticlesHelper
     groups.sort_by { |src, _| [src.nil? ? 1 : 0, src&.title.to_s.downcase] }
   end
 end
+

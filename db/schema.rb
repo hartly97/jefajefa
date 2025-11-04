@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_10_07_002511) do
+ActiveRecord::Schema[7.1].define(version: 2025_10_10_021118) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -159,9 +159,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_07_002511) do
     t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "slug"
     t.index ["census_id", "householdid", "linenumber"], name: "idx_census_entries_loc"
     t.index ["census_id"], name: "index_census_entries_on_census_id"
     t.index ["lastname", "firstname"], name: "index_census_entries_on_lastname_and_firstname"
+    t.index ["slug"], name: "index_census_entries_on_slug", unique: true, where: "(slug IS NOT NULL)"
     t.index ["soldier_id"], name: "index_census_entries_on_soldier_id"
   end
 

@@ -7,11 +7,14 @@ class SourcesController < ApplicationController
   end
 
   def show
-   end
+  end
+
   def new
      @source = Source
-    end
-  def edit; end
+  end
+
+  def edit
+  end
 
   def create
     @source = Source.new(source_params)

@@ -23,6 +23,17 @@
              soldier.try(:death_month_name),
              soldier.try(:death_year)].compact.join(" ") %>
       </p>
+<!-- Service & units -->
+      <div class="mb-2">
+  <%= f.label :unit %>
+  <%= f.text_field :unit, class: "form-control" %>
+</div>
+
+<div class="mb-2">
+  <%= f.label :branch_of_service, "Branch of Service" %>
+  <%= f.text_field :branch_of_service, class: "form-control" %>
+</div>
+
 
       <%# Parents %>
       <p class="mb-1"><strong>Father:</strong> <%= soldier.try(:fathername) %></p>

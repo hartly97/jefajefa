@@ -4,17 +4,26 @@
 
 <%= render "shared/involvements_panel", involvable: @war %>
 
-
 <h2>Involvements</h2>
-<% if @involvements.present? %>
+<% invs = @involvements || @war.involvements.includes(:participant).order(:year, :id) %>
+<% if invs.any? %>
   <ul>
-    <% @involvements.each do |inv| %>
+    <% invs.each do |inv| %>
+      <% s = inv.participant %>
       <li>
-        <% s = inv.participant %>
-        <%= link_to(s.respond_to?(:display_name) ? s.display_name : inv.participant_label, s) if s %>
-        <%== " — <strong>#{ERB::Util.html_escape(inv.role)}</strong>" if inv.role.present? %>
+        <% if s %>
+          <%= link_to(
+                s.respond_to?(:display_name) ? s.display_name :
+                  ([s.try(:first_name), s.try(:last_name)].compact.join(" ").presence || "Soldier ##{inv.participant_id}"),
+                s
+              ) %>
+        <% else %>
+          Soldier #<%= inv.participant_id %>
+        <% end %>
+
+        <%= " — " + content_tag(:strong, inv.role) if inv.role.present? %>
         <%= " (#{inv.year})" if inv.year.present? %>
-        <%= " — #{inv.note}"  if inv.note.present? %>
+        <%= " — " + content_tag(:em, inv.note)  if inv.note.present? %>
       </li>
     <% end %>
   </ul>
