@@ -5,7 +5,7 @@ class SoldiersController < ApplicationController
 
   # GET /soldiers
   # app/controllers/soldiers_controller.rb  (index action only)
-def index
+# def index
   # @q = params[:q].to_s.strip
   # scope = Soldier.order(:last_name, :first_name)
   # scope = scope.search_name(@q) if @q.present?
@@ -171,7 +171,7 @@ end
       :first_name, :middle_name, :last_name,
       :birth_date, :birthcity, :birthstate, :birthcountry,
       :death_date, :deathcity, :deathstate, :deathcountry, :deathplace,
-      :cemetery_id,
+      :cemetery_id, :unit, :branch_of_service, 
       { category_ids: [] },
 
       # Awards (not medals)
@@ -192,4 +192,4 @@ end
       ]
     )
   end
-end
+

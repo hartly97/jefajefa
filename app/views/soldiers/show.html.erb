@@ -3,30 +3,23 @@
 <h2><% @soldier.birthplace %><h2>
 <h2><% @soldier.death_date %><h2>
 <h2><% @soldier.deathplace %><h2>
-<h2><% @soldier.branch_of_service %><h2>
 
-<h2><% @soldier.unit %><h2>
-<h2<%# @soldier.%><h2>
+<h2><% if @soldier.branch_of_service.present? %>
+  <p></h2><strong>Branch:</strong> <%= @soldier.branch_of_service %></p>
+<% end %>
 
-<h2><% @soldier.first_enlisted_start_date %><h2>
+<h2><% if @soldier.unit.present? %>
+  <p><strong>Unit:</strong> <%= @soldier.unit %></p></h2>
+<% end %>
+
+<h2>
+
+<h2><% @soldier first_enlisted_start_date %></h2>
 <h2><% @soldier.first_enlisted_end_date %><h2>
 
 
 <%= render "shared/citations", citable: @soldier, heading: "Soldier Citations" %>
 
-# <h3>Wars</h3>
-# <ul>
-#   <%# Array(@soldier.try(:wars)).sort_by { |w| w.name.to_s }.each do |war| %>
-#     <li><%#= link_to war.name, war %></li>
-#   <%# end %>
-# </ul>
-
-# <h3>Battles</h3>
-# <ul>
-#   <%# Array(@soldier.try(:battles)).sort_by { |b| b.name.to_s }.each do |b| %>
-#     <li><%#= link_to b.name, b %></li>
-#   <% end %>
-# </ul>
 
 <% wars = @soldier.involvements.where(involvable_type: "War").includes(:involvable).order(:year, :id) %>
 <% if wars.any? %>

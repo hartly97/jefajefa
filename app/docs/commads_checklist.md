@@ -1,3 +1,6 @@
+bin/rails categories:report
+
+
 bundle exec erblint app/views/soldiers
 
 Index Health Check — Quick Guide

@@ -2,32 +2,19 @@
 // Run that command whenever you add a new controller or create them with
 // ./bin/rails generate stimulus controllerName
 
-import { Application } from "@hotwired/stimulus"
+import { application } from "./application"
+
 import CitationsController from "./citations_controller"
-import SourcePickerController from "./source_picker_controller"
-
-window.Stimulus = Application.start()
-Stimulus.register("citations", CitationsController)
-Stimulus.register("source-picker", SourcePickerController)
-
-
-const application = Application.start()
-// Load your controllers
 application.register("citations", CitationsController)
 
-// Optional: export if you need to access Application elsewhere
-export { application }
+import HelloController from "./hello_controller"
+application.register("hello", HelloController)
 
-//  import { Application } from "@hotwired/stimulus"
-//   const application = Application.start()
+import InvolvementFormController from "./involvement_form_controller"
+application.register("involvement-form", InvolvementFormController)
 
-//   import CitationsController from "./citations_controller"
-//   application.register("citations", CitationsController)
+import InvolvementsController from "./involvements_controller"
+application.register("involvements", InvolvementsController)
 
-
-
-// import { Application } from "@hotwired/stimulus"
-// import CitationsController from "./citations_controller"
-
-// window.Stimulus = Application.start()
-// Stimulus.register("citations", CitationsController)
+import SourcePickerController from "./source_picker_controller"
+application.register("source-picker", SourcePickerController)

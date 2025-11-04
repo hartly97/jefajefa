@@ -20,15 +20,29 @@ class Soldier < ApplicationRecord
 
   has_many :citations, as: :citable, dependent: :destroy
 
+ 
+
+class Soldier < ApplicationRecord
   scope :by_last_first, -> { order(:last_name, :first_name) }
+
   scope :search_name, ->(q) {
-    like = "%#{q.to_s.downcase}%"
-    next all if q.blank?
-    where(
-      "LOWER(first_name) LIKE :q OR LOWER(last_name) LIKE :q OR LOWER(COALESCE(first_name,'') || ' ' || COALESCE(last_name,'')) LIKE :q OR LOWER(COALESCE(name,'')) LIKE :q OR LOWER(slug) LIKE :q",
-      q: like
-    )
+    q = q.to_s.strip
+    if q.blank?
+      all
+    else
+      like = "%#{ActiveRecord::Base.sanitize_sql_like(q)}%"
+      where(
+        "first_name ILIKE :q OR last_name ILIKE :q OR " \
+        "(COALESCE(first_name,'') || ' ' || COALESCE(last_name,'')) ILIKE :q OR " \
+        "COALESCE(unit,'') ILIKE :q OR COALESCE(branch_of_service,'') ILIKE :q OR " \
+        "COALESCE(slug,'') ILIKE :q",
+        q: like
+      )
+    end
   }
+end
+
+
 
   def display_name
   return name if respond_to?(:name) && name.present?
