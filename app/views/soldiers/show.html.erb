@@ -1,87 +1,10 @@
-<h1><%= @soldier.respond_to?(:display_name) ? @soldier.display_name : [@soldier.first_name, @soldier.last_name].compact.join(" ") %></h1>
-<h2><% @soldier.birth_date%><h2>
-<h2><% @soldier.birthplace %><h2>
-<h2><% @soldier.death_date %><h2>
-<h2><% @soldier.deathplace %><h2>
+<%# app/views/soldiers/show.html.erb %>
+<%= render "card", soldier: @soldier %>
 
-<h2><% if @soldier.branch_of_service.present? %>
-  <p></h2><strong>Branch:</strong> <%= @soldier.branch_of_service %></p>
-<% end %>
+<%= render "shared/citations",
+           citable: @soldier,
+           heading: "Soldier Citations" %>
 
-<h2><% if @soldier.unit.present? %>
-  <p><strong>Unit:</strong> <%= @soldier.unit %></p></h2>
-<% end %>
-
-<h2>
-
-<h2><% @soldier first_enlisted_start_date %></h2>
-<h2><% @soldier.first_enlisted_end_date %><h2>
-
-
-<%= render "shared/citations", citable: @soldier, heading: "Soldier Citations" %>
-
-
-<% wars = @soldier.involvements.where(involvable_type: "War").includes(:involvable).order(:year, :id) %>
-<% if wars.any? %>
-  <h3>Wars</h3>
-  <ul>
-    <% wars.each do |inv| %>
-      <li>
-        <%= link_to inv.involvable.name, inv.involvable %>
-        <%= " (#{inv.year})" if inv.year.present? %>
-        <%= " — #{inv.role}" if inv.role.present? %>
-        <%= " — #{inv.note}" if inv.note.present? %>
-      </li>
-    <% end %>
-  </ul>
-<% end %>
-
-<% battles = @soldier.involvements.where(involvable_type: "Battle").includes(:involvable).order(:year, :id) %>
-<% if battles.any? %>
-  <h3>Battles</h3>
-  <ul>
-    <% battles.each do |inv| %>
-      <li>
-        <%= link_to inv.involvable.name, inv.involvable %>
-        <%= " (#{inv.year})" if inv.year.present? %>
-        <%= " — #{inv.role}" if inv.role.present? %>
-        <%= " — #{inv.note}" if inv.note.present? %>
-      </li>
-    <% end %>
-  </ul>
-<% end %>
-
-
-<h3>Medals</h3>
-<% if @soldier.medals.exists? %>
-  <ul>
-    <% @soldier.medals.order(:name).each do |m| %>
-      <li><%= link_to m.name, m %></li>
-    <% end %>
-  </ul>
-<% else %>
-  <p><em>No medals recorded.</em></p>
-<% end %>
-
-<h3>Awards</h3>
-<% if @soldier.awards.exists? %>
-  <ul>
-    <% @soldier.awards.order(:year, :id).each do |aw| %>
-      <li>
-        <strong><%= aw.name.presence || "(Unnamed award)" %></strong>
-        <%= " (#{aw.year})" if aw.year.present? %>
-        <%= " — #{aw.country}" if aw.country.present? %>
-        <%= " — #{aw.note}"    if aw.note.present? %>
-      </li>
-    <% end %>
-  </ul>
-<% else %>
-  <p><em>No awards recorded.</em></p>
-<% end %>
-
-<h3>Cemetery</h3>
-<p>
-  <%= @soldier.cemetery ? link_to(@soldier.cemetery.name, @soldier.cemetery) : content_tag(:em, "Not recorded") %>
-</p>
-
-<%= render "shared/involvements_for_participant", participant: @soldier, involvements: @soldier.involvements.includes(:involvable) %>
+<%= render "shared/involvements_for_participant",
+           participant: @soldier,
+           involvements: @soldier.involvements.includes(:involvable) %>

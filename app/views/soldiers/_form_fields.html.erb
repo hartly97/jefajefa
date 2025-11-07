@@ -1,0 +1,40 @@
+# <%# app/views/soldiers/_form_fields.html.erb %>
+<div class="mb-2">
+  <%= f.label :first_name %>
+  <%= f.text_field :first_name, class: "form-control" %>
+</div>
+
+<div class="mb-2">
+  <%= f.label :last_name %>
+  <%= f.text_field :last_name, class: "form-control" %>
+</div>
+
+<div class="mb-2">
+  <%= f.label :branch_of_service, "Branch" %>
+  <%= f.text_field :branch_of_service, class: "form-control" %>
+</div>
+
+<div class="mb-2">
+  <%= f.label :unit %>
+  <%= f.text_field :unit, class: "form-control" %>
+</div>
+
+<div class="mb-2">
+  <%= f.label :birth_date %>
+  <%= f.date_field :birth_date, class: "form-control" %>
+</div>
+
+<div class="mb-2">
+  <%= f.label :birthplace %>
+  <%= f.text_field :birthplace, class: "form-control" %>
+</div>
+
+<div class="mb-2">
+  <%= f.label :death_date %>
+  <%= f.date_field :death_date, class: "form-control" %>
+</div>
+
+<div class="mb-2">
+  <%= f.label :deathplace %>
+  <%= f.text_field :deathplace, class: "form-control" %>
+</div>

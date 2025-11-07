@@ -1,73 +1,41 @@
-<div class="card mb-3 redcard rounded shadow">
+<%# app/views/soldiers/_card.html.erb -- expects `soldier` local %>
+<% raise ArgumentError, "soldier local is required" unless defined?(soldier) && soldier %>
+
+<div class="card mb-3">
   <div class="card-body">
-    <h4 class="card-title mb-2">
-      <% name_label =
-     (soldier.respond_to?(:display_name) && soldier.display_name.presence) ||
-     (soldier.respond_to?(:soldiername)   && soldier.soldiername.presence) ||
-     [soldier.first_name, soldier.last_name].compact.join(" ").presence ||
-     soldier.slug %>
-    <%= link_to name_label, soldier, class: "text-color-blue" %>
-  </h4>
+    <h5 class="card-title">
+      <%= soldier.respond_to?(:display_name) ? soldier.display_name : [soldier.first_name, soldier.last_name].compact.join(" ") %>
+    </h5>
 
-    <div class="text-muted mb-2">
-      <%# Birth / Death %>
+    <p class="mb-1">
+      <strong>Birth:</strong>
+      <%= [soldier.birth_date, soldier.birthplace].compact.join(" — ").presence || content_tag(:em, "Not recorded") %>
+    </p>
+
+    <p class="mb-1">
+      <strong>Death:</strong>
+      <%= [soldier.death_date, soldier.deathplace].compact.join(" — ").presence || content_tag(:em, "Not recorded") %>
+    </p>
+
+    <p class="mb-1">
+      <strong>Branch:</strong>
+      <%= soldier.branch_of_service.presence || content_tag(:em, "Not recorded") %>
+    </p>
+
+    <p class="mb-1">
+      <strong>Unit:</strong>
+      <%= soldier.unit.presence || content_tag(:em, "Not recorded") %>
+    </p>
+
+    <% if soldier.respond_to?(:first_enlisted_start_date) || soldier.respond_to?(:first_enlisted_end_date) || soldier.respond_to?(:first_enlisted_place) %>
       <p class="mb-1">
-        <strong>Birth:</strong>
-        <%= [soldier.try(:birth_date),
-             soldier.try(:birth_month_name),
-             soldier.try(:birth_year)].compact.join(" ") %>
+        <strong>First enlistment:</strong>
+        <%= [soldier.try(:first_enlisted_start_date), soldier.try(:first_enlisted_end_date)].compact.join(" → ").presence || content_tag(:em, "Not recorded") %>
+        <%= " — #{soldier.first_enlisted_place}" if soldier.try(:first_enlisted_place).present? %>
       </p>
-      <p class="mb-1">
-        <strong>Death:</strong>
-        <%= [soldier.try(:death_day),
-             soldier.try(:death_month_name),
-             soldier.try(:death_year)].compact.join(" ") %>
-      </p>
-<!-- Service & units -->
-      <div class="mb-2">
-  <%= f.label :unit %>
-  <%= f.text_field :unit, class: "form-control" %>
-</div>
-
-<div class="mb-2">
-  <%= f.label :branch_of_service, "Branch of Service" %>
-  <%= f.text_field :branch_of_service, class: "form-control" %>
-</div>
-
-
-      <%# Parents %>
-      <p class="mb-1"><strong>Father:</strong> <%= soldier.try(:fathername) %></p>
-      <p class="mb-1"><strong>Mother:</strong> <%= soldier.try(:mothername) %></p>
-
-      <%# Cemetery (only if present) %>
-      <% if soldier.respond_to?(:cemetery) && soldier.cemetery.present? %>
-        <p class="mb-1">
-          <strong>Cemetery:</strong>
-          <%= link_to soldier.cemetery.name, soldier.cemetery %>
-        </p>
-      <% end %>
-    </div>
-
-    <%# Categories (chips or comma list) %>
-    <% if soldier.respond_to?(:categories) && soldier.categories.any? %>
-      <div class="mt-2">
-        <% if lookup_context.exists?("categories/category") %>
-          <%= render soldier.categories %>
-        <% else %>
-          <small class="text-muted"><%= soldier.categories.map(&:name).join(", ") %></small>
-        <% end %>
-      </div>
     <% end %>
 
-    <%# Medals (optional) %>
-    <% if soldier.respond_to?(:medals) && soldier.medals.any? %>
-      <div class="mt-2">
-        <% if lookup_context.exists?("medals/medal") %>
-          <%= render soldier.medals %>
-        <% else %>
-          <small class="text-muted"><%= soldier.medals.map(&:name).join(", ") %></small>
-        <% end %>
-      </div>
-    <% end %>
+    <%= link_to "View", soldier, class: "btn btn-sm btn-primary" %>
+    <%= link_to "Edit", [:edit, soldier], class: "btn btn-sm btn-outline-secondary" %>
   </div>
 </div>

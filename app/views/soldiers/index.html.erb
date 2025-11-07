@@ -10,8 +10,7 @@
         <div class="row">
           <% row.each do |soldier| %>
             <div class="col mb-3">
-              <%= render partial: "card", locals: { soldier: soldier } %>
-              
+            <%= render partial: "card", collection: @soldiers, as: :soldier %>
             </div>
           <% end %>
         </div>
@@ -25,3 +24,11 @@
     </div>
   </div>
 </div>
+
+
+
+<%# app/views/soldiers/index.html.erb %>
+<h1>Soldiers</h1>
+<% @soldiers.each do |soldier| %>
+  <%= render "card", soldier: soldier %>
+<% end %>
