@@ -1,1 +1,7 @@
-<%= render 'form', soldier: @soldier %>
+<%# app/views/soldiers/new.html.erb or edit.html.erb %>
+<h1><%= action_name.capitalize %> Soldier</h1>
+
+<%= form_with model: @soldier do |f| %>
+  <%= render "form_fields", f: f %>
+  <%= f.submit class: "btn btn-primary" %>
+<% end %>

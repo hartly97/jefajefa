@@ -10,6 +10,10 @@ include Citable
 
   validates :name, presence: true
   validates :year, numericality: { allow_nil: true, only_integer: true }
- end
+
+ # <-- add this so Sluggable knows what to slug
+  def slug_source = name
+end
+
 
 
