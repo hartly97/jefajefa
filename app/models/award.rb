@@ -12,7 +12,9 @@ include Citable
   validates :year, numericality: { allow_nil: true, only_integer: true }
 
  # <-- add this so Sluggable knows what to slug
-  def slug_source = name
+  def slug_source
+    [first_name, last_name].compact.join(" ").presence || "soldier-#{id || SecureRandom.hex(2)}"
+  end
 end
 
 

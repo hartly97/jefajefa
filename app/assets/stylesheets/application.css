@@ -1,0 +1,451 @@
+@import "bootstrap/dist/css/bootstrap.min.css";
+@import "bootstrap-icons/font/bootstrap-icons.css";
+@import "trix/dist/trix.css"; /* <-- this replaces actiontext.css */
+@import "welcome.css";
+
+ 
+
+
+/*Dna section*/
+/* app/assets/stylesheets/dna.css */
+.card ol { padding-left: 1.25rem; }
+.card ul { padding-left: 1.25rem; margin-bottom: .5rem; }
+/* app/assets/stylesheets/dna.css */
+.card ol, .card ul { padding-left: 1.25rem; }
+.card h4.h6 { margin-top: 1rem; }
+/* Scope all tweaks to this page only */
+.dna .card-body { text-align: left; }       /* kill any inherited text-center */
+.dna ol, .dna ul { padding-left: 1.25rem; margin-left: 0; list-style-position: outside; }
+.dna li { margin-bottom: .25rem; }
+
+/* Pricing table: turn off sticky first column + keep it tidy */
+.dna .dna-pricing { width: 100%; table-layout: auto; }
+.dna .dna-pricing th,
+.dna .dna-pricing td { white-space: nowrap; }
+.dna .dna-pricing th { position: static !important; }  /* defeats site-wide sticky col */
+
+
+/* CURRENTLY USING */
+html {
+  scroll-behavior: smooth;
+  position: relative;
+  min-height: 100%;
+}
+
+/*background gray color body background*/
+body {
+  position: relative;
+  margin: 0;
+  padding-bottom: 6rem;
+  /*min-height: 100%;
+   min-height: 100vh;*/
+  font-family: "Lato", Arial, sans-serif;
+  background-color:#F99554;
+  /*#f8f9f9;
+  *D3D3D3;*/
+  font-size:19px;
+   margin-bottom: 40px;
+   height: 100%;
+}
+
+
+footer {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 1rem;
+   /* background-color: #efefef;*/
+  text-align: center;
+   margin-top: auto;
+}
+
+main {
+    display: block;
+    margin: 0;
+}
+
+main {
+    position: relative;
+}
+
+sup {
+  vertical-align: sup;
+  font-size: smaller;
+  font-weight:bold;
+}
+
+/* Descendants index
+.descbordercard {
+  border-left: 3px solid #00bcd4; /*#B23A48;
+  border-right: none;
+  border-bottom: none;
+  border-top: none;
+}
+.descbordercard_2 {
+  border-top: 3px solid #00bcd4;
+  border-right: none;
+  border-bottom: none;
+  border-left: none;
+}
+/*leave 
+.article-headings {
+  background-color: #021E73;
+  /* #049DBF;
+}
+
+.samuelcheck {
+  border:0px;
+}
+
+.hero-image-newsletters {
+  background:url(../images/salem_village_1692.jpg) no-repeat center;
+  background-size: cover;
+  height: 940px;
+  position: relative;
+}
+
+.hero-text-newsletters {
+  text-align: center;
+  position: absolute;
+  top: 8%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: gray;
+}
+
+
+/* ============== Anouncement Banner on welcome page=====================*/
+#announcement-page{
+  background-color:#FCAC74;
+}
+
+/* announcements template */
+.home-announcements {
+  background-color: #B95B25;
+  /* #049DBF;*/
+}
+/*=====================*/
+
+.soldier-card {
+max-width: 18rem;
+}
+
+.redcard {
+  border-bottom: solid 3px #f44336;
+  border-radius: 4px;
+}
+.peachcard {
+  border-bottom: solid 3px #F99554;
+  border-radius: 4px;
+}
+
+/*@import"https:/*fonts.googleapis.com/css?family=Roboto:100,300,400,500,700|Indie+Flower";*/
+
+
+
+
+/* ============= STARTS Users page ======================== */
+/* sidebar */
+
+aside {
+  section.user_info {
+    margin-top: 20px;
+  }
+  section {
+    padding: 10px 0;
+    margin-top: 20px;
+    &:first-child {
+      border: 0;
+      padding-top: 0;
+    }
+    span {
+      display: block;
+      margin-bottom: 3px;
+      line-height: 1;
+    }
+    h1 {
+      font-size: 1.4em;
+      text-align: left;
+      letter-spacing: -1px;
+      margin-bottom: 3px;
+      margin-top: 0px;
+    }
+  }
+}
+
+.gravatar {
+  float: left;
+  margin-right: 10px;
+}
+
+.gravatar_edit {
+  margin-top: 15px;
+}
+
+/* =========================== End user page ===========================*/
+
+/* =========================== End user page ===========================*/
+
+
+.line-color {
+  background-color:#17a2b8;
+}
+/*??
+.simple-linear {
+  background: linear-gradient(#021E73, #4d619d);
+}
+/*added to militaries.scss
+
+/* .samuelcheck {
+/*   border:0px;
+/* }
+
+.navcolor {
+  font-weight: 800;
+}
+/*added to ancestors.scss
+/* .input_checkbox input {
+/*   width: auto !important;
+/* }
+
+th, td {
+  padding: 10px;
+}
+
+.p {
+  font-family: Merriweather, serif;
+  font-size:14px;
+}
+
+a {
+    color: black;
+    text-decoration: none;
+    /* background-color: transparent;
+}
+
+.btn-peach {
+  background-color:#F99554
+}
+/*COLORS
+.peach-color {
+  color:#F99554
+}
+
+.text-color-blue {
+  color:#021E73;
+}
+.graycolor {
+  color: gray;
+}
+.battlecolor {
+  background-color:#ffe6e6; /*f6ebe9
+  border: 1px solid red;
+}
+.blue-color {
+color: #021E73;
+}
+.colorpeach {
+  color:#F99655;
+}
+.userdash {
+  padding-left: 15px;
+}
+
+
+/*========= BUTTONS ================/*
+.btn-danger {
+    color: #fff;
+    background-color: #B23A48;
+    border-color: #B23A48;
+}
+.btn-peach-color {
+background-color: #F99554;
+}
+/* .btn-blue-color {
+/*   color: #021E73;
+/* }
+.text-peach-color {
+  color: #F99554;
+}
+.text-oeach-color-two {
+  text:bold;
+}
+
+/*========= Background colors ================/*
+.bg-blue {
+  color:#F29F05;
+}
+.bg-danger {
+  color:#B23A48;
+}
+.peach-color-bg {
+  background-color:#F99554
+}
+/*========= badges ================*/
+.badge-peach-color {
+  background-color: #F99554;
+}
+.even-larger-badge {
+    font-size: .75em;
+}
+
+/* NAMES PAGE*/
+.desc1 {
+  padding-left: 15px;
+}
+.desc2 {
+  padding-left: 25px;
+}
+.desc3 {
+  padding-left: 42px;
+}
+.desc4 {
+  padding-left: 50px;
+}
+.desc5 {
+  padding-left: 62px;
+}
+.desc6 {
+  padding-left: 74px;
+}
+.desc7 {
+  padding-left: 84px;
+}
+
+
+.nav-left {
+  padding-left:15px;
+}
+
+/* CARDS - leave here*/
+.card-img-top {
+    width: 100%;
+    height: 15vw;
+    object-fit: cover;
+}
+
+
+/* Trix attachment formatting*/
+.attachment--preview {
+  margin: 0.6em 0;
+  text-align: center;
+  width: 100%;
+}
+.attachment {
+  display: inline-block;
+  position: relative;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
+/* We need to override trix.css’s image gallery styles to accommodate the
+*/ 
+/*
+<action-text-attachment> element we wrap around attachments. Otherwise,*/
+/* images in galleries will be squished by the max-width: 33%; rule.*/
+
+.trix-content {
+  .attachment-gallery {
+    > action-text-attachment,
+    > .attachment {
+      flex: 1 0 33%;
+      padding: 0 0.5em;
+      max-width: 33%;
+    }
+
+    &.attachment-gallery--2,
+    &.attachment-gallery--4 {
+      > action-text-attachment,
+      > .attachment {
+        flex-basis: 50%;
+        max-width: 50%;
+      }
+    }
+  }
+  action-text-attachment {
+    .attachment {
+      padding: 0 !important;
+      max-width: 100% !important;
+    }
+  }
+}
+trix-editor {
+  &.form-control {
+    height: auto;
+  }
+}
+
+/*============== IMAGES ==========================*/
+.intro-image {
+  width:50%;
+  height:75%;
+}
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+
+
+/* Fixes bootstrap nav-brand container overlap*/
+@include media-breakpoint-down(xs) {
+  .container {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+
+.by-laws-header {
+  font-family: Raleway,sans-serif;
+  font-weight: 600;
+  font-size: 32px;
+  line-height: 28px;
+  color: #362c6b;
+  margin: 0 0 20px;
+}
+.about-intro-text {
+    font-family: Raleway,sans-serif;
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 28px;
+    color: #362c6b;
+    margin: 0 0 20px;
+}
+/* .about-intro-text-2 {
+    font-family: Raleway,sans-serif;
+    font-weight: 600;
+    font-size: 26px;
+    line-height: 28px;
+    color: #362c6b;
+    margin: 0 0 20px;
+ }*/
+@media(min-width:992px) {
+.about-intro-text {
+    font-size: 16px;
+    line-height: 24px;
+  }
+}
+@media(min-width:675px) {
+.about-intro-text {
+    font-size: 14px;
+    line-height: 22px;
+  }
+}
+
+
+.jumbotron-pear {
+  background:url(../images/pear-map.png) no-repeat; height:500px; /*pear 25*/
+  background-size: cover;
+  /*height: 100%;*/
+  width: 100%;
+}
+
+.jumbotron-peartree {
+  background:url(../images/pear_tree_20.jpg) no-repeat; height:500px; /*pear 25*/
+  background-size: cover;
+  /*height: 100%;*/
+  width: 100%;
+}
+@import 'actiontext.css';

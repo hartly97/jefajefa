@@ -1,7 +1,8 @@
 <!-- app/views/shared/_involvements_panel.html.erb -->
 <%# locals: involvable:, inv_label: "Soldier" (optional) %>
-<% type    = involvable.class.name %>
-<% dom_key = dom_id(involvable, :soldier_suggest) %>
+<% type         = involvable.class.name %>
+<% dom_key      = dom_id(involvable, :soldier_suggest) %>
+<% cemetery_mode = involvable.is_a?(Cemetery) %>
 
 <section data-controller="involvement-form" class="my-3">
   <form
@@ -10,6 +11,7 @@
     data-involvable-id="<%= involvable.id %>"
     class="row g-2 align-items-end mb-3">
 
+    <!-- Participant search (always Soldier here) -->
     <div class="col-md-5">
       <label class="form-label"><%= local_assigns[:inv_label] || "Soldier" %></label>
       <input type="text"
@@ -21,26 +23,55 @@
       <input type="hidden" data-involvement-form-target="participantId">
     </div>
 
-    <div class="col-md-2">
-      <label class="form-label">Role</label>
-      <input type="text" class="form-control" data-involvement-form-target="role">
-    </div>
+    <% if cemetery_mode %>
+      <!-- Cemetery-specific labels -->
+      <div class="col-md-2">
+        <label class="form-label">Burial year</label>
+        <input type="number" min="1" max="3000" step="1" class="form-control"
+               data-involvement-form-target="year">
+      </div>
 
-    <div class="col-md-2">
-      <label class="form-label">Year</label>
-      <input type="number" min="1" max="3000" step="1" class="form-control" data-involvement-form-target="year">
-    </div>
+      <div class="col-md-3">
+        <label class="form-label">Note (plot / section / marker)</label>
+        <input type="text" class="form-control"
+               placeholder="e.g., Section B, Plot 12"
+               data-involvement-form-target="note">
+      </div>
 
-    <div class="col-md-3">
-      <label class="form-label">Note</label>
-      <input type="text" class="form-control" data-involvement-form-target="note">
-    </div>
+      <div class="col-md-2">
+        <label class="form-label">Role (optional)</label>
+        <input type="text" class="form-control"
+               placeholder="Buried, Memorialized, Reinterred…"
+               data-involvement-form-target="role">
+      </div>
+    <% else %>
+      <!-- Default labels for wars/battles (service-style involvement) -->
+      <div class="col-md-2">
+        <label class="form-label">Role</label>
+        <input type="text" class="form-control"
+               placeholder="Captain, Infantry, Volunteer…"
+               data-involvement-form-target="role">
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label">Year</label>
+        <input type="number" min="1" max="3000" step="1" class="form-control"
+               data-involvement-form-target="year">
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Note</label>
+        <input type="text" class="form-control"
+               placeholder="Militia service, wounded at…, etc."
+               data-involvement-form-target="note">
+      </div>
+    <% end %>
 
     <div class="col-12 mt-2">
       <button type="button"
               class="btn btn-sm btn-outline-primary"
               data-action="click->involvement-form#add">
-        Add
+        <%= cemetery_mode ? "Add burial" : "Add involvement" %>
       </button>
     </div>
   </form>

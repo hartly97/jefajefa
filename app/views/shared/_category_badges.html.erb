@@ -2,8 +2,18 @@
 <% if categories.any? %>
   <div class="d-flex flex-wrap gap-2">
     <% categories.sort_by(&:name).each do |cat| %>
+      <% klass   = "badge rounded-pill #{category_badge_class(cat)} badge-pill-tight" %>
+      <% title   = category_badge_title(cat) %>
+      <% icon    = category_badge_icon(cat) %>
+
       <%= link_to category_path(cat),
-        class: "badge rounded-pill text-decoration-none #{helpers.category_badge_class(cat)}" do %>
+                  class: "text-decoration-none #{klass}",
+                  title: title,
+                  "aria-label": title,
+                  data: { bs_toggle: "tooltip", bs_placement: "top" } do %>
+        <% if icon.present? %>
+          <i class="bi <%= icon %> me-1" aria-hidden="true"></i>
+        <% end %>
         <%= cat.name %>
       <% end %>
     <% end %>

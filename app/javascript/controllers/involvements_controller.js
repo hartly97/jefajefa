@@ -2,7 +2,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["form", "list", "participantId", "role", "year", "note"]
+  static targets = ["form","list","participantId","role","year","note","search","suggest"]
 
   async add(event) {
     event.preventDefault()

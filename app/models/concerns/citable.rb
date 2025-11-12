@@ -20,11 +20,5 @@ module Citable
         any_locator      = locator_keys.any? { |k| attrs[k].present? }
         !has_source_id && !has_source_title && !any_locator
 
-    # accepts_nested_attributes_for :citations,
-    #   allow_destroy: true,
-    #   reject_if: ->(attrs) do
-    #     attrs.values_at('pages','quote','note','source_id').all?(&:blank?) &&
-    #       (attrs['source_attributes'].blank? || attrs['source_attributes']['title'].blank?)
-      end
-  end
+    
 end

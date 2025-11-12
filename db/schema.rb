@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_10_10_021118) do
+ActiveRecord::Schema[7.1].define(version: 2025_11_11_163111) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -97,6 +97,30 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_10_021118) do
     t.string "transcription"
     t.string "transcriptiontwo"
     t.index ["name"], name: "index_books_on_name"
+  end
+
+  create_table "burials", force: :cascade do |t|
+    t.bigint "cemetery_id", null: false
+    t.string "first_name"
+    t.string "middle_name"
+    t.string "last_name"
+    t.string "participant_type"
+    t.bigint "participant_id"
+    t.date "birth_date"
+    t.string "birth_place"
+    t.date "death_date"
+    t.string "death_place"
+    t.text "inscription"
+    t.string "section"
+    t.string "plot"
+    t.string "marker"
+    t.string "link_url"
+    t.text "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cemetery_id", "participant_type", "participant_id"], name: "idx_burials_unique_triplet", unique: true
+    t.index ["cemetery_id"], name: "index_burials_on_cemetery_id"
+    t.index ["participant_type", "participant_id"], name: "index_burials_on_participant_type_and_participant_id"
   end
 
   create_table "categories", force: :cascade do |t|
@@ -421,6 +445,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_10_021118) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "awards", "soldiers"
   add_foreign_key "battles", "wars"
+  add_foreign_key "burials", "cemeteries"
   add_foreign_key "categorizations", "categories"
   add_foreign_key "census_entries", "censuses"
   add_foreign_key "census_entries", "soldiers"

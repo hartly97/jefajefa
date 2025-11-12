@@ -6,6 +6,8 @@ class Soldier < ApplicationRecord
 
   belongs_to :cemetery, optional: true
 
+  has_many :burials, as: :participant, dependent: :nullify
+
   # Directs
   has_many :awards, inverse_of: :soldier, dependent: :destroy
 
@@ -28,7 +30,7 @@ class Soldier < ApplicationRecord
   # Citations are provided by Citable; don’t redefine here.
 
   # Nested attributes used by your form
-  accepts_nested_attributes_for :awards, :soldier_medals, :involvements, :citations,
+  accepts_nested_attributes_for :awards, :soldier_medals,  :citations,
                                 allow_destroy: true, reject_if: :all_blank
 
   # ---- Scopes ----

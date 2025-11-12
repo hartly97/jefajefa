@@ -1,0 +1,113 @@
+<%= form_with model: [(@cemetery || @burial.cemetery), @burial].compact, local: true do |f| %>
+  <% if @burial.errors.any? %>
+    <div class="alert alert-danger">
+      <strong>Fix the errors below:</strong>
+      <ul class="mb-0">
+        <% @burial.errors.full_messages.each do |m| %><li><%= m %></li><% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <fieldset class="mb-3">
+    <legend>Person</legend>
+    <div class="row g-2">
+      <div class="col-md-4"><%= f.label :first_name %><%= f.text_field :first_name, class: "form-control" %></div>
+      <div class="col-md-4"><%= f.label :middle_name %><%= f.text_field :middle_name, class: "form-control" %></div>
+      <div class="col-md-4"><%= f.label :last_name %><%= f.text_field :last_name, class: "form-control" %></div>
+    </div>
+  </fieldset>
+
+  <fieldset class="mb-3">
+    <legend>Dates & places</legend>
+    <div class="row g-2 mb-2">
+      <div class="col-md-4"><%= f.label :birth_date %><%= f.date_field :birth_date, class: "form-control" %></div>
+      <div class="col-md-8"><%= f.label :birth_place %><%= f.text_field :birth_place, class: "form-control" %></div>
+    </div>
+    <div class="row g-2">
+      <div class="col-md-4"><%= f.label :death_date %><%= f.date_field :death_date, class: "form-control" %></div>
+      <div class="col-md-8"><%= f.label :death_place %><%= f.text_field :death_place, class: "form-control" %></div>
+    </div>
+  </fieldset>
+
+  <fieldset class="mb-3">
+    <legend>Grave details</legend>
+    <div class="row g-2">
+      <div class="col-md-3"><%= f.label :section %><%= f.text_field :section, class: "form-control" %></div>
+      <div class="col-md-3"><%= f.label :plot %><%= f.text_field :plot, class: "form-control" %></div>
+      <div class="col-md-3"><%= f.label :marker %><%= f.text_field :marker, class: "form-control" %></div>
+      <div class="col-md-3"><%= f.label :link_url, "Find-a-Grave / link" %><%= f.url_field :link_url, class: "form-control", placeholder: "https://…" %></div>
+    </div>
+    <div class="mt-2">
+      <%= f.label :inscription %>
+      <%= f.text_area :inscription, rows: 2, class: "form-control", placeholder: "Optional headstone inscription" %>
+    </div>
+    <div class="mt-2">
+      <%= f.label :note %>
+      <%= f.text_area :note, rows: 2, class: "form-control" %>
+    </div>
+  </fieldset>
+
+  <fieldset class="mb-3">
+    <legend>Link to an existing record (optional)</legend>
+    <%# store a Soldier (or future Person) as participant_* %>
+    <div class="row g-2">
+      <div class="col-md-6">
+        <label class="form-label">Search soldiers</label>
+        <input type="text"
+               class="form-control"
+               list="burial_soldier_suggest"
+               placeholder="Type to search soldiers…"
+               data-involvement-form-target="search">
+        <datalist id="burial_soldier_suggest" data-involvement-form-target="suggest"></datalist>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Linked record</label>
+        <div class="input-group">
+          <span class="input-group-text">participant_id</span>
+          <%= f.number_field :participant_id, class: "form-control",
+                data: { "involvement-form-target": "participantId" } %>
+          <%= f.hidden_field :participant_type, value: (@burial.participant_type.presence || "Soldier") %>
+          <% if @burial.participant.present? %>
+            <span class="input-group-text">
+              <%= link_to "view", @burial.participant, target: "_blank", rel: "noopener" %>
+            </span>
+          <% end %>
+        </div>
+        <small class="text-muted">Leave blank if this is a non-soldier burial.</small>
+      </div>
+    </div>
+  </fieldset>
+
+  <div class="mt-3 d-flex gap-2">
+    <%= f.submit class: "btn btn-primary" %>
+    <%= link_to "Cancel", (@burial.cemetery || @cemetery || cemeteries_path), class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>
+
+<script>
+  // light client-side helper that reuses SoldiersController#search.json
+  document.addEventListener("turbo:load", wireBurialSearch)
+  document.addEventListener("DOMContentLoaded", wireBurialSearch)
+  function wireBurialSearch() {
+    const search = document.querySelector('[data-involvement-form-target="search"]')
+    const list   = document.querySelector('[data-involvement-form-target="suggest"]')
+    const pid    = document.querySelector('[name="burial[participant_id]"][data-involvement-form-target="participantId"]')
+    if (!search || !list || !pid) return
+
+    search.addEventListener("input", async (e) => {
+      const q = e.target.value.trim()
+      if (q.length < 2) { list.innerHTML = ""; return }
+      try {
+        const r = await fetch(`/soldiers/search.json?q=${encodeURIComponent(q)}`)
+        if (!r.ok) return
+        const rows = await r.json()
+        list.innerHTML = rows.map(r => `<option value="${r.label}" data-id="${r.id}"></option>`).join("")
+      } catch (_) {}
+    })
+
+    search.addEventListener("change", () => {
+      const opt = Array.from(list.children).find(o => o.value === search.value)
+      if (opt) pid.value = opt.getAttribute("data-id") || ""
+    })
+  }
+</script>

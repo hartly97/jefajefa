@@ -48,9 +48,10 @@ class InvolvementsController < ApplicationController
   def involvement_json(inv)
     {
       id: inv.id,
-      participant_id:   inv.participant_id,
-      participant_type: inv.participant_type,
+      participant_id:    inv.participant_id,
+      participant_type:  inv.participant_type,
       participant_label: inv.participant_label,
+      participant_path:  url_for(inv.participant),
       role: inv.role,
       year: inv.year,
       note: inv.note

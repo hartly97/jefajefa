@@ -3,6 +3,7 @@ class Cemetery < ApplicationRecord
   include Categorizable
   include Citable
 
+  has_many :burials, dependent: :destroy
   has_many :citations, as: :citable, dependent: :destroy
   has_many :involvements, as: :involvable, dependent: :destroy, inverse_of: :involvable
   has_many :soldiers, through: :involvements, source: :participant, source_type: "Soldier"

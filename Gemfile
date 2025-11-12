@@ -2,12 +2,12 @@ source "https://rubygems.org"
 
 ruby "3.1.4"
 
-
+gem 'action_text-trix', '~> 2.1', '>= 2.1.15'
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.1.5", ">= 7.1.5.2"
 
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
-gem "sprockets-rails"
+# gem "sprockets-rails"
 
 # Use sqlite3 as the database for Active Record
 gem "pg", "~> 1.6"

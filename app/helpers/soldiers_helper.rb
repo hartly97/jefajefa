@@ -12,4 +12,9 @@ module SoldiersHelper
       content_tag(:strong, "Branch: ") + h(soldier.branch_of_service)
     end
   end
+
+  # Include all relevant category types for soldiers
+  def soldier_badge_categories(soldier)
+    soldier.categories_of_types(:war, :battle, :medal, :award, :cemetery)
+  end
 end
