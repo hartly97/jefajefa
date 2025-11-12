@@ -3,6 +3,7 @@ class Soldier < ApplicationRecord
   include Sluggable
   include Citable
   include Categorizable
+after_commit :sync_burial_involvement, if: :saved_change_to_cemetery_id?
 
   belongs_to :cemetery, optional: true
 
@@ -107,4 +108,29 @@ def slug_source
       errors.add(:base, "Must provide a first or last name.")
     end
   end
+
+  def sync_burial_involvement
+  old_cem, new_cem = saved_change_to_cemetery_id
+  if old_cem.present? && old_cem != new_cem
+    Involvement.where(
+      involvable_type: "Cemetery", involvable_id: old_cem,
+      participant_type: "Soldier",  participant_id: id,
+      role: "burial"
+    ).delete_all
+  end
+
+  if new_cem.present?
+    Involvement.where(
+      involvable_type: "Cemetery", involvable_id: new_cem,
+      participant_type: "Soldier",  participant_id: id,
+      role: "burial"
+    ).first_or_create!
+  else
+    Involvement.where(
+      involvable_type: "Cemetery",
+      participant_type: "Soldier", participant_id: id,
+      role: "burial"
+    ).delete_all
+  end
+end
 end

@@ -1,6 +1,42 @@
 <!-- app/views/burials/new.html.erb -->
 <h1>New burial at <%= @cemetery.name %></h1>
 <%= form_with model: [@cemetery, @burial], local: true do |f| %>
-  <!-- fields... -->
+  <fieldset class="mb-3">
+    <legend>Person</legend>
+    <div class="row g-2">
+      <div class="col-md-4"><%= f.label :first_name %><%= f.text_field :first_name, class: "form-control" %></div>
+      <div class="col-md-4"><%= f.label :middle_name %><%= f.text_field :middle_name, class: "form-control" %></div>
+      <div class="col-md-4"><%= f.label :last_name %><%= f.text_field :last_name, class: "form-control" %></div>
+    </div>
+  </fieldset>
+
+  <fieldset class="mb-3">
+    <legend>Dates & places</legend>
+    <div class="row g-2 mb-2">
+      <div class="col-md-4"><%= f.label :birth_date %><%= f.date_field :birth_date, class: "form-control" %></div>
+      <div class="col-md-8"><%= f.label :birth_place %><%= f.text_field :birth_place, class: "form-control" %></div>
+    </div>
+    <div class="row g-2">
+      <div class="col-md-4"><%= f.label :death_date %><%= f.date_field :death_date, class: "form-control" %></div>
+      <div class="col-md-8"><%= f.label :death_place %><%= f.text_field :death_place, class: "form-control" %></div>
+    </div>
+  </fieldset>
+  <fieldset class="mb-3">
+    <legend>Grave details</legend>
+    <div class="row g-2">
+      <div class="col-md-3"><%= f.label :section %><%= f.text_field :section, class: "form-control" %></div>
+      <div class="col-md-3"><%= f.label :plot %><%= f.text_field :plot, class: "form-control" %></div>
+      <div class="col-md-3"><%= f.label :marker %><%= f.text_field :marker, class: "form-control" %></div>
+      <div class="col-md-3"><%= f.label :link_url, "Find-a-Grave / link" %><%= f.url_field :link_url, class: "form-control", placeholder: "https://…" %></div>
+    </div>
+    <div class="mt-2">
+      <%= f.label :inscription %>
+      <%= f.text_area :inscription, rows: 2, class: "form-control", placeholder: "Optional headstone inscription" %>
+    </div>
+    <div class="mt-2">
+      <%= f.label :note %>
+      <%= f.text_area :note, rows: 2, class: "form-control" %>
+    </div>
+  </fieldset>
   <%= f.submit "Save", class: "btn btn-primary" %>
 <% end %>
