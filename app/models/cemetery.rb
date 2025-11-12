@@ -5,6 +5,8 @@ class Cemetery < ApplicationRecord
 
   has_many :burials, dependent: :destroy
 
+has_many :involvements, as: :involvable, dependent: :destroy
+
    # Only the burial rows
   has_many :burial_involvements,
            -> { where(role: "burial") },
@@ -15,6 +17,8 @@ class Cemetery < ApplicationRecord
            through: :burials,
            source: :participant,
            source_type: "Soldier"
+
+             has_many :involvements, as: :involvable, dependent: :destroy
 
   has_many :citations, as: :citable, dependent: :destroy
 
