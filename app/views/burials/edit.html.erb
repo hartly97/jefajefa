@@ -1,0 +1,6 @@
+<!-- app/views/burials/edit.html.erb -->
+<h1>Edit burial</h1>
+<%= form_with model: @burial, local: true do |f| %>
+  <!-- fields... -->
+  <%= f.submit "Update", class: "btn btn-primary" %>
+<% end %>

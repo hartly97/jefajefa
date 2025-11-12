@@ -1,0 +1,6 @@
+<!-- app/views/burials/new.html.erb -->
+<h1>New burial at <%= @cemetery.name %></h1>
+<%= form_with model: [@cemetery, @burial], local: true do |f| %>
+  <!-- fields... -->
+  <%= f.submit "Save", class: "btn btn-primary" %>
+<% end %>

@@ -1,0 +1,3 @@
+/* Pagination tweaks */
+.pagination .page-link { padding: .375rem .6rem; }
+.pagination .page-item + .page-item { margin-left: .125rem; }

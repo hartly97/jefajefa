@@ -3,9 +3,13 @@ class AwardsController < ApplicationController
   before_action :set_award, only: [:show, :edit, :update, :destroy, :regenerate_slug]
 
   def index
-    @awards = Award.order(:name)
+  @battles = Award.order(:name)
+  respond_to do |format|
+    format.html
+    format.json { render json: @awards.select(:id, :name) }
   end
-  
+end
+
   def show
     @award = Award.find_by!(slug: params[:id])
     @involvements = @award.involvements.includes(:participant)

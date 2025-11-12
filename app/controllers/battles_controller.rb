@@ -6,8 +6,12 @@ class BattlesController < ApplicationController
   before_action :ensure_nested_source_builds, only: [:new, :edit]
 
   def index
-    @battles = Battle.order(:name)
+  @battles = Battle.order(:name)
+  respond_to do |format|
+    format.html
+    format.json { render json: @battles.select(:id, :name) }
   end
+end
 
   def show
     @involvements = @battle.involvements.includes(:participant)

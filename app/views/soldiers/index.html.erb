@@ -1,34 +1,24 @@
-
 <h1>Soldiers</h1>
 
-<%= render "search_form", soldier: @soldier %>
-<%= render "pager" %>
-<div class="container-fluid">
-  <div class="row justify-content-start">
-    <div class="col-12 col-md-10">
-      <% Array(@soldiers).each_slice(3) do |row| %>
-        <div class="row">
-          <% row.each do |soldier| %>
-            <div class="col mb-3">
-            <%= render partial: "card", collection: @soldiers, as: :soldier %>
-            </div>
-          <% end %>
-        </div>
-      <% end %>
-
-      <%= render "pager" %>
-    </div>
-
-    <div class="col-12 col-md-2">
-      <%#= render "sidebar" %>
-    </div>
-  </div>
+ <%= render "search_form", soldier: @soldier %>
+ <%= render "pager" %>
+<div class="mb-3">
+  <%= link_to "Grid", soldiers_path(request.query_parameters.merge(view: "grid")), class: "btn btn-sm btn-outline-secondary #{'active' if @view=='grid'}" %>
+  <%= link_to "List", soldiers_path(request.query_parameters.merge(view: "list")), class: "btn btn-sm btn-outline-secondary #{'active' if @view=='list'}" %>
 </div>
 
-
-
-<%# app/views/soldiers/index.html.erb %>
-<h1>Soldiers</h1>
-<% @soldiers.each do |soldier| %>
-  <%= render "card", soldier: soldier %>
+<% if @view == "list" %>
+  <%= render "list", soldiers: @soldiers %>
+<% else %>
+  <% @soldiers.each_slice(3) do |row| %>
+    <div class="row">
+      <% row.each do |soldier| %>
+        <div class="col mb-3">
+          <%= render "card", soldier: soldier %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
 <% end %>
+<%= render "pager" %>
+

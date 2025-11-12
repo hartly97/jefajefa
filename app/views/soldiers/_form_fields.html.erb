@@ -1,40 +1,296 @@
-# <%# app/views/soldiers/_form_fields.html.erb %>
-<div class="mb-2">
-  <%= f.label :first_name %>
-  <%= f.text_field :first_name, class: "form-control" %>
-</div>
+<div class="mb-2"><%= f.label :first_name %><%= f.text_field :first_name, class: "form-control" %></div>
+<div class="mb-2"><%= f.label :middle_name %><%= f.text_field :middle_name, class: "form-control" %></div>
+<div class="mb-2"><%= f.label :last_name %><%= f.text_field :last_name, class: "form-control" %></div>
 
-<div class="mb-2">
-  <%= f.label :last_name %>
-  <%= f.text_field :last_name, class: "form-control" %>
-</div>
+<div class="mb-2"><%= f.label :birth_date %><%= f.date_field :birth_date, class: "form-control" %></div>
+<div class="mb-2"><%= f.label :death_date %><%= f.date_field :death_date, class: "form-control" %></div>
 
-<div class="mb-2">
-  <%= f.label :branch_of_service, "Branch" %>
-  <%= f.text_field :branch_of_service, class: "form-control" %>
-</div>
+<div class="mb-2"><%= f.label :birthcity %><%= f.text_field :birthcity, class: "form-control" %></div>
+<div class="mb-2"><%= f.label :birthstate %><%= f.text_field :birthstate, class: "form-control" %></div>
+<div class="mb-2"><%= f.label :birthcountry %><%= f.text_field :birthcountry, class: "form-control" %></div>
 
-<div class="mb-2">
-  <%= f.label :unit %>
-  <%= f.text_field :unit, class: "form-control" %>
-</div>
+<div class="mb-2"><%= f.label :deathcountry %><%= f.text_field :deathcountry, class: "form-control" %></div>
 
-<div class="mb-2">
-  <%= f.label :birth_date %>
-  <%= f.date_field :birth_date, class: "form-control" %>
-</div>
+<div class="mb-2"><%= f.label :first_enlisted_start_date %><%= f.date_field :first_enlisted_start_date, class: "form-control" %></div>
+<div class="mb-2"><%= f.label :first_enlisted_end_date %><%= f.date_field :first_enlisted_end_date, class: "form-control" %></div>
+<div class="mb-2"><%= f.label :first_enlisted_place %><%= f.text_field :first_enlisted_place, class: "form-control" %></div>
 
-<div class="mb-2">
-  <%= f.label :birthplace %>
-  <%= f.text_field :birthplace, class: "form-control" %>
-</div>
+<div class="mb-2"><%= f.label :unit %><%= f.text_field :unit, class: "form-control" %></div>
+<div class="mb-2"><%= f.label :branch_of_service, "Branch of Service" %><%= f.text_field :branch_of_service, class: "form-control" %></div>
 
-<div class="mb-2">
-  <%= f.label :death_date %>
-  <%= f.date_field :death_date, class: "form-control" %>
-</div>
+<fieldset class="mb-3">
+  <legend>Cemetery</legend>
+  <%= f.collection_select :cemetery_id, Cemetery.order(:name), :id, :name,
+        { include_blank: true }, class: "form-select" %>
+</fieldset>
 
-<div class="mb-2">
-  <%= f.label :deathplace %>
-  <%= f.text_field :deathplace, class: "form-control" %>
-</div>
+<fieldset class="mb-3">
+  <legend>Awards (not medals)</legend>
+  <%= f.fields_for :awards do |af| %>
+    <div class="border p-2 mb-3 rounded">
+      <div class="row g-2">
+        <div class="col-md-5"><%= af.label :name %><%= af.text_field :name, class: "form-control" %></div>
+        <div class="col-md-3"><%= af.label :country %><%= af.text_field :country, class: "form-control" %></div>
+        <div class="col-md-2"><%= af.label :year %><%= af.number_field :year, in: 1000..3000, step: 1, class: "form-control" %></div>
+        <div class="col-12"><%= af.label :note %><%= af.text_area :note, rows: 2, class: "form-control" %></div>
+        <div class="col-12 form-check mt-1">
+          <label class="form-check-label"><%= af.check_box :_destroy, class: "form-check-input" %> Remove</label>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</fieldset>
+
+<fieldset class="mb-3">
+  <legend>Medals</legend>
+  <%= f.fields_for :soldier_medals do |mf| %>
+    <div class="border p-2 mb-3 rounded">
+      <div class="row g-2">
+        <div class="col-md-6">
+          <%= mf.label :medal_id, "Medal" %>
+          <%= mf.collection_select :medal_id, Medal.order(:name), :id, :name, { include_blank: true }, class: "form-select" %>
+        </div>
+        <div class="col-md-2"><%= mf.label :year %><%= mf.number_field :year, in: 1000..3000, step: 1, class: "form-control" %></div>
+        <div class="col-12"><%= mf.label :note %><%= mf.text_area :note, rows: 2, class: "form-control" %></div>
+        <div class="col-12 form-check mt-1">
+          <label class="form-check-label"><%= mf.check_box :_destroy, class: "form-check-input" %> Remove</label>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</fieldset>
+
+<fieldset class="mb-3">
+  <legend>Wars</legend>
+  <%= f.collection_select :category_ids, Category.wars.order(:name), :id, :name,
+        { include_hidden: false }, { multiple: true, size: 6, class: "form-select" } %>
+</fieldset>
+
+<fieldset class="mb-3">
+  <legend>Battles</legend>
+  <%= f.collection_select :category_ids, Category.battles.order(:name), :id, :name,
+        { include_hidden: false }, { multiple: true, size: 8, class: "form-select" } %>
+</fieldset>
+
+# <div data-controller="involvement-form involvement-picker">
+#   <!-- this is visible to BOTH controllers -->
+#   <div
+#     data-involvement-form-target="form"
+#     data-involvable-type="War"
+#     data-involvable-id=""
+#     data-involvement-picker-target="formBox">
+    
+#     <div class="row g-2 align-items-end">
+#       <div class="col-md-3">
+#         <label class="form-label">Type</label>
+#         <select class="form-select"
+#                 data-involvement-picker-target="typeSelect"
+#                 data-action="involvement-picker#changeType">
+#           <option value="War">War</option>
+#           <option value="Battle">Battle</option>
+#           <option value="Cemetery">Cemetery</option>
+#         </select>
+#       </div>
+
+#       <div class="col-md-4">
+#         <label class="form-label">Choose record</label>
+
+#         <% wars    = War.order(:name) %>
+#         <% battles = Battle.order(:name) %>
+#         <% cemets  = Cemetery.order(:name) %>
+
+#         <select class="form-select"
+#                 data-involvement-picker-target="warSelect"
+#                 data-action="involvement-picker#pick">
+#           <option value="">— pick a war —</option>
+#           <% wars.each { |w| %><option value="<%= w.id %>"><%= w.name %></option><% } %>
+#         </select>
+
+#         <select class="form-select mt-1 d-none"
+#                 data-involvement-picker-target="battleSelect"
+#                 data-action="involvement-picker#pick">
+#           <option value="">— pick a battle —</option>
+#           <% battles.each { |b| %><option value="<%= b.id %>"><%= b.name %></option><% } %>
+#         </select>
+
+#         <select class="form-select mt-1 d-none"
+#                 data-involvement-picker-target="cemeterySelect"
+#                 data-action="involvement-picker#pick">
+#           <option value="">— pick a cemetery —</option>
+#           <% cemets.each { |c| %><option value="<%= c.id %>"><%= c.name %></option><% } %>
+#         </select>
+#       </div>
+
+#       <div class="col-md-2">
+#         <label class="form-label">Role</label>
+#         <input type="text" class="form-control" data-involvement-form-target="role">
+#       </div>
+
+#       <div class="col-md-2">
+#         <label class="form-label">Year</label>
+#         <input type="number" min="1" max="2999" step="1" class="form-control" data-involvement-form-target="year">
+#       </div>
+
+#       <div class="col-12 mt-2">
+#         <label class="form-label">Note</label>
+#         <textarea rows="2" class="form-control" data-involvement-form-target="note"></textarea>
+#       </div>
+
+#       <div class="col-12 mt-2">
+#         <button type="button" class="btn btn-sm btn-outline-primary"
+#                 data-action="involvement-form#add">
+#           Add involvement
+#         </button>
+#       </div>
+#     </div>
+#   </div>
+
+#   <hr class="my-3">
+#   <h6 class="mb-2">Current involvements</h6>
+#   <ul class="list-unstyled" data-involvement-form-target="list">
+#     <% @soldier.involvements.includes(:involvable).order(:year, :id).each do |inv| %>
+#       <li class="mb-2" data-involvement-row="<%= inv.id %>">
+#         <%= link_to inv.participant_label, @soldier %>
+#         <%= " — " + content_tag(:strong, inv.role) if inv.role.present? %>
+#         <%= " (#{inv.year})" if inv.year.present? %>
+#         <%= " — " + content_tag(:em, inv.note) if inv.note.present? %>
+#         <button type="button" class="btn btn-sm btn-outline-danger ms-2"
+#                 data-action="involvement-form#remove"
+#                 data-involvement-form-id-param="<%= inv.id %>">Remove</button>
+#       </li>
+#     <% end %>
+#   </ul>
+# </div>
+
+<fieldset class="mb-3">
+  <legend>Involvements (AJAX)</legend>
+
+  <div data-controller="involvement-form involvement-picker">
+    <!-- This box carries the chosen type/id for the add() action -->
+    <div
+      data-involvement-form-target="form"
+      data-involvable-type="War"
+      data-involvable-id=""
+      data-involvement-picker-target="formBox">
+
+      <!-- Soldier (participant) -->
+      <%= hidden_field_tag :participant_id, @soldier.id,
+            data: { "involvement-form-target": "participantId" } %>
+
+      <div class="row g-2 align-items-end">
+        <div class="col-md-3">
+          <label class="form-label">Type</label>
+          <select class="form-select"
+                  data-involvement-picker-target="typeSelect"
+                  data-action="involvement-picker#changeType">
+            <option value="War">War</option>
+            <option value="Battle">Battle</option>
+            <option value="Cemetery">Cemetery</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Choose record</label>
+          <% wars    = War.order(:name) %>
+          <% battles = Battle.order(:name) %>
+          <% cemets  = Cemetery.order(:name) %>
+
+          <select class="form-select"
+                  data-involvement-picker-target="warSelect"
+                  data-action="involvement-picker#pick">
+            <option value="">— pick a war —</option>
+            <% wars.each do |w| %>
+              <option value="<%= w.id %>"><%= w.name %></option>
+            <% end %>
+          </select>
+
+          <select class="form-select mt-1 d-none"
+                  data-involvement-picker-target="battleSelect"
+                  data-action="involvement-picker#pick">
+            <option value="">— pick a battle —</option>
+            <% battles.each do |b| %>
+              <option value="<%= b.id %>"><%= b.name %></option>
+            <% end %>
+          </select>
+
+          <select class="form-select mt-1 d-none"
+                  data-involvement-picker-target="cemeterySelect"
+                  data-action="involvement-picker#pick">
+            <option value="">— pick a cemetery —</option>
+            <% cemets.each do |c| %>
+              <option value="<%= c.id %>"><%= c.name %></option>
+            <% end %>
+          </select>
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label">Role</label>
+          <input type="text" class="form-control" data-involvement-form-target="role">
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label">Year</label>
+          <input type="number" min="1" max="2999" step="1" class="form-control" data-involvement-form-target="year">
+        </div>
+
+        <div class="col-md-12 mt-2">
+          <label class="form-label">Note</label>
+          <textarea rows="2" class="form-control" data-involvement-form-target="note"></textarea>
+        </div>
+
+        <div class="col-md-12 mt-2">
+          <button type="button" class="btn btn-sm btn-outline-primary"
+                  data-action="involvement-form#add">
+            Add involvement
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <hr class="my-3">
+
+    <h6 class="mb-2">Current involvements</h6>
+    <ul class="list-unstyled" data-involvement-form-target="list">
+      <% @soldier.involvements.includes(:involvable).order(:year, :id).each do |inv| %>
+        <li class="mb-2" data-involvement-row="<%= inv.id %>">
+          <%= link_to inv.participant_label, @soldier %>
+          <%= " — " + content_tag(:strong, inv.role) if inv.role.present? %>
+          <%= " (#{inv.year})" if inv.year.present? %>
+          <%= " — " + content_tag(:em, inv.note) if inv.note.present? %>
+          <button type="button"
+                  class="btn btn-sm btn-outline-danger ms-2"
+                  data-action="involvement-form#remove"
+                  data-involvement-form-id-param="<%= inv.id %>">Remove</button>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</fieldset>
+
+
+<fieldset class="mb-3">
+  <legend>Citations</legend>
+  <div data-controller="citations" data-citations-index-value="<%= @soldier.citations.size %>">
+    <div data-citations-target="list">
+      <% f.fields_for :citations do |cf| %>
+        <div data-citations-wrapper>
+          <%= render "citations/fields", cf: cf, sources: (@sources || Source.order(:title)) %>
+        </div>
+      <% end %>
+    </div>
+
+    <template data-citations-target="template">
+      <div data-citations-wrapper>
+        <%= f.fields_for :citations, Citation.new, child_index: "NEW_RECORD" do |cf| %>
+          <%= render "citations/fields", cf: cf, sources: (@sources || Source.order(:title)) %>
+        <% end %>
+      </div>
+    </template>
+
+    <p class="mt-2">
+      <button type="button" class="btn btn-sm btn-outline-primary" data-action="citations#add">
+        Add citation
+      </button>
+    </p>
+  </div>
+</fieldset>

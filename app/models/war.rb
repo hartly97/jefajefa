@@ -20,6 +20,8 @@ has_many :involvements, as: :involvable, dependent: :destroy, inverse_of: :invol
 
   # accepts_nested_attributes_for :involvements, allow_destroy: true, reject_if: :all_blank
 
-  def slug_source = name
+ 
+  def slug_source
+    [first_name, last_name].compact.join(" ").presence || "soldier-#{id || SecureRandom.hex(2)}"
+  end
 end
-

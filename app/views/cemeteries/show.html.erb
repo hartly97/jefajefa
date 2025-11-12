@@ -2,15 +2,15 @@
 
 <%= render "shared/citations", citable: @cemetery, heading: "Cemetery Citations" %>
 
-
 <p class="mt-3">
   <%= link_to "Edit", [:edit, @cemetery] %> |
-  <%= link_to "Back", url_for(controller: controller_name, action: :index) %>
+  <%= link_to "Back", url_for(controller: controller_name, action: :index) %> |
+  <%= link_to "Add burial", new_cemetery_burial_path(@cemetery),
+              class: "btn btn-sm btn-outline-primary" %>
 </p>
-<h2>Burials <small class="text-muted">(<%= @burials_count %>)</small></h2>
 
 <%= form_with url: cemetery_path(@cemetery), method: :get, local: true,
-              class: "row g-2 align-items-end mb-2" do %>
+              class: "row g-2 align-items-end mb-3" do %>
   <div class="col-md-6">
     <%= label_tag :q, "Search burials" %>
     <%= text_field_tag :q, params[:q], class: "form-control",
@@ -26,20 +26,20 @@
   <% end %>
 <% end %>
 
-<% if @burials.any? %>
-  <ul>
-    <% @burials.each do |s| %>
-      <li><%= link_to(s.respond_to?(:display_name) ? s.display_name :
-                      [s.first_name, s.last_name].compact.join(" "),
-                      s) %></li>
-    <% end %>
-  </ul>
-  <% end %>
+<hr class="my-4">
 
-<%#= render "cemeteries/burials",
-           cemetery: @cemetery,
-           soldiers: @burials,
-           total_count: @burials_count %>
-<!-- app/views/cemeteries/show.html.erb -->
-<h1><%= @cemetery.name %></h1>
-<%= render "shared/involvements_panel", involvable: @cemetery %>
+<h2>Soldiers buried here
+  <small class="text-muted">(<%= @soldier_burials_count %>)</small>
+</h2>
+<%= render "cemeteries/burials_table",
+      cemetery: @cemetery,
+      burials:  @soldier_burials,
+      total_count: @soldier_burials_count %>
+
+<h2 class="mt-4">Other burials
+  <small class="text-muted">(<%= @burials_count %>)</small>
+</h2>
+<%= render "cemeteries/burials_table",
+      cemetery: @cemetery,
+      burials:  @burials,
+      total_count: @burials_count %>

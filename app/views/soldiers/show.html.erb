@@ -1,10 +1,93 @@
-<%# app/views/soldiers/show.html.erb %>
-<%= render "card", soldier: @soldier %>
+<!-- app/views/soldiers/show.html.erb -->
+<div class="container my-4">
+  <%= render "card", soldier: @soldier %>
 
-<%= render "shared/citations",
-           citable: @soldier,
-           heading: "Soldier Citations" %>
+  <%# ---------- Service ---------- %>
+  <% if @soldier.branch_of_service.present? || @soldier.unit.present? %>
+    <h3 class="mt-4 mb-2 border-bottom pb-1">Service</h3>
+    <dl class="row">
+      <% if @soldier.branch_of_service.present? %>
+        <dt class="col-sm-3 text-muted">Branch</dt>
+        <dd class="col-sm-9"><%= @soldier.branch_of_service %></dd>
+      <% end %>
+      <% if @soldier.unit.present? %>
+        <dt class="col-sm-3 text-muted">Unit</dt>
+        <dd class="col-sm-9"><%= @soldier.unit %></dd>
+      <% end %>
+    </dl>
+  <% end %>
 
-<%= render "shared/involvements_for_participant",
-           participant: @soldier,
-           involvements: @soldier.involvements.includes(:involvable) %>
+  <%# ---------- Cemetery ---------- %>
+  <% if @soldier.cemetery.present? %>
+    <h3 class="mt-4 mb-2 border-bottom pb-1">Cemetery</h3>
+    <p>
+      <i class="bi bi-geo-alt-fill text-secondary"></i>
+      <%= link_to @soldier.cemetery.name, @soldier.cemetery, class: "text-decoration-none" %>
+    </p>
+  <% end %>
+
+  <% if @soldier.burials.any? %>
+  <h3>Burial</h3>
+  <ul>
+    <% @soldier.burials.includes(:cemetery).each do |b| %>
+      <li><%= link_to b.cemetery.name, b.cemetery %>
+        <% if b.section || b.plot || b.marker %>
+          — <%= [b.section, b.plot, b.marker].compact.join(", ") %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+
+
+  # <#% ---------- Wars ---------- %>
+  <% wars = @soldier.involvements.select { |i| i.involvable_type == "War" && i.involvable.present? }.sort_by { |i| [i.year || 0, i.id] } %>
+  <% if wars.any? %>
+    <h3 class="mt-4 mb-2 border-bottom pb-1">Wars</h3>
+    <ul class="list-group list-group-flush">
+      <% wars.each do |inv| %>
+        <li class="list-group-item px-0">
+          <%= link_to(inv.involvable.name, inv.involvable, class: "fw-semibold") %>
+          <%= " (#{inv.year})" if inv.year.present? %>
+          <%= " — #{inv.role}" if inv.role.present? %>
+          <%= tag.em(inv.note, class: "text-muted") if inv.note.present? %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <%# ---------- Battles ---------- %>
+  <% battles = @soldier.involvements.select { |i| i.involvable_type == "Battle" && i.involvable.present? }.sort_by { |i| [i.year || 0, i.id] } %>
+  <% if battles.any? %>
+    <h3 class="mt-4 mb-2 border-bottom pb-1">Battles</h3>
+    <ul class="list-group list-group-flush">
+      <% battles.each do |inv| %>
+        <li class="list-group-item px-0">
+          <%= link_to(inv.involvable.name, inv.involvable, class: "fw-semibold") %>
+          <%= " (#{inv.year})" if inv.year.present? %>
+          <%= " — #{inv.role}" if inv.role.present? %>
+          <%= tag.em(inv.note, class: "text-muted") if inv.note.present? %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <%# ---------- Awards (not medals) ---------- %>
+  <% if @soldier.awards.any? %>
+    <h3 class="mt-4 mb-2 border-bottom pb-1">Awards</h3>
+    <ul class="list-group list-group-flush">
+      <% @soldier.awards.sort_by { |a| [a.year || 0, a.id] }.each do |aw| %>
+        <li class="list-group-item px-0">
+          <strong><%= aw.name.presence || "(Unnamed award)" %></strong>
+          <%= " (#{aw.year})" if aw.year.present? %>
+          <%= " — #{aw.country}" if aw.country.present? %>
+          <%= tag.em(aw.note, class: "text-muted") if aw.note.present? %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <div class="mt-4">
+    <%= render "shared/citations", citable: @soldier, heading: "Soldier Citations" %>
+  </div>
+

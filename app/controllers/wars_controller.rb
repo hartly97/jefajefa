@@ -3,9 +3,14 @@ class WarsController < ApplicationController
   before_action :set_sources,                  only: [:new, :edit]
   before_action :ensure_nested_source_builds,  only: [:new, :edit]
 
+
   def index
-    @wars = War.order(:name)
+  @wars = War.order(:name)
+  respond_to do |format|
+    format.html
+    format.json { render json: @wars.select(:id, :name) }
   end
+end
 
   def new
     @war = War.new

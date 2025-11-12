@@ -1,87 +1,93 @@
 # config/routes.rb
 Rails.application.routes.draw do
-  # root "articles#index"  # uncomment if/when you want a homepage
+  # ---- Root ----
+  root "articles#index"
 
-  # Health
-  get "up" => "rails/health#show", as: :rails_health_check
-
-  # Silence Chrome DevTools probe (returns empty 204 JSON)
-  get "/.well-known/appspecific/com.chrome.devtools.json",
-      to: proc { [204, { "Content-Type" => "application/json" }, ["{}"]] }
-
-  # Articles
+  # ---- Articles ----
   resources :articles do
     patch :regenerate_slug, on: :member
   end
 
-  # DNA
-  resources :dnas
-
-  # Soldiers (single block)
-  resources :soldiers do
-    collection do
-      get :search, defaults: { format: :json }   # /soldiers/search.json
-    end
-    patch :regenerate_slug, on: :member
-
-    # Nested mini-endpoints
-    resources :awards, only: [:create, :destroy]
-    resources :soldier_medals, only: [:create, :destroy]
-  end
-
-  # Involvements (AJAX add/remove)
-  resources :involvements, only: [:create, :destroy]
-
-  # Units (search endpoint)
-  resources :units do
-    collection { get :search }
-  end
-
-  # Sources (single consolidated block)
-  resources :sources do
-    get   :autocomplete,    on: :collection
-    patch :regenerate_slug, on: :member
-    patch :toggle_common,   on: :member
-    post  :create_citation, on: :member
-  end
-
-  # Medals, Battles, Wars, Awards
-  resources :medals  do
-    patch :regenerate_slug, on: :member
-  end
-  resources :battles do
-    patch :regenerate_slug, on: :member
-  end
-  resources :wars do
-    patch :regenerate_slug, on: :member
-  end
+  # ---- Awards ----
   resources :awards do
     patch :regenerate_slug, on: :member
   end
 
-  # Censuses
+  # ---- Battles ----
+  resources :battles do
+    patch :regenerate_slug, on: :member
+  end
+
+  # ---- Censuses ----
   resources :censuses do
     patch :regenerate_slug, on: :member
   end
 
-  # Cemeteries (single block)
+  # ---- Cemeteries & Burials ----
+  # Nested: index/new/create handled under the cemetery
   resources :cemeteries do
-    get :burials, on: :member
+    patch :regenerate_slug, on: :member
+    resources :burials, only: [:index, :new, :create]
+  end
+  # Standalone edits for an individual burial
+  resources :burials, only: [:show, :edit, :update, :destroy]
+
+  # ---- DNA ----
+  resources :dnas
+
+  # ---- Medals ----
+  resources :medals do
+    patch :regenerate_slug, on: :member
   end
 
-  # Newsletters & Books
+  # ---- Involvements (AJAX) ----
+  resources :involvements, only: [:create, :destroy], defaults: { format: :json }
+
+  # ---- Newsletters & Books ----
   resources :newsletters do
     patch :regenerate_slug, on: :member
   end
-  resources :books
-  get 'books/remedybook'
-  get 'books/thumbnails'
-  get 'welcome/apothecary'
+  resources :books do
+    collection do
+      get :remedybook
+      get :thumbnails
+    end
+  end
+  get "welcome/apothecary", to: "welcome#apothecary"
 
-  # Taxonomy & joins
-  resources :categories
-  resources :categorizations, only: [:create, :destroy]
+  # ---- Soldiers ----
+  resources :soldiers do
+    collection do
+      get :search, defaults: { format: :json }  # /soldiers/search.json
+    end
+    patch :regenerate_slug, on: :member
+  end
 
-  # Lookups
-  get "lookups/citables", to: "lookups#citables"
+  # ---- Sources ----
+  resources :sources do
+    collection { get :autocomplete }
+    member do
+      patch :regenerate_slug
+      patch :toggle_common
+      post  :create_citation
+    end
+  end
+
+  # ---- Units ----
+  resources :units do
+    collection { get :search }
+  end
+
+  # ---- Wars ----
+  resources :wars do
+    patch :regenerate_slug, on: :member
+  end
+
+  # ---- SoldierMedals (bridge) ----
+  resources :soldier_medals, only: [:create, :destroy]
+
+  # ---- Health & DevTools noise ----
+  get "up" => "rails/health#show", as: :rails_health_check
+  get "/.well-known/appspecific/com.chrome.devtools.json",
+      to: proc { [204, { "Content-Type" => "application/json" }, ["{}"]] }
 end

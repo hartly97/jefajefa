@@ -1,0 +1,62 @@
+<% burials   = local_assigns.fetch(:burials, []) %>
+<% cemetery  = local_assigns[:cemetery] %>
+<% total     = local_assigns[:total_count] %>
+
+<% if burials.blank? %>
+  <div class="alert alert-light border">No burials recorded.</div>
+<% else %>
+  <div class="table-responsive">
+    <table class="table table-sm align-middle">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Birth</th>
+          <th>Death</th>
+          <th>Section</th>
+          <th>Plot</th>
+          <th>Marker</th>
+          <th>Link</th>
+          <th>Note</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% burials.each do |b| %>
+          <%# Prefer linked participant if present; otherwise use burial's name fields %>
+          <% display_name =
+                if b.respond_to?(:participant) && b.participant.present?
+                  (b.participant.try(:display_name) ||
+                   [b.participant.try(:first_name), b.participant.try(:last_name)].compact.join(" ").presence ||
+                   "Record ##{b.participant_id}")
+                else
+                  [b.first_name, b.middle_name, b.last_name].compact.join(" ").presence || "Unnamed"
+                end %>
+
+          <tr>
+            <td>
+              <% if b.respond_to?(:participant) && b.participant.present? %>
+                <%= link_to display_name, b.participant %>
+              <% else %>
+                <%= display_name %>
+              <% end %>
+            </td>
+            <td>
+              <%= [b.try(:birth_date)&.to_s, b.try(:birth_place)].compact.join(" — ").presence || content_tag(:em, "—") %>
+            </td>
+            <td>
+              <%= [b.try(:death_date)&.to_s, b.try(:death_place)].compact.join(" — ").presence || content_tag(:em, "—") %>
+            </td>
+            <td><%= b.try(:section).presence || "—" %></td>
+            <td><%= b.try(:plot).presence    || "—" %></td>
+            <td><%= b.try(:marker).presence  || "—" %></td>
+            <td>
+              <% if b.try(:link_url).present? %>
+                <%= link_to "memorial", b.link_url, target: "_blank", rel: "noopener" %>
+              <% else %>—<% end %>
+            </td>
+            <td><%= b.try(:note).presence || "—" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

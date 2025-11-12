@@ -1,5 +1,3 @@
-
-# app/models/census_entry.rb
 class CensusEntry < ApplicationRecord
   self.table_name = "census_entries"
 
@@ -29,31 +27,6 @@ class CensusEntry < ApplicationRecord
     [firstname, lastname].compact.join(" ").presence || "Entry ##{id}"
   end
 
-#   # app/models/census_entry.rb
-# scope :search_name, ->(q) {
-#   q = q.to_s.strip
-#   if q.blank?
-#     all
-#   else
-#     like = "%#{ActiveRecord::Base.sanitize_sql_like(q)}%"
-
-#     preds = [
-#       "firstname ILIKE :q",
-#       "lastname  ILIKE :q",
-#       "(COALESCE(firstname,'') || ' ' || COALESCE(lastname,'')) ILIKE :q",
-#     ]
-
-#     # Only add optional columns if they exist
-#     preds << "slug ILIKE :q"               if column_names.include?("slug")
-#     preds << "birthlikeplacetext ILIKE :q" if column_names.include?("birthlikeplacetext")
-#     preds << "place ILIKE :q"              if column_names.include?("place")
-#     preds << "district ILIKE :q"           if column_names.include?("district")
-#     preds << "subdistrict ILIKE :q"        if column_names.include?("subdistrict")
-
-#     where(preds.join(" OR "), q: like)
-#   end
-# }
-# app/models/census_entry.rb
 scope :search_name, ->(q) {
   q = q.to_s.strip
   if q.blank?
@@ -76,41 +49,6 @@ scope :search_name, ->(q) {
     where(preds.join(" OR "), q: like)
   end
 }
-
-# scope :search_name, ->(q) {
-#   like = "%#{q}%"
-
-#   # Always-present pieces
-#   predicates = [
-#     "firstname ILIKE :q",
-#     "lastname  ILIKE :q",
-#     "(firstname || ' ' || lastname) ILIKE :q"
-#   ]
-
-#   # Only add optional columns if they exist in this table
-#   predicates << "slug ILIKE :q"                  if column_names.include?("slug")
-#   predicates << "birthlikeplacetext ILIKE :q"    if column_names.include?("birthlikeplacetext")
-#   predicates << "place ILIKE :q"                 if column_names.include?("place")
-#   predicates << "district ILIKE :q"              if column_names.include?("district")
-#   predicates << "subdistrict ILIKE :q"           if column_names.include?("subdistrict")
-
-#   where(predicates.join(" OR "), q: like)
-# }
-
-  # scope :search_name, ->(q) {
-  #   like = "%#{q}%"
-  #   where(
-  #     "firstname ILIKE :q OR lastname ILIKE :q OR " \
-  #     "(firstname || ' ' || lastname) ILIKE :q OR " \
-  #     "COALESCE(name,'') ILIKE :q OR COALESCE(slug,'') ILIKE :q",
-  #     q: like
-  #   )
-  # }
-  #  predicates << "slug ILIKE :q"                  if column_names.include?("slug")
-  # predicates << "birthlikeplacetext ILIKE :q"    if column_names.include?("birthlikeplacetext")
-  # predicates << "place ILIKE :q"                 if column_names.include?("place")
-  # predicates << "district ILIKE :q"              if column_names.include?("district")
-  # predicates << "subdistrict ILIKE :q"           if column_names.include?("subdistrict")
 
   private
 

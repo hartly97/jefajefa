@@ -1,41 +1,44 @@
-<%# app/views/soldiers/_card.html.erb -- expects `soldier` local %>
-<% raise ArgumentError, "soldier local is required" unless defined?(soldier) && soldier %>
+<% soldier ||= local_assigns[:soldier] || @soldier %>
+<% if soldier.present? %>
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+      <h3 class="card-title mb-1">
+        <%= soldier.display_name %>
+      </h3>
 
-<div class="card mb-3">
-  <div class="card-body">
-    <h5 class="card-title">
-      <%= soldier.respond_to?(:display_name) ? soldier.display_name : [soldier.first_name, soldier.last_name].compact.join(" ") %>
-    </h5>
-
-    <p class="mb-1">
-      <strong>Birth:</strong>
-      <%= [soldier.birth_date, soldier.birthplace].compact.join(" — ").presence || content_tag(:em, "Not recorded") %>
-    </p>
-
-    <p class="mb-1">
-      <strong>Death:</strong>
-      <%= [soldier.death_date, soldier.deathplace].compact.join(" — ").presence || content_tag(:em, "Not recorded") %>
-    </p>
-
-    <p class="mb-1">
-      <strong>Branch:</strong>
-      <%= soldier.branch_of_service.presence || content_tag(:em, "Not recorded") %>
-    </p>
-
-    <p class="mb-1">
-      <strong>Unit:</strong>
-      <%= soldier.unit.presence || content_tag(:em, "Not recorded") %>
-    </p>
-
-    <% if soldier.respond_to?(:first_enlisted_start_date) || soldier.respond_to?(:first_enlisted_end_date) || soldier.respond_to?(:first_enlisted_place) %>
-      <p class="mb-1">
-        <strong>First enlistment:</strong>
-        <%= [soldier.try(:first_enlisted_start_date), soldier.try(:first_enlisted_end_date)].compact.join(" → ").presence || content_tag(:em, "Not recorded") %>
-        <%= " — #{soldier.first_enlisted_place}" if soldier.try(:first_enlisted_place).present? %>
+      <p class="text-muted mb-3">
+        <% if soldier.birth_date.present? || soldier.birthplace.present? %>
+          <i class="bi bi-person text-secondary"></i>
+          <%= [soldier.birth_date, soldier.birthplace].compact.join(" — ") %>
+        <% end %>
+        <% if soldier.death_date.present? || soldier.deathplace.present? %>
+          <br>
+          <i class="bi bi-cross text-secondary"></i>
+          <%= [soldier.death_date, soldier.deathplace].compact.join(" — ") %>
+        <% end %>
       </p>
-    <% end %>
 
-    <%= link_to "View", soldier, class: "btn btn-sm btn-primary" %>
-    <%= link_to "Edit", [:edit, soldier], class: "btn btn-sm btn-outline-secondary" %>
+      <p class="mb-1"><strong>Branch:</strong> <%= soldier.branch_of_service.presence || tag.em("Not recorded", class: "text-muted") %></p>
+      <p class="mb-2"><strong>Unit:</strong> <%= soldier.unit.presence || tag.em("Not recorded", class: "text-muted") %></p>
+
+      <% if soldier.respond_to?(:first_enlisted_start_date) || soldier.respond_to?(:first_enlisted_end_date) || soldier.respond_to?(:first_enlisted_place) %>
+        <p class="mb-1">
+          <strong>First enlistment:</strong>
+          <%= [soldier.try(:first_enlisted_start_date), soldier.try(:first_enlisted_end_date)].compact.join(" → ").presence || content_tag(:em, "Not recorded", class: "text-muted") %>
+          <%= " — #{soldier.first_enlisted_place}" if soldier.try(:first_enlisted_place).present? %>
+        </p>
+      <% end %>
+
+      <div class="mt-3">
+        <%= render "shared/category_badges", categories: soldier_badge_categories(soldier) %>
+
+
+      </div>
+
+      <div class="mt-3">
+        <%= link_to "View", soldier, class: "btn btn-sm btn-primary" %>
+        <%= link_to "Edit", [:edit, soldier], class: "btn btn-sm btn-outline-secondary" %>
+      </div>
+    </div>
   </div>
-</div>
+<% end %>

@@ -1,80 +1,31 @@
-# <table class="table table-sm">
-#   <thead>
-#     <tr><th>Name</th></tr>
-#   </thead>
-#   <tbody>
-#     <%soldiers.each do |soldier| %>
-#       <tr>
-#         <td><%= link_to ([soldier.first_name, soldier.last_name].compact.join(" ").presence || soldier.slug), soldier %></td>
-#         <td><%= (defined?(l) ? l(soldier.created_at, format: :short) : soldier.created_at) rescue soldier.created_at %></td>
-#       </tr>
-#       <tr>soldier.birth_day</tr>
-#     <% end %>
-#   </tbody>
-# </table>
-
-# <div class="row row-cols-1 row-cols-md-3 g-3">
-#     <% soldiers.each do |soldier| %>
-#       <div class="col">
-#       <div class="card h-100">
-#         <div class="card-body">
-#           <h4 class="card-title">
-#         <%= link_to(([soldier.first_name, soldier.last_name].compact.join(" ").presence || soldier.slug), soldier) %></h4>
-#         <p><%= [soldier.try(:birth_day), soldier.try(:birth_month_name), soldier.try(:birth_year)].compact.join(" ") %></p>
-#         <p><%= [soldier.try(:death_date), soldier.try(:death_month_name), soldier.try(:death_year)].compact.join(" ") %></p>
-#         <p><%= soldier.try(:fathername) %></td>
-#         <p><%= soldier.try(:mothername) %></p>
-#         <p>
-#           <% if soldier.respond_to?(:categories) && soldier.categories.any? %>
-#             <% if lookup_context.exists?("categories/category") %>
-#               <%= render soldier.categories %>
-#             <% else %>
-#               <%= soldier.categories.map(&:name).join(", ") %>
-#             <% end %>
-#           <% end %>
-#         </p>
-#       </div>
-#     <% end %>
-#     % end %>
-#     </div>
-#      </div>
-#       </div>
-
-
-
-
-<!-- app/views/soldiers/_list.html.erb -->
-<table class="table table-sm">
+<table class="table table-sm align-middle">
   <thead>
-    <tr><th>Name</th><th>Created</th></tr>
+    <tr>
+      <th>Name</th>
+      <th>Categories</th>
+      <th>Created</th>
+    </tr>
   </thead>
   <tbody>
     <% soldiers.each do |soldier| %>
       <tr>
-        <td><%= link_to(([soldier.first_name, soldier.last_name].compact.join(" ").presence || soldier.slug), soldier) %></td>
-        <td><%= (defined?(l) ? l(soldier.created_at, format: :short) : soldier.created_at) rescue soldier.created_at %></td>
+        <td>
+          <%= link_to(
+                [soldier.first_name, soldier.last_name].compact.join(" ").presence || soldier.slug,
+                soldier
+              ) %>
+        </td>
+        <td>
+         <td>
+ <%= render "shared/category_badges", categories: soldier_badge_categories(soldier) %>
+</td>
+
+        </td>
+        <td>
+          <%= (defined?(l) ? l(soldier.created_at, format: :short) : soldier.created_at)
+              rescue soldier.created_at %>
+        </td>
       </tr>
     <% end %>
   </tbody>
 </table>
-
-<div class="row row-cols-1 row-cols-md-3 g-3">
-  <% soldiers.each do |soldier| %>
-    <div class="col">
-      <div class="card h-100">
-        <div class="card-body">
-          <h4 class="card-title">
-            <%= link_to(([soldier.first_name, soldier.last_name].compact.join(" ").presence || soldier.slug), soldier) %>
-          </h4>
-          <p><%= [soldier.try(:birth_day), soldier.try(:birth_month_name), soldier.try(:birth_year)].compact.join(" ") %></p>
-          <p><%= [soldier.try(:death_day), soldier.try(:death_month_name), soldier.try(:death_year)].compact.join(" ") %></p>
-          <p><%= soldier.try(:fathername) %></p>
-          <p><%= soldier.try(:mothername) %></p>
-          <% if soldier.respond_to?(:categories) && soldier.categories.any? %>
-            <p><%= soldier.categories.map(&:name).join(", ") %></p>
-          <% end %>
-        </div>
-      </div>
-    </div>
-  <% end %>
-</div>
