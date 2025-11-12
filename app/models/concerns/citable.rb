@@ -19,6 +19,6 @@ module Citable
         has_source_title = nested['title'].present?
         any_locator      = locator_keys.any? { |k| attrs[k].present? }
         !has_source_id && !has_source_title && !any_locator
-
-    
+      end
+  end
 end

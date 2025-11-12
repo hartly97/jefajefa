@@ -31,8 +31,8 @@ import BurialFormController from
 application.register("burial-form", 
 BurialFormController)
 
-import BurialController from 
-"./burial_controller"
-application.register("burial-form", 
-BurialController)
+// import BurialController from 
+// "./burial_controller"
+// application.register("burial-form", 
+// BurialController)
 

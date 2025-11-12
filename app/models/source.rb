@@ -3,7 +3,6 @@ class Source < ApplicationRecord
   include Sluggable
   include Categorizable
  
-
   has_many :citations, dependent: :restrict_with_error, inverse_of: :source
 
   has_many :cited_articles, through: :citations, source: :citable, source_type: "Article"
