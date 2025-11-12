@@ -24,8 +24,10 @@ class Soldier < ApplicationRecord
            as: :participant,
            inverse_of: :participant,
            dependent: :destroy
-  has_many :battles, through: :involvements, source: :involvable, source_type: "Battle"
-  has_many :wars,    through: :involvements, source: :involvable, source_type: "War"
+  
+           has_many :battles, through: :involvements, source: :involvable, source_type: "Battle"
+  
+           has_many :wars,    through: :involvements, source: :involvable, source_type: "War"
 
   # Citations are provided by Citable; don’t redefine here.
 
@@ -58,8 +60,15 @@ class Soldier < ApplicationRecord
     [first_name, last_name].compact.join(" ").presence || "Soldier ##{id}"
   end
 
-  def slug_source
-    [first_name, last_name].compact.join(" ").presence || "soldier-#{id || SecureRandom.hex(2)}"
+def slug_source
+    full = [first_name, middle_name, last_name].compact.join(" ").squeeze(" ").strip
+    full.presence || "soldier-#{id || SecureRandom.hex(2)}"
+  end
+
+  def slug_source_changed?
+    will_save_change_to_first_name? ||
+    will_save_change_to_middle_name? ||
+    will_save_change_to_last_name?
   end
 
   def birth_month_name
