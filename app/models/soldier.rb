@@ -3,14 +3,19 @@ class Soldier < ApplicationRecord
   include Sluggable
   include Citable
   include Categorizable
-after_commit :sync_burial_involvement, if: :saved_change_to_cemetery_id?
+  after_commit :sync_burial_involvement, if: :saved_change_to_cemetery_id?
 
   belongs_to :cemetery, optional: true
 
   has_many :burials, as: :participant, dependent: :nullify
 
+  has_many :involvements, as: :participant, dependent: :destroy
+  accepts_nested_attributes_for :involvements, allow_destroy: true
+
   # Directs
   has_many :awards, inverse_of: :soldier, dependent: :destroy
+
+  
 
   # Medals via join
   has_many :soldier_medals, inverse_of: :soldier, dependent: :destroy

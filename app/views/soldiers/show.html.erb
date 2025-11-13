@@ -1,8 +1,7 @@
-<!-- app/views/soldiers/show.html.erb -->
 <div class="container my-4">
   <%= render "card", soldier: @soldier %>
 
-  <%# ---------- Service ---------- %>
+
   <% if @soldier.branch_of_service.present? || @soldier.unit.present? %>
     <h3 class="mt-4 mb-2 border-bottom pb-1">Service</h3>
     <dl class="row">
@@ -17,7 +16,7 @@
     </dl>
   <% end %>
 
-  <%# ---------- Cemetery ---------- %>
+
   <% if @soldier.cemetery.present? %>
     <h3 class="mt-4 mb-2 border-bottom pb-1">Cemetery</h3>
     <p>
@@ -26,21 +25,26 @@
     </p>
   <% end %>
 
-  <% if @soldier.burials.any? %>
-  <h3>Burial</h3>
-  <ul>
-    <% @soldier.burials.includes(:cemetery).each do |b| %>
-      <li><%= link_to b.cemetery.name, b.cemetery %>
-        <% if b.section || b.plot || b.marker %>
-          — <%= [b.section, b.plot, b.marker].compact.join(", ") %>
-        <% end %>
+  <%# if @soldier.burials.any? %>
+  <!--<h3>Burial</h3>
+  <ul>-->
+    <%# @soldier.burials.includes(:cemetery).each do |b| %>
+      <li>
+      <%#= link_to b.cemetery.name, b.cemetery %>
+        <%# if b.section || b.plot || b.marker %>
+         <!-- — --><%#= [b.section, b.plot, b.marker].compact.join(", ") %>
+        <%# end %>
       </li>
-    <% end %>
+    <%# end %>
   </ul>
-<% end %>
+<%# end %>
+<%# remove or guard this %>
+<% invs = @soldier.involvements.includes(:involvable) %>
+<%= render("shared/involvements_for_participant", participant: @soldier, involvements: invs) if invs.any? %>
 
 
-  # <#% ---------- Wars ---------- %>
+
+
   <% wars = @soldier.involvements.select { |i| i.involvable_type == "War" && i.involvable.present? }.sort_by { |i| [i.year || 0, i.id] } %>
   <% if wars.any? %>
     <h3 class="mt-4 mb-2 border-bottom pb-1">Wars</h3>
@@ -56,7 +60,7 @@
     </ul>
   <% end %>
 
-  <%# ---------- Battles ---------- %>
+ 
   <% battles = @soldier.involvements.select { |i| i.involvable_type == "Battle" && i.involvable.present? }.sort_by { |i| [i.year || 0, i.id] } %>
   <% if battles.any? %>
     <h3 class="mt-4 mb-2 border-bottom pb-1">Battles</h3>
@@ -72,7 +76,7 @@
     </ul>
   <% end %>
 
-  <%# ---------- Awards (not medals) ---------- %>
+  
   <% if @soldier.awards.any? %>
     <h3 class="mt-4 mb-2 border-bottom pb-1">Awards</h3>
     <ul class="list-group list-group-flush">

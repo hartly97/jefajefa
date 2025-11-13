@@ -10,7 +10,7 @@
   </div>
 
   <%# Only show the multi-select to admins, and keep it INSIDE the form %>
-  <% if defined?(current_user) && current_user&.admin? %>
+  <%# if defined?(current_user) && current_user&.admin? %>
     <div class="field">
       <%= f.label :category_ids, "Categories" %>
       <%= f.collection_select :category_ids,
@@ -38,6 +38,8 @@
       <%= cf.label :_destroy, "Remove" %>
     </div>
   <% end %>
-
-  <%= f.submit %>
+<div class="mt-3">
+    <%= f.submit class: "btn btn-primary" %>
+  
+<% end %>
 <% end %>
