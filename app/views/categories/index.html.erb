@@ -1,7 +1,10 @@
 <h1><%= controller_name.titleize %></h1>
+<p><%= link_to "New Category", new_categories_path, class: "btn btn-primary" %></p>
 <ul>
-  <% categories.each do |r| %>
-    <li><%= link_to(r.try(:title) || r.try(:name) || r.try(:slug), r) %></li>
+<% if @categories.any? %>
+  <% categories.each do |category| %>
+    <li><%= link_to(category.try(:title) || category.try(:name) || category.try(:slug), category) %></li>
   <% end %>
 </ul>
 <p><%= link_to "New", url_for([:new, controller_name.singularize]) %></p>
+<% end %>

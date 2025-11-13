@@ -15,3 +15,4 @@ has_many :citations, as: :citable, dependent: :destroy
   def slug_source
     [first_name, last_name].compact.join(" ").presence || "soldier-#{id || SecureRandom.hex(2)}"
   end
+end

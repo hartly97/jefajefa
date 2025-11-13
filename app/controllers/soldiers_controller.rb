@@ -14,7 +14,20 @@ class SoldiersController < ApplicationController
     offset = (current_page - 1) * page_size
     @soldiers = scope.limit(page_size).offset(offset)
     @has_next  = current_page < @total_pages
+    @medal_categories = begin
+      parent = Category.where("lower(name) = ?", "medals").first
+      if parent && Category.column_names.include?("parent_id")
+        Category.where(parent_id: parent.id).order(:name)
+      elsif parent && parent.respond_to?(:children)
+        parent.children.order(:name)
+      else
+        Category.where("name ILIKE ?", "%medal%").order(:name)
+      end
+    rescue
+      []
+    end
   end
+
 
   # GET /soldiers/:id
   def show
@@ -33,7 +46,13 @@ class SoldiersController < ApplicationController
   # GET /soldiers/:id/edit
   def edit
     build_nested(@soldier)
+    #  is the following in the form?
+    @soldier.awards.build         if @soldier.awards.empty?
+    @soldier.soldier_medals.build if @soldier.soldier_medals.empty?
+    @soldier.citations.build      if @soldier.citations.empty?
+    @soldier.category_names ||= @soldier.categories.order(:name).pluck(:name).join(", ") if @soldier.respond_to?(:category_names)
   end
+
 
   # POST /soldiers
   def create
@@ -108,6 +127,7 @@ class SoldiersController < ApplicationController
     s.citations.build if s.citations.empty?
   end
 
+
   def soldier_params
     params.require(:soldier).permit(
       :first_name, :middle_name, :last_name,
@@ -133,3 +153,4 @@ class SoldiersController < ApplicationController
     )
   end
 end
+

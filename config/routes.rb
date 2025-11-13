@@ -18,10 +18,25 @@ Rails.application.routes.draw do
     patch :regenerate_slug, on: :member
   end
 
+  #----Categories ----
+  resources :categories, only: %i[index show] do
+    collection do
+      get :topics
+      get :sources
+      get :locations
+    end
+  end
+
+  # Taxonomy & joins
+  resources :categories
+  resources :categorizations, only: [:create, :new, :destroy]
+
   # ---- Censuses ----
   resources :censuses do
     patch :regenerate_slug, on: :member
   end
+
+  "cemeteries#index"
 
   # ---- Cemeteries & Burials ----
   # Nested: index/new/create handled under the cemetery
@@ -29,8 +44,10 @@ Rails.application.routes.draw do
     patch :regenerate_slug, on: :member
     resources :burials, only: [:index, :new, :create]
   end
+
   # Standalone edits for an individual burial
   resources :burials, only: [:show, :edit, :update, :destroy]
+
 
   # ---- DNA ----
   resources :dnas
@@ -71,6 +88,15 @@ Rails.application.routes.draw do
       patch :toggle_common
       post  :create_citation
     end
+  end
+
+  resources :sources do
+    member do
+      patch :regenerate_slug
+      post  :create_citation
+      patch :toggle_common
+    end
+    collection { get :autocomplete }
   end
 
   # ---- Units ----
