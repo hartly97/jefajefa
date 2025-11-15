@@ -13,7 +13,7 @@
        <div class="col-md-6">
     <%= label_tag :q, "Search burials" %>
     <%= text_field_tag :q, params[:q], class: "form-control",
-                       placeholder: "Search by name…" %>
+                       placeholder: "Search by name" %>
   </div>
   <div class="col-md-2">
     <%= submit_tag "Search", class: "btn btn-primary w-100" %>
@@ -45,15 +45,21 @@
         <% else %>
           (participant missing)
         <% end %>
-        <%== " — <strong>#{ERB::Util.html_escape(inv.role)}</strong>" if inv.role.present? %>
+        <%== "  <strong>#{ERB::Util.html_escape(inv.role)}</strong>" if inv.role.present? %>
         <%= " (#{inv.year})" if inv.year.present? %>
-        <%= " — #{inv.note}"  if inv.note.present? %>
+        <%= "  #{inv.note}"  if inv.note.present? %>
       </li>
     <% end %>
   </ul>
 <% else %>
   <p><em>No involvements recorded.</em></p>
 <% end %>
+
+<!-- Drop into each show view where helpful -->
+<% if @record.respond_to?(:categories) && @record.categories.any? %>
+  <p><strong>Categories:</strong> <%= @record.categories.order(:name).map(&:name).join(", ") %></p>
+<% end %>
+
 
 <p class="mt-3">
   <%#= link_to "Edit", [:edit, @cemetery] %> <!--|-->

@@ -14,15 +14,19 @@ class CemeteriesController < ApplicationController
   end
  
   def show
+  @cemetery = Cemetery.find_by(slug: params[:id]) || Cemetery.find(params[:id])
+  @burials  = @cemetery.burials.order(:last_name, :first_name).limit(200)
+  @total_count = @cemetery.burials.count
+
   @q = params[:q].to_s.strip.downcase
 
-  # 1) Real burials — NO join on polymorphic participant
+  # 1) Real burials  NO join on polymorphic participant
   burials_scope = @cemetery.burials
 
   if @q.present?
     like = "%#{ActiveRecord::Base.sanitize_sql_like(@q)}%"
 
-    # Match either burial’s own name fields OR the linked Soldier’s name
+    # Match either burials own name fields OR the linked Soldiers name
     burials_scope = burials_scope.where(<<~SQL, q: like)
       LOWER(COALESCE(burials.first_name,'') || ' ' || COALESCE(burials.last_name,'')) LIKE :q
       OR (
@@ -37,7 +41,7 @@ class CemeteriesController < ApplicationController
     SQL
   end
 
-  # ✅ Preload (separate query), do NOT join
+  #  Preload (separate query), do NOT join
   real_burials = burials_scope.preload(:participant).to_a
 
   # 2) Fallback: Soldiers tied by cemetery_id but without a Burial row
@@ -66,7 +70,7 @@ fallback_soldiers = fallback_soldiers.where.not(
   )
 end
 
-# ✨ Split for the view
+#  Split for the view
 real_soldier_burials = real_burials.select { |b| b.participant_type == "Soldier" }
 other_real_burials   = real_burials.reject { |b| b.participant_type == "Soldier" }
 
@@ -144,7 +148,7 @@ def set_sources
 
   def cemetery_params
     params.require(:cemetery).permit(
-      :name, :city, :state, :country, :note,
+      :name, :city, :state, :country, :note,:slug,
       { category_ids: [] },
       citations_attributes: [
         :id, :_destroy, :source_id,

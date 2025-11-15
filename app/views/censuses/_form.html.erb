@@ -19,7 +19,7 @@
             class: "form-control",
             placeholder: "https://photos.smugmug.com/.../image.jpg" %>
       <div class="form-text">
-        Paste a direct image URL (jpg/png/webp). We don’t upload the file; we embed it.
+        Paste a direct image URL (jpg/png/webp). We dont upload the file; we embed it.
       </div>
     </div>
 
@@ -32,7 +32,7 @@
         <%= f.label :external_image_credit, "Credit / Attribution" %>
         <%= f.text_field :external_image_credit,
               class: "form-control",
-              placeholder: "© Your Name / SmugMug" %>
+              placeholder: " Your Name / SmugMug" %>
       </div>
     </div>
 
@@ -50,6 +50,9 @@
   <h5>Citations</h5>
   <%= render "citations/sections", f: f, sources: (@sources || Source.order(:title)) %>
  
+<%= render "shared/category_picker",
+      record: @censuses, object_name: :censuses,
+      scope: Category.censusess.order(:name), legend: "Census categories" %>
 
 
   <div class="mt-3">

@@ -15,7 +15,7 @@ puts "Soldier categories: #{s.categories.pluck(:name).inspect}"
 
 # 3. Source + Citation
 src = Source.create!(title: "Regimental Records Vol. 1")
-s.cite!(src, pages: "pp. 10–12", note: "Listed as Private")
+s.cite!(src, pages: "pp. 1012", note: "Listed as Private")
 puts "Soldier sources: #{s.sources.pluck(:title).inspect}"
 puts "Reverse lookup Source.cited_for(s): #{Source.cited_for(s).pluck(:title).inspect}"
 

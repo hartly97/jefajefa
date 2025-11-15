@@ -72,9 +72,9 @@
         :id, :_destroy, :source_id,
         :pages, :quote, :note,
         :volume, :issue, :folio, :page, :column, :line_number, :record_number,
-        :image_url, :image_frame, :roll, :enumeration_district, :locator,
+        :image_url, :image_frame, :roll, :slug, :enumeration_district, :locator,
         { source_attributes: [:id, :title, :author, :publisher, :year, :url, :details, :repository, :link_url] }
-      ],
+      ], { category_ids: [] },
       involvements_attributes: [
         :id, :participant_id, :participant_type, :role, :year, :note, :_destroy
       ]

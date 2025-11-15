@@ -16,7 +16,7 @@
 
       <% if src&.author.present? || src&.publisher.present? || src&.year.present? %>
         <div class="text-muted mb-2">
-          <%= [src&.author, src&.publisher, src&.year].compact_blank.join(" • ") %>
+          <%= [src&.author, src&.publisher, src&.year].compact_blank.join("  ") %>
         </div>
       <% end %>
 
@@ -27,7 +27,7 @@
               <strong><%= c.pages || c.page %></strong>
             <% end %>
             <% if c.quote.present? %>
-              <div class="mt-1"><em>“<%= c.quote %>”</em></div>
+              <div class="mt-1"><em><%= c.quote %></em></div>
             <% end %>
             <% if c.note.present? %>
               <div class="text-muted"><%= c.note %></div>

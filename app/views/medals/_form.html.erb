@@ -10,3 +10,6 @@
       <%= f.label :category_ids, "Categories" %>
       <%= f.collection_select :category_ids, Category.order(:name), :id, :name, {}, multiple: true %>
     </div>
+    <%= render "shared/category_picker",
+      record: @soldier, object_name: :battle,
+      scope: Category.soldiers.order(:name), legend: "Soldier categories" %>

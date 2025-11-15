@@ -18,7 +18,7 @@
   # <%= ivf.hidden_field :_destroy %>
   <!-- fields: participant_type, participant_id, role, year, note -->
   <fieldset class="mb-3">
-  <legend>Involvements (Soldiers) — AJAX</legend>
+  <legend>Involvements (Soldiers)  AJAX</legend>
 
   <div data-controller="involvement-form">
     <!-- Fixed involvable: this Battle -->
@@ -32,7 +32,7 @@
           <label class="form-label">Soldier</label>
           <input type="text"
                  class="form-control"
-                 placeholder="Type to search soldiers…"
+                 placeholder="Type to search soldiers"
                  list="soldier-suggest"
                  data-involvement-form-target="search">
           <datalist id="soldier-suggest" data-involvement-form-target="suggest"></datalist>
@@ -65,15 +65,18 @@
     </div>
 
     <hr class="my-3">
+<%= render "shared/category_picker",
+      record: @battle, object_name: :battle,
+      scope: Category.battles.order(:name), legend: "Battle categories" %>
 
     <h6 class="mb-2">Current soldier involvements</h6>
     <ul class="list-unstyled" data-involvement-form-target="list">
       <% @battle.involvements.includes(:participant).order(:year, :id).each do |inv| %>
         <li class="mb-2" data-involvement-row="<%= inv.id %>">
           <%= link_to inv.participant_label, inv.participant_type == "Soldier" ? soldier_path(inv.participant_id) : "#" %>
-          <%= " — " + content_tag(:strong, inv.role) if inv.role.present? %>
+          <%= "  " + content_tag(:strong, inv.role) if inv.role.present? %>
           <%= " (#{inv.year})" if inv.year.present? %>
-          <%= " — " + content_tag(:em, inv.note) if inv.note.present? %>
+          <%= "  " + content_tag(:em, inv.note) if inv.note.present? %>
           <button type="button"
                   class="btn btn-sm btn-outline-danger ms-2"
                   data-action="involvement-form#remove"

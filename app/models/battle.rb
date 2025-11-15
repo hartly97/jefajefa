@@ -12,7 +12,7 @@ has_many :citations, as: :citable, dependent: :destroy
   validates :name, presence: true
 
   
-  def slug_source
-    [first_name, last_name].compact.join(" ").presence || "soldier-#{id || SecureRandom.hex(2)}"
-  end
+  # def slug_source
+  #   [first_name, last_name].compact.join(" ").presence || "soldier-#{id || SecureRandom.hex(2)}"
+  # end
 end

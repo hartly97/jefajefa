@@ -1,0 +1,12 @@
+<h1>Burials</h1>
+<%= render "search" %>
+
+<%= render "pager" %>
+<%= render "table",
+      burials: @burials,
+      cemetery: nil,
+      total_count: @total_count %>
+
+<%= render "pager" %>
+
+

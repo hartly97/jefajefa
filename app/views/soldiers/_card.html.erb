@@ -2,30 +2,40 @@
 <% if soldier.present? %>
   <div class="card shadow-sm border-0 mb-4">
     <div class="card-body">
-      <h3 class="card-title mb-1">
-      <%= soldier.display_name %>
+      # <h3 class="card-title mb-1">
+      # <%#= @soldier.try(:display_name) || [@soldier.first_name, @soldier.last_name].compact.join(' ') || "Soldier ##{@soldier.id}" %>
+      # <%# s = @soldier || local_assigns[:soldier] %>
+
+<h1>
+  <% s = (defined?(soldier) && soldier) || @soldier %>
+  <%= s&.display_name || [s&.first_name, s&.last_name].compact.join(" ").presence || (s ? "Soldier ##{s.id}" : "Soldier") %>
+</h1>
+
+</h1>
+
+
       </h3>
 
       <p class="text-muted mb-3">
         <% if soldier.birth_date.present? || soldier.birthplace.present? %>
           <i class="bi bi-person text-secondary"></i>
-          <%= [soldier.birth_date, soldier.birthplace].compact.join(" — ") %>
+          <%= [soldier.birth_date, soldier.birthplace].compact.join("  ") %>
         <% end %>
         <% if soldier.death_date.present? || soldier.deathplace.present? %>
           <br>
           <i class="bi bi-cross text-secondary"></i>
-          <%= [soldier.death_date, soldier.deathplace].compact.join(" — ") %>
+          <%= [soldier.death_date, soldier.deathplace].compact.join("  ") %>
         <% end %>
       </p>
 
-      <p class="mb-1"><strong>Branch:</strong> <%= soldier.branch_of_service.presence || tag.em("Not recorded", class: "text-muted") %></p>
-      <p class="mb-2"><strong>Unit:</strong> <%= soldier.unit.presence || tag.em("Not recorded", class: "text-muted") %></p>
+      <p class="mb-1">Branch: <%= soldier.branch_of_service.presence || tag.em("Not recorded", class: "text-muted") %></p>
+      <p class="mb-2">Unit:<%= soldier.unit.presence || tag.em("Not recorded", class: "text-muted") %></p>
 
       <% if soldier.respond_to?(:first_enlisted_start_date) || soldier.respond_to?(:first_enlisted_end_date) || soldier.respond_to?(:first_enlisted_place) %>
         <p class="mb-1">
           <strong>First enlistment:</strong>
-          <%= [soldier.try(:first_enlisted_start_date), soldier.try(:first_enlisted_end_date)].compact.join(" → ").presence || content_tag(:em, "Not recorded", class: "text-muted") %>
-          <%= " — #{soldier.first_enlisted_place}" if soldier.try(:first_enlisted_place).present? %>
+          <%= [soldier.try(:first_enlisted_start_date), soldier.try(:first_enlisted_end_date)].compact.join("  ").presence || content_tag(:em, "Not recorded", class: "text-muted") %>
+          <%= "  #{soldier.first_enlisted_place}" if soldier.try(:first_enlisted_place).present? %>
         </p>
       <% end %>
 
@@ -41,4 +51,5 @@
       </div>
     </div>
   </div>
+   
 <% end %>

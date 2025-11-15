@@ -8,6 +8,9 @@
     <%= label_tag :cemetery_category_names, "Categories (comma-separated)" %>
     <%= text_field_tag "cemetery[category_names]" %>
   </div>
+<%= render "shared/category_picker",
+      record: @battle, object_name: :cemetery,
+      scope: Category.cemeteries.order(:name), legend: "Cemetery categories" %>
 
   <%# Only show the multi-select to admins, and keep it INSIDE the form %>
   <%# if defined?(current_user) && current_user&.admin? %>
@@ -41,5 +44,4 @@
 <div class="mt-3">
     <%= f.submit class: "btn btn-primary" %>
   
-<% end %>
 <% end %>

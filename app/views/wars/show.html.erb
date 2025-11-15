@@ -3,6 +3,9 @@
 <%= render "shared/citations", citable: @war, heading: "War Citations" %>
 
 <%= render "shared/involvements_panel", involvable: @war %>
+<h2>Involvements</h2>
+<%= render "shared/involvement_list", involvements: @war.involvements.includes(:participant).order(:year, :id) %>
+
 
 <h2>Involvements</h2>
 <% invs = @involvements || @war.involvements.includes(:participant).order(:year, :id) %>
@@ -21,12 +24,17 @@
           Soldier #<%= inv.participant_id %>
         <% end %>
 
-        <%= " — " + content_tag(:strong, inv.role) if inv.role.present? %>
+        <%= "  " + content_tag(:strong, inv.role) if inv.role.present? %>
         <%= " (#{inv.year})" if inv.year.present? %>
-        <%= " — " + content_tag(:em, inv.note)  if inv.note.present? %>
+        <%= "  " + content_tag(:em, inv.note)  if inv.note.present? %>
       </li>
     <% end %>
   </ul>
 <% else %>
   <p><em>No involvements recorded.</em></p>
 <% end %>
+<!-- Drop into each show view where helpful -->
+<% if @record.respond_to?(:categories) && @record.categories.any? %>
+  <p><strong>Categories:</strong> <%= @record.categories.order(:name).map(&:name).join(", ") %></p>
+<% end %>
+

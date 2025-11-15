@@ -1,6 +1,6 @@
 # app/helpers/burials_helper.rb
 module BurialsHelper
-  # A single row “view-model” so the table works for Soldier or Burial records
+  # A single row view-model so the table works for Soldier or Burial records
   def burial_row(record)
     OpenStruct.new(
       id:         record.id,
@@ -56,7 +56,7 @@ module BurialsHelper
     bits = []
     bits << l(date)              if date.respond_to?(:to_date) rescue bits << date
     bits << place                if place.present?
-    bits.compact.join(" — ").presence
+    bits.compact.join("  ").presence
   end
 
   def join_label_value(label, value)

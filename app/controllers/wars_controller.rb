@@ -74,7 +74,7 @@ end
 
   def war_params
     params.require(:war).permit(
-      :name, :start_year, :end_year, :note,
+      :name, :start_year, :end_year, :note,:slug,
       { category_ids: [] },
       citations_attributes: [
         :id, :source_id, :pages, :quote, :note, :_destroy,

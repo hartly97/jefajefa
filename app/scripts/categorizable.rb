@@ -14,7 +14,7 @@ namespace :cat do
   #   ARTICLE_ID_MAP=tmp/article_id_map.csv     # optional: old_id,new_id
   #   CATEGORY_ID_MAP=tmp/category_id_map.csv   # optional: old_id,new_id
   ###########################################################################
-  desc "Import legacy Article↔Category links from CSV (headers: id,article_id,category_id,created_at,updated_at)"
+  desc "Import legacy ArticleCategory links from CSV (headers: id,article_id,category_id,created_at,updated_at)"
   task import_articles_and_categories_from_csv: :environment do
     path   = ENV["CSV"] || "tmp/article_categories_legacy.csv"
     dry    = ENV["DRY_RUN"].to_s == "1"
@@ -80,7 +80,7 @@ namespace :cat do
       end
 
       if dry
-        puts "DRY: link Article(#{article.id}) ⇢ Category(#{category.id})"
+        puts "DRY: link Article(#{article.id})  Category(#{category.id})"
         stat[:linked] += 1
         seen << pair
       else
@@ -90,7 +90,7 @@ namespace :cat do
           seen << pair
         rescue => e
           stat[:errors] += 1
-          warn "ERROR linking Article(#{article.id}) ⇢ Category(#{category.id}): #{e.class} #{e.message}"
+          warn "ERROR linking Article(#{article.id})  Category(#{category.id}): #{e.class} #{e.message}"
         end
       end
     end
@@ -125,7 +125,7 @@ namespace :cat do
                   .count
     if top.any?
       puts "  top categories (by Article usage):"
-      top.each { |(id, name, type), cnt| puts "    • [#{id}] #{name} (#{type || 'n/a'}): #{cnt}" }
+      top.each { |(id, name, type), cnt| puts "     [#{id}] #{name} (#{type || 'n/a'}): #{cnt}" }
     else
       puts "  top categories: none"
     end
@@ -137,7 +137,7 @@ namespace :cat do
                      .pluck(:id, :title)
     if missing.any?
       puts "  sample without categories:"
-      missing.each { |id, title| puts "    • (#{id}) #{title}" }
+      missing.each { |id, title| puts "     (#{id}) #{title}" }
     end
 
     # Other common models (only if they exist)
@@ -198,7 +198,7 @@ namespace :cat do
     if dups.any?
       dups.each do |k, cnt|
         cat_id, type, rid = k
-        puts "  #{type}(#{rid}) ⇢ Category(#{cat_id}): #{cnt}"
+        puts "  #{type}(#{rid})  Category(#{cat_id}): #{cnt}"
       end
     else
       puts "  None found."

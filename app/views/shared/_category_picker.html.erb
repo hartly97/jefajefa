@@ -1,0 +1,17 @@
+<%# locals: record:, object_name:, scope:, legend: %>
+<fieldset class="mb-3">
+  <legend class="h6"><%= legend || "Categories" %></legend>
+
+<!--   <label class="form-label">Add/remove categories</label> -->
+  <%= f.label :category_names, "Add/remove categories (comma separated)" %>
+<%= f.text_field :category_names, class: "form-control",
+      placeholder: "War of 1812, Bunker Hill" %>
+
+
+  <%# Optional: show currently selected %>
+  <% if record.categories.loaded? ? record.categories.any? : record.categories.exists? %>
+    <div class="form-text mt-1">
+      Selected: <%= record.categories.order(:name).pluck(:name).join(", ") %>
+    </div>
+  <% end %>
+</fieldset>

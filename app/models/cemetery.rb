@@ -5,7 +5,6 @@ class Cemetery < ApplicationRecord
 
   has_many :burials, dependent: :destroy
 
-has_many :involvements, as: :involvable, dependent: :destroy
 
    # Only the burial rows
   has_many :burial_involvements,
@@ -18,20 +17,35 @@ has_many :involvements, as: :involvable, dependent: :destroy
            source: :participant,
            source_type: "Soldier"
 
-             has_many :involvements, as: :involvable, dependent: :destroy
 
   has_many :citations, as: :citable, dependent: :destroy
 
-  # has_many :involvements, as: :involvable, dependent: :destroy, inverse_of: :involvable
+  has_many :involvements, as: :involvable, dependent: :destroy, inverse_of: :involvable
 
   # has_many :soldiers, through: :involvements, source: :participant, source_type: "Soldier"
 
   validates :name, presence: true
 
-   def slug_source
-  base = [name, city, state, country].compact.map(&:to_s).reject(&:blank?).join(" ")
-    base.presence || "cemetery-#{id || SecureRandom.hex(2)}"
+ has_many :buried_soldiers, through: :burials, source: :participant, source_type: "Soldier"
+end
 
-    has_many :buried_soldiers, through: :burials, source: :participant, source_type: "Soldier"
-end
-end
+
+# # app/models/cemetery.rb
+# class Cemetery < ApplicationRecord
+#   include Sluggable
+#   include Citable
+#   include Categorizable
+
+#   has_many :soldiers, dependent: :nullify
+
+#   # If you want soldiers listed through Involvements too, keep this:
+#   has_many :involvements, as: :involvable, dependent: :destroy, inverse_of: :involvable
+#   has_many :participants, through: :involvements, source: :participant, source_type: "Soldier"
+
+#   validates :name, presence: true
+
+#   private
+
+#   # Sluggable uses this
+#   def slug_source = name
+# end

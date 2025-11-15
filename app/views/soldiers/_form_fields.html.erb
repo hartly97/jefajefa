@@ -1,4 +1,8 @@
-<div class="mb-2"><%= f.label :first_name %><%= f.text_field :first_name, class: "form-control" %></div>
+<% unless local_assigns[:f] %>
+  <% raise ArgumentError, "shared/_category_picker requires local :f (form builder)" %>
+<% end %>
+
+<div class="soldier-fields-container"><div class="mb-2"><%= f.label :first_name %><%= f.text_field :first_name, class: "form-control" %></div>
 <div class="mb-2"><%= f.label :middle_name %><%= f.text_field :middle_name, class: "form-control" %></div>
 <div class="mb-2"><%= f.label :last_name %><%= f.text_field :last_name, class: "form-control" %></div>
 
@@ -60,17 +64,17 @@
   <% end %>
 </fieldset>
 
-<fieldset class="mb-3">
+<!--<fieldset class="mb-3">
   <legend>Wars</legend>
-  <%= f.collection_select :category_ids, Category.wars.order(:name), :id, :name,
+  <%#= f.collection_select :category_ids, Category.wars.order(:name), :id, :name,
         { include_hidden: false }, { multiple: true, size: 6, class: "form-select" } %>
-</fieldset>
+</fieldset>--><!--
 
-<fieldset class="mb-3">
-  <legend>Battles</legend>
-  <%= f.collection_select :category_ids, Category.battles.order(:name), :id, :name,
-        { include_hidden: false }, { multiple: true, size: 8, class: "form-select" } %>
-</fieldset>
+# <fieldset class="mb-3">
+#   <legend>Battles</legend>
+#   <%#= f.collection_select :category_ids, Category.battles.order(:name), :id, :name,
+#         { include_hidden: false }, { multiple: true, size: 8, class: "form-select" } %>
+# </fieldset>
 
 <fieldset class="mb-3">
   <legend>Involvements (AJAX)</legend>
@@ -108,7 +112,7 @@
           <select class="form-select"
                   data-involvement-picker-target="warSelect"
                   data-action="involvement-picker#pick">
-            <option value="">— pick a war —</option>
+            <option value=""> pick a war </option>
             <% wars.each do |w| %>
               <option value="<%= w.id %>"><%= w.name %></option>
             <% end %>
@@ -117,7 +121,7 @@
           <select class="form-select mt-1 d-none"
                   data-involvement-picker-target="battleSelect"
                   data-action="involvement-picker#pick">
-            <option value="">— pick a battle —</option>
+            <option value=""> pick a battle </option>
             <% battles.each do |b| %>
               <option value="<%= b.id %>"><%= b.name %></option>
             <% end %>
@@ -126,7 +130,7 @@
           <select class="form-select mt-1 d-none"
                   data-involvement-picker-target="cemeterySelect"
                   data-action="involvement-picker#pick">
-            <option value="">— pick a cemetery —</option>
+            <option value=""> pick a cemetery </option>
             <% cemets.each do |c| %>
               <option value="<%= c.id %>"><%= c.name %></option>
             <% end %>
@@ -164,9 +168,9 @@
       <% @soldier.involvements.includes(:involvable).order(:year, :id).each do |inv| %>
         <li class="mb-2" data-involvement-row="<%= inv.id %>">
           <%= link_to inv.participant_label, @soldier %>
-          <%= " — " + content_tag(:strong, inv.role) if inv.role.present? %>
+          <%= "  " + content_tag(:strong, inv.role) if inv.role.present? %>
           <%= " (#{inv.year})" if inv.year.present? %>
-          <%= " — " + content_tag(:em, inv.note) if inv.note.present? %>
+          <%= "  " + content_tag(:em, inv.note) if inv.note.present? %>
           <button type="button"
                   class="btn btn-sm btn-outline-danger ms-2"
                   data-action="involvement-form#remove"
@@ -197,6 +201,12 @@
       </div>
     </template>
 
+      <%= render "shared/category_picker",f: f,
+      record: @soldier, object_name: :soldier,
+      scope: Category.soldiers.order(:name),
+      legend: "Soldier categories" %>
+
+
     <p class="mt-2">
       <button type="button" class="btn btn-sm btn-outline-primary" data-action="citations#add">
         Add citation
@@ -204,3 +214,8 @@
     </p>
   </div>
 </fieldset>
+ 
+<%= f.submit "Save", class: "btn btn-primary" %>
+ 
+</div>
+<!-- ends soldier-fields-container-->

@@ -1,3 +1,4 @@
+<!-- app/views/burials/_form.html.erb -->
 <%= form_with model: [(@cemetery || @burial.cemetery), @burial].compact, local: true do |f| %>
   <% if @burial.errors.any? %>
     <div class="alert alert-danger">
@@ -35,7 +36,7 @@
       <div class="col-md-3"><%= f.label :section %><%= f.text_field :section, class: "form-control" %></div>
       <div class="col-md-3"><%= f.label :plot %><%= f.text_field :plot, class: "form-control" %></div>
       <div class="col-md-3"><%= f.label :marker %><%= f.text_field :marker, class: "form-control" %></div>
-      <div class="col-md-3"><%= f.label :link_url, "Find-a-Grave / link" %><%= f.url_field :link_url, class: "form-control", placeholder: "https://…" %></div>
+      <div class="col-md-3"><%= f.label :link_url, "Find-a-Grave / link" %><%= f.url_field :link_url, class: "form-control", placeholder: "https://" %></div>
     </div>
     <div class="mt-2">
       <%= f.label :inscription %>
@@ -49,7 +50,6 @@
 
   <fieldset class="mb-3">
     <legend>Link to an existing record (optional)</legend>
-    <%# store a Soldier (or future Person) as participant_* %>
     <div class="row g-2">
       <div class="col-md-6">
         <label class="form-label">Search soldiers</label>
@@ -60,6 +60,7 @@
                data-involvement-form-target="search">
         <datalist id="burial_soldier_suggest" data-involvement-form-target="suggest"></datalist>
       </div>
+
       <div class="col-md-6">
         <label class="form-label">Linked record</label>
         <div class="input-group">
@@ -78,6 +79,11 @@
     </div>
   </fieldset>
 
+  <%= render "shared/category_picker",
+        record: @burial, object_name: :burial,
+        scope: Category.where(category_type: "burial").order(:name),
+        legend: "Burial categories" %>
+
   <div class="mt-3 d-flex gap-2">
     <%= f.submit class: "btn btn-primary" %>
     <%= link_to "Cancel", (@burial.cemetery || @cemetery || cemeteries_path), class: "btn btn-outline-secondary" %>
@@ -85,7 +91,7 @@
 <% end %>
 
 <script>
-  // light client-side helper that reuses SoldiersController#search.json
+  // Reuse SoldiersController#search.json
   document.addEventListener("turbo:load", wireBurialSearch)
   document.addEventListener("DOMContentLoaded", wireBurialSearch)
   function wireBurialSearch() {

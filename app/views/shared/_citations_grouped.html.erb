@@ -12,7 +12,7 @@
     <ul class="mb-0">
       <% cites.each do |c| %>
         <li>
-          <%= [c.pages.presence || c.page.presence, c.locator.presence].compact.join(" · ") %>
+          <%= [c.pages.presence || c.page.presence, c.locator.presence].compact.join("  ") %>
           <% if c.quote.present? %><br><em><%= c.quote %></em><% end %>
         </li>
       <% end %>

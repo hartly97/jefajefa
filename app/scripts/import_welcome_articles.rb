@@ -8,11 +8,11 @@ WELCOME_VIEWS_PATH = Rails.root.join("app/views/welcome")
 DRY_RUN = ENV["DRY_RUN"].to_s == "1"
 UPDATE  = ENV["UPDATE"].to_s == "1"
 
-puts "📂 Scanning: #{WELCOME_VIEWS_PATH}"
+puts " Scanning: #{WELCOME_VIEWS_PATH}"
 html_files = Dir.glob(WELCOME_VIEWS_PATH.join("*.html.erb")).reject { |p| File.basename(p).start_with?("_") }
 
 if html_files.empty?
-  puts "❌ No .html.erb files found in welcome view folder."
+  puts " No .html.erb files found in welcome view folder."
   exit 1
 end
 
@@ -26,7 +26,7 @@ html_files.each do |filepath|
   title    = titleize.call(filename)                    # "Early Colonial Notes"
   slug     = paramize.call(filename)                    # "early-colonial-notes"
 
-  puts "📄 Importing: #{filename} → Article: #{title}"
+  puts " Importing: #{filename}  Article: #{title}"
 
   raw_html = File.read(filepath)
 
@@ -49,9 +49,9 @@ html_files.each do |filepath|
   source_name   = titleize.call(source_line)   if source_line.present?
   location_name = titleize.call(location_line) if location_line.present?
 
-  puts "🏷️  Tags: #{tags.join(', ')}" if tags.any?
-  puts "📚 Source: #{source_name}" if source_name.present?
-  puts "📍 Location: #{location_name}" if location_name.present?
+  puts "  Tags: #{tags.join(', ')}" if tags.any?
+  puts " Source: #{source_name}" if source_name.present?
+  puts " Location: #{location_name}" if location_name.present?
 
   # Render the ERB to final HTML (no layout)
   # This evaluates helpers/partials etc.
@@ -85,7 +85,7 @@ html_files.each do |filepath|
     return if name.blank?
     cat = Category.find_or_create_by!(name: name, category_type: type)
     if DRY_RUN
-      puts "DRY: link #{article.slug} → [#{type || 'n/a'}] #{name}"
+      puts "DRY: link #{article.slug}  [#{type || 'n/a'}] #{name}"
     else
       Categorization.find_or_create_by!(category: cat, categorizable: article)
     end
@@ -96,4 +96,4 @@ html_files.each do |filepath|
   linker.call(location_name, "location")
 end
 
-puts "✅ Finished processing #{html_files.size} file(s).#{DRY_RUN ? ' (dry run)' : ''}"
+puts " Finished processing #{html_files.size} file(s).#{DRY_RUN ? ' (dry run)' : ''}"

@@ -6,4 +6,8 @@
     <div class="field">
       <%= f.label :category_ids, "Categories" %>
       <%= f.collection_select :category_ids, Category.order(:name), :id, :name, {}, multiple: true %>
+      <%= render "shared/category_picker",
+      record: @battle, object_name: :battle,
+      scope: Category.battles.order(:name), legend: "Battle categories" %>
+
     </div>

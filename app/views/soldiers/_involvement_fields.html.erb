@@ -21,19 +21,19 @@
       <% cemets  = Cemetery.order(:name) %>
       <%= select_tag :_war_select,
             options_from_collection_for_select(wars, :id, :name, ivf.object.involvable_type == "War" ? ivf.object.involvable_id : nil),
-            include_blank: "— Pick a war —",
+            include_blank: " Pick a war ",
             class: "form-select",
             data: { action: "change->involvement-picker#pick",
                     "involvement-picker-target": "warSelect" } %>
       <%= select_tag :_battle_select,
             options_from_collection_for_select(battles, :id, :name, ivf.object.involvable_type == "Battle" ? ivf.object.involvable_id : nil),
-            include_blank: "— Pick a battle —",
+            include_blank: " Pick a battle ",
             class: "form-select mt-1",
             data: { action: "change->involvement-picker#pick",
                     "involvement-picker-target": "battleSelect" } %>
       <%= select_tag :_cemetery_select,
             options_from_collection_for_select(cemets, :id, :name, ivf.object.involvable_type == "Cemetery" ? ivf.object.involvable_id : nil),
-            include_blank: "— Pick a cemetery —",
+            include_blank: " Pick a cemetery ",
             class: "form-select mt-1",
             data: { action: "change->involvement-picker#pick",
                     "involvement-picker-target": "cemeterySelect" } %>
