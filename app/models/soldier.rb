@@ -7,6 +7,9 @@ class Soldier < ApplicationRecord
 
   belongs_to :cemetery, optional: true
 
+  has_many :burials, dependent: :nullify
+
+  #  Do I need this?
   has_many :burials, as: :participant, dependent: :nullify
 
   has_many :involvements, as: :participant, dependent: :destroy
