@@ -8,6 +8,10 @@ class Census < ApplicationRecord
   include Citable
   include Categorizable
 
+  # Optional, but explicit:
+  def slug_source = name
+end
+
   has_many :census_entries, dependent: :destroy
 
   validates :country, :year, presence: true
@@ -20,9 +24,7 @@ class Census < ApplicationRecord
                      allow_blank: true }
 
   # Used by Sluggable to derive a stable slug base
-  def slug_source
-    [country, year, district, subdistrict, piece, folio, page].compact.join("-")
-  end
+
 
   # Prefer SmugMug/external URL; fall back to Active Storage if you ever attach
   # has_one_attached :image

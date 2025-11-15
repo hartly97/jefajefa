@@ -29,7 +29,7 @@ namespace :data do
     end
 
     # 1) From Cemetery involvements -> Burials
-    say.call "Phase 1: Converting Cemetery involvements to burials…"
+    say.call "Phase 1: Converting Cemetery involvements to burials"
     Involvement.where(involvable_type: "Cemetery").includes(:participant).find_each do |inv|
       cemetery = Cemetery.find_by(id: inv.involvable_id)
       participant = inv.participant
@@ -86,7 +86,7 @@ namespace :data do
     end
 
     # 2) From Soldier.cemetery_id -> Burials
-    say.call "Phase 2: Backfilling soldiers with cemetery_id into burials…"
+    say.call "Phase 2: Backfilling soldiers with cemetery_id into burials"
     Soldier.where.not(cemetery_id: nil).find_each do |s|
       cemetery = Cemetery.find_by(id: s.cemetery_id)
       unless cemetery

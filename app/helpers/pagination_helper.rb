@@ -38,7 +38,7 @@ module PaginationHelper
     def gap
       @template.content_tag(
         :li,
-        @template.content_tag(:span, "…", class: "page-link"),
+        @template.content_tag(:span, "", class: "page-link"),
         class: "page-item disabled"
       )
     end

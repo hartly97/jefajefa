@@ -15,10 +15,10 @@ namespace :logs do
     files = Dir.glob("\#{log_dir}/dry_run_*.log").sort_by { |f| File.mtime(f) }.reverse
 
     if files.empty?
-      puts "❌ No dry-run log files found."
+      puts " No dry-run log files found."
     else
       latest = files.first
-      puts "📄 Showing latest dry-run log: \#{latest}"
+      puts " Showing latest dry-run log: \#{latest}"
       puts "-" * 60
       puts File.read(latest)
     end
@@ -32,10 +32,10 @@ namespace :logs do
     log_dir = Rails.root.join("tmp/log")
     files = Dir.glob("\#{log_dir}/dry_run_*.log")
     if files.empty?
-      puts "✅ No dry-run logs to delete."
+      puts " No dry-run logs to delete."
     else
       files.each { |f| File.delete(f) }
-      puts "🧹 Deleted \#{files.size} dry-run log(s)."
+      puts " Deleted \#{files.size} dry-run log(s)."
     end
   end
 
@@ -47,13 +47,13 @@ namespace :logs do
 
     files = Dir.glob("\#{log_dir}/dry_run_*.log")
     if files.empty?
-      puts "📦 No dry-run logs to archive."
+      puts " No dry-run logs to archive."
     else
       files.each do |file|
         filename = File.basename(file)
         FileUtils.mv(file, File.join(export_dir, filename))
       end
-      puts "📦 Moved \#{files.size} log(s) to shared/exports."
+      puts " Moved \#{files.size} log(s) to shared/exports."
     end
   end
 end

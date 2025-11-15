@@ -40,20 +40,20 @@
               <% end %>
             </td>
             <td>
-              <%= [b.try(:birth_date)&.to_s, b.try(:birth_place)].compact.join(" — ").presence || content_tag(:em, "—") %>
+              <%= [b.try(:birth_date)&.to_s, b.try(:birth_place)].compact.join("  ").presence || content_tag(:em, "") %>
             </td>
             <td>
-              <%= [b.try(:death_date)&.to_s, b.try(:death_place)].compact.join(" — ").presence || content_tag(:em, "—") %>
+              <%= [b.try(:death_date)&.to_s, b.try(:death_place)].compact.join("  ").presence || content_tag(:em, "") %>
             </td>
-            <td><%= b.try(:section).presence || "—" %></td>
-            <td><%= b.try(:plot).presence    || "—" %></td>
-            <td><%= b.try(:marker).presence  || "—" %></td>
+            <td><%= b.try(:section).presence || "" %></td>
+            <td><%= b.try(:plot).presence    || "" %></td>
+            <td><%= b.try(:marker).presence  || "" %></td>
             <td>
               <% if b.try(:link_url).present? %>
                 <%= link_to "memorial", b.link_url, target: "_blank", rel: "noopener" %>
-              <% else %>—<% end %>
+              <% else %><% end %>
             </td>
-            <td><%= b.try(:note).presence || "—" %></td>
+            <td><%= b.try(:note).presence || "" %></td>
           </tr>
         <% end %>
       </tbody>

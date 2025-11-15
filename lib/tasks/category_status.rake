@@ -24,7 +24,7 @@ namespace :categories do
     if top.any?
       puts "  top categories (by Article usage):"
       top.each do |(cat_id, name, cat_type), cnt|
-        puts "    • [#{cat_id}] #{name} (#{cat_type || 'n/a'}): #{cnt}"
+        puts "     [#{cat_id}] #{name} (#{cat_type || 'n/a'}): #{cnt}"
       end
     else
       puts "  top categories: none"
@@ -38,7 +38,7 @@ namespace :categories do
                      .pluck(:id, :title)
     if missing.any?
       puts "  sample without categories:"
-      missing.each { |id, title| puts "    • (#{id}) #{title}" }
+      missing.each { |id, title| puts "     (#{id}) #{title}" }
     end
 
     # --- Optional: other categorizables (uncomment as needed) ---

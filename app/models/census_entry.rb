@@ -5,6 +5,10 @@ class CensusEntry < ApplicationRecord
   include Categorizable
   include Sluggable
 
+  # Optional, but explicit:
+  def slug_source = name
+end
+
   belongs_to :census
   belongs_to :soldier, optional: true
 
@@ -50,9 +54,4 @@ scope :search_name, ->(q) {
   end
 }
 
-  private
-
-  def slug_source
-    display_name.presence || "entry-#{id || SecureRandom.hex(2)}"
-  end
 end

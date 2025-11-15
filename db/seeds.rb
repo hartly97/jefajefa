@@ -25,7 +25,7 @@ def involvement!(soldier:, type:, inv:, role: nil, year: nil, note: nil)
 end
 
 ActiveRecord::Base.transaction do
-  puts "Seeding…"
+  puts "Seeding"
 
   # --- Cemeteries ---
   evergreen = Cemetery.find_or_create_by!(name: "Evergreen Cemetery")
@@ -39,7 +39,7 @@ ActiveRecord::Base.transaction do
   bunker_hill = Battle.find_or_create_by!(name: "Battle of Bunker Hill")
   [civil_war, rev_war, gettysburg, bunker_hill].each { |r| ensure_slug!(r, r.name) }
 
-  # Optional categories (flat; works even if you don’t use parent/children)
+  # Optional categories (flat; works even if you dont use parent/children)
   cat_military = Category.find_or_create_by!(name: "Military")
   cat_civil    = Category.find_or_create_by!(name: "American Civil War")
   cat_rev      = Category.find_or_create_by!(name: "Revolutionary War")
@@ -85,7 +85,7 @@ if award.respond_to?(:slug)
   award.slug = "community-service-award" if award.slug.blank?
   award.save!  # validates slug presence via Sluggable
 else
-  award.save!(validate: false) # no slug column → skip validations
+  award.save!(validate: false) # no slug column  skip validations
 end
 
 
@@ -109,7 +109,7 @@ end
   # --- Sources & Citations ---
   src1 = Source.find_or_create_by!(title: "Official Records of the War of the Rebellion") do |s|
     s.author = "U.S. War Department"
-    s.year   = "1880–1901"
+    s.year   = "18801901"
     s.url    = "https://example.org/or/"
     s.details = "Primary source compilation"
   end
@@ -121,8 +121,8 @@ end
   [src1, src2].each { |s| ensure_slug!(s, s.title) }
 
   john.citations.find_or_create_by!(source: src1) do |c|
-    c.pages = "12–13"
-    c.quote = "Enlisted among the volunteers…"
+    c.pages = "1213"
+    c.quote = "Enlisted among the volunteers"
     c.note  = "Company B muster roll"
   end
 
@@ -162,6 +162,31 @@ end
     e.birthlikeplacetext = "Massachusetts"
   end
 
+  # --- Soldier/Burial/War/Battle/… categories (with category_type) ---
+def ensure_category!(name, ctype)
+  rec = Category.find_or_initialize_by(name: name, category_type: ctype)
+  rec.slug ||= name.to_s.parameterize
+  rec.save! if rec.changed?
+  rec
+end
+
+{
+  "soldier" => %w[Infantry Cavalry Artillery Navy Marines Home\ Guard Militia Unknown],
+  "burial"  => %w[Veteran\ Grave Family\ Plot Unmarked Government\ Marker Reinterred Unknown],
+  "war"     => ["American Revolution", "War of 1812", "Civil War", "World War I", "World War II"],
+  "battle"  => ["Bunker Hill", "Saratoga", "Yorktown", "Gettysburg"],
+  "medal"   => ["Medal of Honor", "Purple Heart", "Good Conduct Medal"],
+  "article" => ["Biography", "Local History", "Methodology"],
+  "award"   => ["Community Service", "Lifetime Achievement"],
+  "census"  => ["1850 US Census", "1860 US Census", "1870 US Census"],
+  "cemetery"=> ["Historic", "Town", "Private"]
+}.each { |ctype, names| names.each { |n| ensure_category!(n, ctype) } }
+
+# --- Backfill for any existing categories that lack slug or type ---
+Category.where(slug: [nil, ""]).find_each do |c|
+  c.update_columns(slug: c.name.to_s.parameterize.presence || SecureRandom.hex(4))
+end
+
   puts "Done."
   puts({
     soldiers: Soldier.count,
@@ -180,3 +205,45 @@ end
     articles: Article.count
   }.map { |k,v| "#{k}=#{v}" }.join(" | "))
 end
+
+
+require_relative "./seeds/categories"
+
+# Minimal click-around data (safe to re-run)
+cem  = Cemetery.find_or_create_by!(name: "Test Cemetery") { |c| c.slug = "test-cemetery" }
+
+sol  = Soldier.find_or_create_by!(first_name: "Test", last_name: "Soldier") do |s|
+  s.slug  = "test-soldier"
+  s.unit  = "Unknown"
+  s.branch_of_service = ""
+end
+
+# Link a few soldier categories (only once)
+soldier_cats = Category.where(category_type: "soldier", name: ["Infantry", "Unknown"]).to_a
+(sol.categories << soldier_cats.reject { |c| sol.categories.include?(c) })
+sol.save! if sol.changed?
+
+# A Source to cite (handy for the citations UI)
+Source.find_or_create_by!(title: "Town Register, Vol. 1") do |src|
+  src.author = "Clerk of Records"
+  src.year   = "1899"
+  src.url    = "https://example.org/register"
+  src.slug   = "town-register-vol-1"
+end
+
+# One burial connected to the Soldier (so the Burials UX shows something)
+burial = Burial.find_or_initialize_by(cemetery: cem, participant_type: "Soldier", participant_id: sol.id)
+if burial.new_record?
+  burial.first_name = sol.first_name
+  burial.last_name  = sol.last_name
+  burial.slug       = "burial-#{sol.slug}"
+  burial.save!
+end
+
+puts "\nSeed summary:"
+puts " - Cemetery:  #{Cemetery.count}"
+puts " - Soldier:   #{Soldier.count}"
+puts " - Burial:    #{Burial.count}"
+puts " - Category:  #{Category.count}"
+puts " - Source:    #{Source.count}"
+

@@ -1,0 +1,12 @@
+<!-- Drop into each show view where helpful -->
+<% if @record.respond_to?(:categories) && @record.categories.any? %>
+  <p><strong>Categories:</strong> <%= @record.categories.order(:name).map(&:name).join(", ") %></p>
+<% end %>
+
+<h1><%= @cemetery.name %></h1>
+
+<h2>Burials</h2>
+<%= render "burials/table",
+      burials: @burials,
+      cemetery: @cemetery,
+      total_count: @total_count %>

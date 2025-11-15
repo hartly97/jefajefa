@@ -1,5 +1,5 @@
 <div class="container my-4">
-  <%= render "card", soldier: @soldier %>
+  <%= render "soldiers/card", soldier: @soldier %>
 
 
   <% if @soldier.branch_of_service.present? || @soldier.unit.present? %>
@@ -15,6 +15,10 @@
       <% end %>
     </dl>
   <% end %>
+<!-- Drop into each show view where helpful -->
+<% if @record.respond_to?(:categories) && @record.categories.any? %>
+  <p><strong>Categories:</strong> <%= @record.categories.order(:name).map(&:name).join(", ") %></p>
+<% end %>
 
 
   <% if @soldier.cemetery.present? %>
@@ -32,7 +36,7 @@
       <li>
       <%#= link_to b.cemetery.name, b.cemetery %>
         <%# if b.section || b.plot || b.marker %>
-         <!-- — --><%#= [b.section, b.plot, b.marker].compact.join(", ") %>
+         <!--  --><%#= [b.section, b.plot, b.marker].compact.join(", ") %>
         <%# end %>
       </li>
     <%# end %>
@@ -53,7 +57,7 @@
         <li class="list-group-item px-0">
           <%= link_to(inv.involvable.name, inv.involvable, class: "fw-semibold") %>
           <%= " (#{inv.year})" if inv.year.present? %>
-          <%= " — #{inv.role}" if inv.role.present? %>
+          <%= "  #{inv.role}" if inv.role.present? %>
           <%= tag.em(inv.note, class: "text-muted") if inv.note.present? %>
         </li>
       <% end %>
@@ -69,7 +73,7 @@
         <li class="list-group-item px-0">
           <%= link_to(inv.involvable.name, inv.involvable, class: "fw-semibold") %>
           <%= " (#{inv.year})" if inv.year.present? %>
-          <%= " — #{inv.role}" if inv.role.present? %>
+          <%= "  #{inv.role}" if inv.role.present? %>
           <%= tag.em(inv.note, class: "text-muted") if inv.note.present? %>
         </li>
       <% end %>
@@ -84,7 +88,7 @@
         <li class="list-group-item px-0">
           <strong><%= aw.name.presence || "(Unnamed award)" %></strong>
           <%= " (#{aw.year})" if aw.year.present? %>
-          <%= " — #{aw.country}" if aw.country.present? %>
+          <%= "  #{aw.country}" if aw.country.present? %>
           <%= tag.em(aw.note, class: "text-muted") if aw.note.present? %>
         </li>
       <% end %>

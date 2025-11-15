@@ -2,7 +2,7 @@
 
   <!-- Breadcrumb / back -->
   <div class="mb-3">
-    <%= link_to "← All Articles", articles_path, class: "btn btn-outline-secondary btn-primary" %>
+    <%= link_to " All Articles", articles_path, class: "btn btn-outline-secondary btn-primary" %>
   </div>
   <%= link_to   "New Article", new_article_path, class: "btn btn-primary" %>
 
@@ -20,10 +20,10 @@
         <span><strong>By</strong> <%= @article.author %></span>
       <% end %>
       <% if @article.date.present? %>
-        <span>• <%= @article.date.to_date.strftime("%b %-d, %Y") rescue @article.date %></span>
+        <span> <%= @article.date.to_date.strftime("%b %-d, %Y") rescue @article.date %></span>
       <% end %>
       <% if @article.categories.any? %>
-        <span>•</span>
+        <span></span>
         <div class="d-inline-flex flex-wrap gap-1">
           <% @article.categories.each do |cat| %>
             <%= link_to cat.name, category_path(cat),

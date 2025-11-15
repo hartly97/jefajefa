@@ -1,0 +1,25 @@
+<!-- app/views/burials/_search.html.erb -->
+<%= form_with url: burials_path, method: :get, local: true, class: "row g-2 align-items-end" do %>
+  <div class="col-md-4">
+    <%= label_tag :q, "Search", class: "form-label" %>
+    <%= text_field_tag :q, params[:q].to_s, class: "form-control",
+          placeholder: "Name / section / plot / marker" %>
+  </div>
+
+  <div class="col-md-4">
+    <%= label_tag :cemetery_id, "Cemetery", class: "form-label" %>
+    <%= select_tag :cemetery_id,
+          options_for_select([["— Any —",""]] + @cemeteries.map { |c| [c.name, c.id] }, params[:cemetery_id]),
+          class: "form-select" %>
+  </div>
+
+  <div class="col-md-2">
+    <%= label_tag :per_page, "Per page", class: "form-label" %>
+    <%= number_field_tag :per_page, (@per_page || 50), in: 1..200, class: "form-control" %>
+  </div>
+
+  <div class="col-md-2">
+    <%= submit_tag "Filter", class: "btn btn-primary mt-4" %>
+    <%= link_to "Reset", burials_path, class: "btn btn-link mt-4" %>
+  </div>
+<% end %>

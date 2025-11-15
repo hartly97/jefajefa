@@ -17,7 +17,7 @@
       <input type="text"
              class="form-control"
              list="<%= dom_key %>"
-             placeholder="Type to search soldiers…"
+             placeholder="Type to search soldiers"
              data-involvement-form-target="search">
       <datalist id="<%= dom_key %>" data-involvement-form-target="suggest"></datalist>
       <input type="hidden" data-involvement-form-target="participantId">
@@ -41,7 +41,7 @@
       <div class="col-md-2">
         <label class="form-label">Role (optional)</label>
         <input type="text" class="form-control"
-               placeholder="Buried, Memorialized, Reinterred…"
+               placeholder="Buried, Memorialized, Reinterred"
                data-involvement-form-target="role">
       </div>
     <% else %>
@@ -49,7 +49,7 @@
       <div class="col-md-2">
         <label class="form-label">Role</label>
         <input type="text" class="form-control"
-               placeholder="Captain, Infantry, Volunteer…"
+               placeholder="Captain, Infantry, Volunteer"
                data-involvement-form-target="role">
       </div>
 
@@ -62,7 +62,7 @@
       <div class="col-md-3">
         <label class="form-label">Note</label>
         <input type="text" class="form-control"
-               placeholder="Militia service, wounded at…, etc."
+               placeholder="Militia service, wounded at, etc."
                data-involvement-form-target="note">
       </div>
     <% end %>
@@ -85,9 +85,9 @@
                "Soldier ##{inv.participant_id}"),
               inv.participant
             ) %>
-        <%= " — " + content_tag(:strong, inv.role) if inv.role.present? %>
+        <%= "  " + content_tag(:strong, inv.role) if inv.role.present? %>
         <%= " (#{inv.year})" if inv.year.present? %>
-        <%= " — " + content_tag(:em, inv.note) if inv.note.present? %>
+        <%= "  " + content_tag(:em, inv.note) if inv.note.present? %>
         <button class="btn btn-sm btn-outline-danger ms-2"
                 data-action="click->involvement-form#remove"
                 data-involvement-form-id-param="<%= inv.id %>">

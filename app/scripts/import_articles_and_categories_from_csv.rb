@@ -3,7 +3,7 @@ require "csv"
 require "set"
 
 namespace :cat do
-  desc "Import legacy Article↔Category links from CSV with headers: id,article_id,category_id,created_at,updated_at
+  desc "Import legacy ArticleCategory links from CSV with headers: id,article_id,category_id,created_at,updated_at
 ENV:
   CSV=tmp/article_categories_legacy.csv
   DRY_RUN=1                  # preview only
@@ -48,7 +48,7 @@ ENV:
     }
 
     # Preload a minimal set for faster existence checks
-    # (If your tables are small, this is fine; otherwise we’ll still hit the DB.)
+    # (If your tables are small, this is fine; otherwise well still hit the DB.)
     cat_scope = Category.all
     art_scope = Article.all
 
@@ -78,14 +78,14 @@ ENV:
       end
 
       key = [article.id, category.id]
-      # Skip if we’ve already linked in this run, or the DB already has it
+      # Skip if weve already linked in this run, or the DB already has it
       if seen.include?(key) || article.categories.exists?(category.id)
         stat[:skipped_dup] += 1
         next
       end
 
       if dry
-        puts "DRY: link Article(#{article.id}) ⇢ Category(#{category.id})"
+        puts "DRY: link Article(#{article.id})  Category(#{category.id})"
         stat[:linked] += 1
         seen << key
       else
@@ -95,7 +95,7 @@ ENV:
           seen << key
         rescue => e
           stat[:errors] += 1
-          warn "ERROR linking Article(#{article.id}) ⇢ Category(#{category.id}): #{e.class} #{e.message}"
+          warn "ERROR linking Article(#{article.id})  Category(#{category.id}): #{e.class} #{e.message}"
           next
         end
       end

@@ -4,15 +4,15 @@
 
     <div class="ms-md-auto d-flex gap-2">
       <%= form_with url: articles_path, method: :get, local: true, class: "d-flex" do %>
-        <input name="q" value="<%= params[:q] %>" class="form-control" placeholder="Search articles…">
+        <input name="q" value="<%= params[:q] %>" class="form-control" placeholder="Search articles">
         <button class="btn btn-outline-secondary ms-2">Search</button>
       <% end %>
 
       <%= form_with url: articles_path, method: :get, local: true do %>
         <select name="sort" class="form-select" onchange="this.form.submit()">
-          <option value="" <%= "selected" if params[:sort].blank? %>>Sort by…</option>
+          <option value="" <%= "selected" if params[:sort].blank? %>>Sort by</option>
           <option value="new" <%= "selected" if params[:sort]=="new" %>>Newest</option>
-          <option value="az"  <%= "selected" if params[:sort]=="az"  %>>A–Z</option>
+          <option value="az"  <%= "selected" if params[:sort]=="az"  %>>AZ</option>
         </select>
       <% end %>
     </div>
@@ -41,7 +41,7 @@
                 <span class="me-2">By <%= article.author %></span>
               <% end %>
               <% if article.date.present? %>
-                <span>• <%= article.date.to_date.strftime("%b %-d, %Y") rescue article.date %></span>
+                <span> <%= article.date.to_date.strftime("%b %-d, %Y") rescue article.date %></span>
               <% end %>
             </div>
 

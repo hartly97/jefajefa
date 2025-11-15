@@ -55,6 +55,6 @@ class MedalsController < ApplicationController
   end
 
   def medal_params
-    params.require(:medal).permit(:name, :year, :note)
+    params.require(:medal).permit(:name, :year, :note,{ category_ids: [] },)
   end
 end

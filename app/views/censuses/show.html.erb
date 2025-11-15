@@ -9,6 +9,11 @@
   ].compact.join(", ") %>
 </p>
 
+<!-- Drop into each show view where helpful -->
+<% if @record.respond_to?(:categories) && @record.categories.any? %>
+  <p><strong>Categories:</strong> <%= @record.categories.order(:name).map(&:name).join(", ") %></p>
+<% end %>
+
 <% if (url = @census.display_image_url(self)) %>
   <figure class="my-3">
     <a href="<%= url %>" target="_blank" rel="noopener">
@@ -36,9 +41,9 @@
     <% rows.each do |r| %>
       <li>
         <%= r.respond_to?(:display_name) ? r.display_name : [r.firstname, r.lastname].compact.join(" ") %>
-        <% if r.age.present? %> — age <%= r.age %><% end %>
-        <% if r.relationshiptohead.present? %> — <%= r.relationshiptohead %><% end %>
-        <% if r.birthlikeplacetext.present? %> — born <%= r.birthlikeplacetext %><% end %>
+        <% if r.age.present? %>  age <%= r.age %><% end %>
+        <% if r.relationshiptohead.present? %>  <%= r.relationshiptohead %><% end %>
+        <% if r.birthlikeplacetext.present? %>  born <%= r.birthlikeplacetext %><% end %>
       </li>
     <% end %>
   </ul>

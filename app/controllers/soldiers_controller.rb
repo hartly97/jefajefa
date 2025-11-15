@@ -2,7 +2,6 @@ class SoldiersController < ApplicationController
   before_action :set_soldier,  only: %i[show edit update destroy regenerate_slug]
   before_action :load_sources, only: %i[new edit]
 
-  # GET /soldiers
   def index
     @q = params[:q].to_s.strip
     scope = Soldier.order(:last_name, :first_name)
@@ -10,51 +9,21 @@ class SoldiersController < ApplicationController
 
     @total_count = scope.count
     @total_pages = (@total_count.to_f / page_size).ceil
-
-    offset = (current_page - 1) * page_size
-    @soldiers = scope.limit(page_size).offset(offset)
-    @has_next  = current_page < @total_pages
-    @medal_categories = begin
-      parent = Category.where("lower(name) = ?", "medals").first
-      if parent && Category.column_names.include?("parent_id")
-        Category.where(parent_id: parent.id).order(:name)
-      elsif parent && parent.respond_to?(:children)
-        parent.children.order(:name)
-      else
-        Category.where("name ILIKE ?", "%medal%").order(:name)
-      end
-    rescue
-      []
-    end
+    @soldiers    = scope.limit(page_size).offset((current_page - 1) * page_size)
+    @has_next    = current_page < @total_pages
   end
 
+  def show; end
 
-  # GET /soldiers/:id
-  def show
-  # ActiveRecord::Associations::Preloader.new( records: @soldier,
-  #   associations: [:cemetery, :awards, { citations: :source }, :categories, { involvements: :involvable }]
-  # ).call
-
-  end
-
-  # GET /soldiers/new
   def new
     @soldier = Soldier.new
     build_nested(@soldier)
   end
 
-  # GET /soldiers/:id/edit
   def edit
     build_nested(@soldier)
-    #  is the following in the form?
-    @soldier.awards.build         if @soldier.awards.empty?
-    @soldier.soldier_medals.build if @soldier.soldier_medals.empty?
-    @soldier.citations.build      if @soldier.citations.empty?
-    @soldier.category_names ||= @soldier.categories.order(:name).pluck(:name).join(", ") if @soldier.respond_to?(:category_names)
   end
 
-
-  # POST /soldiers
   def create
     @soldier = Soldier.new(soldier_params)
     if @soldier.save
@@ -65,7 +34,6 @@ class SoldiersController < ApplicationController
     end
   end
 
-  # PATCH/PUT /soldiers/:id
   def update
     if @soldier.update(soldier_params)
       redirect_to @soldier, notice: "Soldier updated."
@@ -75,19 +43,16 @@ class SoldiersController < ApplicationController
     end
   end
 
-  # DELETE /soldiers/:id
   def destroy
     @soldier.destroy
     redirect_to soldiers_path, notice: "Soldier deleted."
   end
 
-  # PATCH /soldiers/:id/regenerate_slug
   def regenerate_slug
     @soldier.regenerate_slug!
     redirect_to @soldier, notice: "Slug regenerated."
   end
 
-  # GET /soldiers/search.json?q=...
   def search
     q = params[:q].to_s.strip
     scope = Soldier.order(:last_name, :first_name)
@@ -102,29 +67,19 @@ class SoldiersController < ApplicationController
 
   private
 
-  # Try slug, fallback to id
   def set_soldier
     base = Soldier.includes(:cemetery, :awards, { citations: :source }, :categories, { involvements: :involvable })
-    @soldier = base.find_by(slug: params[:id])
-  @soldier ||= base.find(params[:id])
+    @soldier = base.find_by(slug: params[:id]) || base.find(params[:id])
   end
 
-  def page_size
-    (params[:per_page].presence || 30).to_i.clamp(1, 200)
-  end
-
-  def current_page
-    (params[:page].presence || 1).to_i.clamp(1, 10_000)
-  end
-
-  def load_sources
-    @sources = Source.order(:title)
-  end
+  def page_size     = (params[:per_page].presence || 30).to_i.clamp(1, 200)
+  def current_page  = (params[:page].presence || 1).to_i.clamp(1, 10_000)
+  def load_sources  = @sources = Source.order(:title)
 
   def build_nested(s)
-    s.awards.build if s.awards.empty?
+    s.awards.build         if s.awards.empty?
     s.soldier_medals.build if s.soldier_medals.empty?
-    s.citations.build if s.citations.empty?
+    s.citations.build      if s.citations.empty?
   end
 
 
@@ -135,15 +90,10 @@ class SoldiersController < ApplicationController
       :death_date, :deathcity, :deathstate, :deathcountry, :deathplace,
       :cemetery_id, :unit, :branch_of_service,
       :first_enlisted_start_date, :first_enlisted_end_date, :first_enlisted_place,
+      :slug,
       { category_ids: [] },
-
-      # Awards (not medals)
       awards_attributes: [:id, :name, :country, :year, :note, :_destroy],
-
-      # Medals via bridge
       soldier_medals_attributes: [:id, :medal_id, :year, :note, :_destroy],
-
-      # Citations (+ nested source)
       citations_attributes: [
         :id, :source_id, :_destroy,
         :page, :pages, :folio, :column, :line_number, :record_number, :locator,
@@ -153,4 +103,3 @@ class SoldiersController < ApplicationController
     )
   end
 end
-

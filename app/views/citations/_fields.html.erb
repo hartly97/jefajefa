@@ -31,7 +31,7 @@
     <%= cf.collection_select :source_id,
           (defined?(sources) && sources.present?) ? sources : Source.order(:title),
           :id, :title,
-          { include_blank: "— Select a source —" },
+          { include_blank: " Select a source " },
           { class: "form-select", data: { "source-picker-target": "select" } } %>
     <small class="text-muted">Tip: pick an existing source or add a new one below.</small>
   </div>
@@ -40,7 +40,7 @@
     <label>Search all sources</label>
     <input type="text"
            class="form-control"
-           placeholder="Type 2+ letters…"
+           placeholder="Type 2+ letters"
            data-action="input->source-picker#autocomplete"
            data-source-picker-target="query">
     <ul class="list-group mt-1" data-source-picker-target="results"></ul>
@@ -51,7 +51,7 @@
     <div class="mb-2">
       <label>Recent</label>
       <%= select_tag :recent_source_id,
-            options_for_select([["— Pick recent —",""]] + recent.map { |s| [s.title, s.id] }),
+            options_for_select([[" Pick recent ",""]] + recent.map { |s| [s.title, s.id] }),
             class: "form-select",
             data: { action: "change->source-picker#pick" } %>
     </div>
@@ -66,10 +66,10 @@
 
     <div class="mt-2" data-source-picker-target="newForm" style="display:none">
       <div class="alert alert-info py-2 px-3 mb-2">
-        Leave “Source” above blank if you enter a new one here.
+        Leave Source above blank if you enter a new one here.
       </div>
 
-      <%# 👇 NEW source for THIS citation: use cf.fields_for :source do |sf| %>
+      <%#  NEW source for THIS citation: use cf.fields_for :source do |sf| %>
       <%= cf.fields_for :source do |sf| %>
         <div class="row g-3">
           <div class="col-md-8">
@@ -114,7 +114,7 @@
   <div class="row g-3 mt-3">
     <div class="col-md-6">
       <%= cf.label :pages, "Page(s)" %>
-      <%= cf.text_field :pages, class: "form-control", placeholder: "e.g., 12–13" %>
+      <%= cf.text_field :pages, class: "form-control", placeholder: "e.g., 1213" %>
     </div>
     <div class="col-md-6">
       <%= cf.label :folio %>

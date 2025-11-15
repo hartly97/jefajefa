@@ -1,0 +1,13 @@
+<%# locals: cemetery:, soldiers:, total_count: %>
+<h2>Burials <small class="text-muted">(<%= total_count || soldiers.size %>)</small></h2>
+
+<% if soldiers.any? %>
+  <ul>
+    <% soldiers.each do |s| %>
+      <% name = s.respond_to?(:display_name) ? s.display_name : [s.first_name, s.last_name].compact.join(" ") %>
+      <li><%= link_to name.presence || s.slug, s %></li>
+    <% end %>
+  </ul>
+<% else %>
+  <p><em>No burials recorded.</em></p>
+<% end %>
