@@ -6,7 +6,7 @@ class RenamePgToPages < ActiveRecord::Migration[7.1]
       add_column :sources, :pages, :string
     end
 
-    # ensure it's a string for ranges like "12–15"
+    # ensure it's a string for ranges like "1215"
     if column_exists?(:sources, :pages) &&
        ActiveRecord::Base.connection.columns(:sources).find { |c| c.name == "pages" }&.sql_type != "character varying"
       change_column :sources, :pages, :string

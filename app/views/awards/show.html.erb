@@ -1,4 +1,8 @@
 <h1><%= @record.name %></h1>
+<!-- Drop into each show view where helpful -->
+<% if @record.respond_to?(:categories) && @record.categories.any? %>
+  <p><strong>Categories:</strong> <%= @record.categories.order(:name).map(&:name).join(", ") %></p>
+<% end %>
 
 <h2>Involvements</h2>
 <% if @involvements.any? %>
@@ -10,9 +14,9 @@
         <% else %>
           <%= link_to(inv.participant.try(:name) || inv.participant.try(:title) || inv.participant.slug, inv.participant) %>
         <% end %>
-        <% if inv.role.present? %> — <strong><%= inv.role %></strong><% end %>
+        <% if inv.role.present? %>  <strong><%= inv.role %></strong><% end %>
         <% if inv.year.present? %> (<%= inv.year %>)<% end %>
-        <% if inv.note.present? %> — <em><%= inv.note %></em><% end %>
+        <% if inv.note.present? %>  <em><%= inv.note %></em><% end %>
         <%= button_to "Remove", involvement_path(inv), method: :delete, form: { data: { turbo_confirm: "Remove involvement?" } } %>
       </li>
     <% end %>

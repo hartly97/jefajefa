@@ -13,9 +13,9 @@
         <% else %>
           (participant missing)
         <% end %>
-        <%== " — <strong>#{ERB::Util.html_escape(inv.role)}</strong>" if inv.role.present? %>
+        <%== "  <strong>#{ERB::Util.html_escape(inv.role)}</strong>" if inv.role.present? %>
         <%= " (#{inv.year})" if inv.year.present? %>
-        <%= " — #{inv.note}"  if inv.note.present? %>
+        <%= "  #{inv.note}"  if inv.note.present? %>
         <%= button_to "Remove", involvement_path(inv), method: :delete,
               form: { data: { turbo_confirm: "Remove involvement?" } },
               class: "btn btn-sm btn-outline-danger ms-2" %>
@@ -25,6 +25,12 @@
 <% else %>
   <p><em>No involvements recorded.</em></p>
 <% end %>
+
+<!-- Drop into each show view where helpful -->
+<% if @record.respond_to?(:categories) && @record.categories.any? %>
+  <p><strong>Categories:</strong> <%= @record.categories.order(:name).map(&:name).join(", ") %></p>
+<% end %>
+
 
 <h3>Add Soldier Involvement</h3>
 <%= form_with url: involvements_path, method: :post do |f| %>

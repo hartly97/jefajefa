@@ -32,7 +32,7 @@ namespace :sources do
     ranked.each { |id, c| puts "  - #{id}: #{c} cites  #{Source.find_by(id: id)&.title}" }
 
     if dry
-      puts "[sources] DRY=1 — not updating."
+      puts "[sources] DRY=1  not updating."
     else
       updated = Source.where(id: ids).update_all(common: true, updated_at: Time.current)
       puts "[sources] Marked #{updated} sources as common."
@@ -51,7 +51,7 @@ namespace :sources do
     demote_ids.each { |id| puts "  - #{id}: #{counts[id].to_i} cites  #{Source.find_by(id: id)&.title}" }
 
     if dry
-      puts "[sources] DRY=1 — not updating."
+      puts "[sources] DRY=1  not updating."
     else
       updated = Source.where(id: demote_ids).update_all(common: false, updated_at: Time.current)
       puts "[sources] Unmarked #{updated} sources."
@@ -69,7 +69,7 @@ namespace :sources do
     scope.each { |s| puts "  - #{s.id}  #{s.title}" }
 
     if ENV["DRY"] == "1"
-      puts "[sources] DRY=1 — not updating."
+      puts "[sources] DRY=1  not updating."
     else
       updated = scope.update_all(common: true, updated_at: Time.current)
       puts "[sources] Marked #{updated} as common."

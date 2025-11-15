@@ -7,7 +7,7 @@ class AdjustAwardsForMadelAndOther < ActiveRecord::Migration[7.1]
     # 2) Allow non-medal awards
     change_column_null :awards, :medal_id, true
 
-    # (Optional) Add simple FKs if you don’t have them yet:
+    # (Optional) Add simple FKs if you dont have them yet:
     # add_foreign_key :awards, :soldiers unless foreign_key_exists?(:awards, :soldiers)
     # add_foreign_key :awards, :medals   unless foreign_key_exists?(:awards, :medals)
     #

@@ -4,7 +4,7 @@ class  AddLocatorFieldsToCitations < ActiveRecord::Migration[7.1]
       t.string  :volume      unless column_exists?(:citations, :volume)
       t.string  :issue       unless column_exists?(:citations, :issue)
       t.string  :folio       unless column_exists?(:citations, :folio)
-      t.string  :page        unless column_exists?(:citations, :page)        # page or range ("12–15")
+      t.string  :page        unless column_exists?(:citations, :page)        # page or range ("1215")
       t.string  :column      unless column_exists?(:citations, :column)
       t.string  :line_number unless column_exists?(:citations, :line_number)
       t.string  :record_number unless column_exists?(:citations, :record_number)

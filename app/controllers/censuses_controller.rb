@@ -85,8 +85,8 @@ class CensusesController < ApplicationController
 
   def census_params
     params.require(:census).permit(
-      :country, :year, :district, :subdistrict, :place, :piece, :folio, :page, :booknumber,
-      :external_image_url, :external_image_caption, :external_image_credit,
+      :country, :year, :district, :subdistrict, :place, :piece, :folio, :page, :booknumber,:slug,
+      :external_image_url, :external_image_caption, :external_image_credit,{ category_ids: [] },
       citations_attributes: [
         :id, :source_id, :pages, :quote, :note, :volume, :issue, :folio, :page, :column,
         :line_number, :record_number, :image_url, :image_frame, :roll, :enumeration_district,

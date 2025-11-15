@@ -1,0 +1,129 @@
+<!-- app/views/cemeteries/_burials_panel.html.erb -->
+# <%# dom_key = dom_id(cemetery, :soldier_suggest) %>
+
+# <section data-controller="burial-form" class="my-3">
+#   <form class="row g-2 align-items-end"
+#         data-burial-form-target="form"
+#         data-cemetery-id="<%= cemetery.id %>">
+
+#     <div class="col-md-4">
+#       <label class="form-label">Soldier (optional)</label>
+#       <input type="text" class="form-control"
+#              list="<%= dom_key %>"
+#              placeholder="Type to search soldiers…"
+#              data-burial-form-target="search">
+#       <datalist id="<%= dom_key %>" data-burial-form-target="suggest"></datalist>
+#       <input type="hidden" data-burial-form-target="soldierId">
+#     </div>
+
+#     <div class="col-md-4">
+#       <label class="form-label">Name (for non-soldiers)</label>
+#       <div class="d-flex gap-1">
+#         <input class="form-control" placeholder="First"  data-burial-form-target="firstName">
+#         <input class="form-control" placeholder="Middle" data-burial-form-target="middleName">
+#         <input class="form-control" placeholder="Last"   data-burial-form-target="lastName">
+#       </div>
+#     </div>
+
+#     <div class="col-md-4">
+#       <label class="form-label">Inscription</label>
+#       <input class="form-control" data-burial-form-target="inscription">
+#     </div>
+
+#     <div class="col-md-3">
+#       <label class="form-label">Birth date</label>
+#       <input type="date" class="form-control" data-burial-form-target="birthDate">
+#     </div>
+#     <div class="col-md-3">
+#       <label class="form-label">Birth place</label>
+#       <input class="form-control" data-burial-form-target="birthPlace">
+#     </div>
+#     <div class="col-md-3">
+#       <label class="form-label">Death date</label>
+#       <input type="date" class="form-control" data-burial-form-target="deathDate">
+#     </div>
+#     <div class="col-md-3">
+#       <label class="form-label">Death place</label>
+#       <input class="form-control" data-burial-form-target="deathPlace">
+#     </div>
+
+#     <div class="col-md-2">
+#       <label class="form-label">Section</label>
+#       <input class="form-control" data-burial-form-target="section">
+#     </div>
+#     <div class="col-md-2">
+#       <label class="form-label">Plot</label>
+#       <input class="form-control" data-burial-form-target="plot">
+#     </div>
+#     <div class="col-md-2">
+#       <label class="form-label">Marker</label>
+#       <input class="form-control" data-burial-form-target="marker">
+#     </div>
+#     <div class="col-md-6">
+#       <label class="form-label">Note</label>
+#       <input class="form-control" data-burial-form-target="note">
+#     </div>
+
+#     <div class="col-12 mt-2">
+#       <button type="button" class="btn btn-sm btn-outline-primary"
+#               data-action="burial-form#add">Add burial</button>
+#     </div>
+#   </form>
+
+#   <ul class="list-unstyled mt-3" data-burial-form-target="list">
+#     <% cemetery.burials.order(:last_name, :first_name).each do |b| %>
+#       <li class="mb-1" data-burial-row="<%= b.id %>">
+#         <strong><%= b.display_name %></strong>
+#         <% if b.inscription.present? %> — <em><%= b.inscription %></em><% end %>
+#         <button class="btn btn-sm btn-outline-danger ms-2"
+#                 data-action="burial-form#remove"
+#                 data-burial-form-id-param="<%= b.id %>">Remove</button>
+#       </li>
+#     <% end %>
+#   </ul>
+# </section>
+
+<%# locals: cemetery:, burials: %>
+<% if burials.any? %>
+  <div class="table-responsive">
+    <table class="table table-sm align-middle">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Birth</th>
+          <th>Death</th>
+          <th>Inscription</th>
+          <th>Memorial</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% burials.each do |b| %>
+          <tr>
+            <td><%= [b.first_name, b.last_name].compact.join(" ").presence || "(Unnamed)" %></td>
+            <td>
+              <%= [b.birth_date, b.birthplace].compact.join(" — ").presence || "—" %>
+            </td>
+            <td>
+              <%= [b.death_date, b.deathplace].compact.join(" — ").presence || "—" %>
+            </td>
+            <td><%= b.inscription.presence || "—" %></td>
+            <td>
+              <% if b.link_url.present? %>
+                <%= link_to "View", b.link_url, target: "_blank", rel: "noopener" %>
+              <% else %>
+                —
+              <% end %>
+            </td>
+            <td class="text-end">
+              <%= link_to "Show", [cemetery, b], class: "btn btn-sm btn-outline-secondary" %>
+              <%= link_to "Edit", [:edit, cemetery, b], class: "btn btn-sm btn-outline-primary ms-1" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <p class="text-muted">No burial records yet.</p>
+<% end %>

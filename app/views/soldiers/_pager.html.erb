@@ -6,32 +6,32 @@
 
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3">
   <div class="btn-group" role="group" aria-label="Pagination">
-    <%# « First %>
+    <%#  First %>
     <% if curr_page > 1 %>
-      <%= link_to "« First", soldiers_path(base_params.merge(page: 1, per_page: per)), class: "btn btn-outline-secondary" %>
+      <%= link_to " First", soldiers_path(base_params.merge(page: 1, per_page: per)), class: "btn btn-outline-secondary" %>
     <% else %>
-      <button class="btn btn-outline-secondary" disabled aria-disabled="true">« First</button>
+      <button class="btn btn-outline-secondary" disabled aria-disabled="true"> First</button>
     <% end %>
 
-    <%# ‹ Prev %>
+    <%#  Prev %>
     <% if curr_page > 1 %>
-      <%= link_to "‹ Prev", soldiers_path(base_params.merge(page: curr_page - 1, per_page: per)), class: "btn btn-outline-secondary" %>
+      <%= link_to " Prev", soldiers_path(base_params.merge(page: curr_page - 1, per_page: per)), class: "btn btn-outline-secondary" %>
     <% else %>
-      <button class="btn btn-outline-secondary" disabled aria-disabled="true">‹ Prev</button>
+      <button class="btn btn-outline-secondary" disabled aria-disabled="true"> Prev</button>
     <% end %>
 
-    <%# Next › %>
+    <%# Next  %>
     <% if @has_next %>
-      <%= link_to "Next ›", soldiers_path(base_params.merge(page: curr_page + 1, per_page: per)), class: "btn btn-outline-secondary" %>
+      <%= link_to "Next ", soldiers_path(base_params.merge(page: curr_page + 1, per_page: per)), class: "btn btn-outline-secondary" %>
     <% else %>
-      <button class="btn btn-outline-secondary" disabled aria-disabled="true">Next ›</button>
+      <button class="btn btn-outline-secondary" disabled aria-disabled="true">Next </button>
     <% end %>
 
-    <%# Last » %>
+    <%# Last  %>
     <% if total_pages && curr_page < total_pages %>
-      <%= link_to "Last »", soldiers_path(base_params.merge(page: total_pages, per_page: per)), class: "btn btn-outline-secondary" %>
+      <%= link_to "Last ", soldiers_path(base_params.merge(page: total_pages, per_page: per)), class: "btn btn-outline-secondary" %>
     <% else %>
-      <button class="btn btn-outline-secondary" disabled aria-disabled="true">Last »</button>
+      <button class="btn btn-outline-secondary" disabled aria-disabled="true">Last </button>
     <% end %>
   </div>
 
@@ -58,7 +58,7 @@
     <% if defined?(@total_count) && @total_count.to_i > 0 %>
       <% start_i = ((curr_page - 1) * per) + 1 %>
       <% end_i   = start_i + @soldiers.length - 1 %>
-      Showing <%= start_i %>–<%= end_i %> of <%= @total_count %>
+      Showing <%= start_i %><%= end_i %> of <%= @total_count %>
     <% else %>
       No found
     <% end %>

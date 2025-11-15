@@ -7,9 +7,9 @@
       <li class="mb-2" data-involvement-row="<%= inv.id %>">
         <% p = inv.participant %>
         <%= link_to(inv.participant_label, p) if p %>
-        <% if inv.role.present? %> — <strong><%= inv.role %></strong><% end %>
+        <% if inv.role.present? %>  <strong><%= inv.role %></strong><% end %>
         <% if inv.year.present? %> (<%= inv.year %>)<% end %>
-        <% if inv.note.present? %> — <em><%= inv.note %></em><% end %>
+        <% if inv.note.present? %>  <em><%= inv.note %></em><% end %>
         <button class="btn btn-sm btn-outline-danger ms-2"
                 data-action="involvement-form#remove"
                 data-involvement-form-id-param="<%= inv.id %>">Remove</button>
@@ -29,7 +29,7 @@
 
     <div class="mb-2">
       <label for="participant_search">Find Soldier</label>
-      <input type="text" id="participant_search" placeholder="Type a name…" list="participant_suggest" class="form-control">
+      <input type="text" id="participant_search" placeholder="Type a name" list="participant_suggest" class="form-control">
       <datalist id="participant_suggest"></datalist>
       <small class="text-muted">Pick a suggestion; the ID fills automatically.</small>
     </div>

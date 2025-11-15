@@ -18,7 +18,7 @@
             <% details << "(#{inv.year})"               if inv.year.present? %>
             <% details << content_tag(:em, inv.note)    if inv.note.present? %>
             <% if details.any? %>
-              — <span class="text-muted"><%= safe_join(details, " ") %></span>
+               <span class="text-muted"><%= safe_join(details, " ") %></span>
             <% end %>
           <% end %>
         </li>

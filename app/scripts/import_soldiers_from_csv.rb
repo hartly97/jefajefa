@@ -6,7 +6,7 @@ require 'csv'
 
 SOLDIERS_CSV = Rails.root.join("db/data/soldiers.csv")
 
-puts "📥 Importing soldiers..."
+puts " Importing soldiers..."
 CSV.foreach(SOLDIERS_CSV, headers: true) do |row|
   soldier = File.open("/mnt/data/category_upgrade_bundle/tmp/log/dry_run.log", "a") { |f| f.puts("[DRY-RUN]" Would create Soldier: #{row["name"]}" if ENV["DRY_RUN"]) }}; next if ENV["DRY_RUN"]; Soldier.find_or_create_by!(id: row["id"]) do |s|
     s.name = row["name"]
@@ -23,4 +23,4 @@ CSV.foreach(SOLDIERS_CSV, headers: true) do |row|
   end
 end
 
-puts "✅ Soldier import complete."
+puts " Soldier import complete."

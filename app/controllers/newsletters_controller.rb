@@ -8,11 +8,10 @@ class NewslettersController < ApplicationController
 
   def new
     @newsletter = Newsletter.new
-   
   end
 
   def edit
- @newsletter = Newsletter.find(params[:id])
+    @newsletter = Newsletter.find(params[:id])
   end
 
   def show
@@ -60,16 +59,17 @@ private
   end
 
   def newsletter_params
-    params.require(:newsletter).permit(:title, :volume, :number, :day, :month, :year, :file_name, :image,:content, :pdf)
+    params.require(:newsletter).permit(:title, :volume, :slug, :number, :day, :month, :year, :file_name, :image, :content, :pdf),
+    { category_ids: [] },
   end
-private
-
+  
 def set_newsletter
   @newsletter = Newsletter.find_by(slug: params[:id]) || Newsletter.find(params[:id])
 end
 
 def regenerate_slug
-  @newsletter.regenerate_slug!  # provided by your Sluggable concern
+  @newsletter.regenerate_slug!  
+  # provided by your Sluggable concern
   redirect_to @newsletter, notice: "Slug regenerated."
 end
 end

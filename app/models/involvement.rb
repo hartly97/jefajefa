@@ -1,10 +1,10 @@
 class Involvement < ApplicationRecord
   # keep Article for now since you have data; easy to tighten later
-#   Don’t trust params for types: we force participant_type: "Soldier" and check involvable_type against a whitelist.
+#   Dont trust params for types: we force participant_type: "Soldier" and check involvable_type against a whitelist.
 
 # Race-safe: if two requests try to create the same link, the unique index may raise RecordNotUnique. We catch it and update the context fields.
 
-# Year sanity: prevents “0” or 99999.
+# Year sanity: prevents 0 or 99999.
 
 # Mirrors DB rules: app-level validation matches your check constraints so errors show nicely in the UI
   ALLOWED_PARTICIPANT_TYPES = %w[Soldier].freeze
@@ -33,12 +33,36 @@ class Involvement < ApplicationRecord
   scope :for_involvable,  ->(rec) { where(involvable:  rec) }
   scope :with_role,       ->(r)   { r.present? ? where(role: r) : all }
 
-  def participant_label
-    p = participant
-    return "(unknown)" unless p
-    return p.soldier_name if p.respond_to?(:soldier_name)
-    p.try(:name) || p.try(:title) || p.try(:slug) || p.to_s
+def participant_label
+  p = participant
+  return "(unknown)" unless p
+
+  # 1) Prefer the model’s own presentation method
+  return p.display_name if p.respond_to?(:display_name)
+  return p.soldier_name if p.respond_to?(:soldier_name)
+
+  # 2) Common first/last pattern
+  if p.respond_to?(:first_name) || p.respond_to?(:last_name)
+    name = [p.try(:first_name), p.try(:last_name)].compact.join(" ").presence
+    return name if name
   end
+
+  # 3) Other typical attributes
+  p.try(:name).presence ||
+    p.try(:title).presence ||
+    p.try(:slug).presence ||
+    # 4) Final fallback
+    "#{participant_type} ##{participant_id}"
+end
+
+def participant_path
+  p = participant
+  return nil unless p
+  Rails.application.routes.url_helpers.polymorphic_path(p) rescue nil
+end
+
+
+
 
   private
 

@@ -3,6 +3,7 @@ class Soldier < ApplicationRecord
   include Sluggable
   include Citable
   include Categorizable
+
   after_commit :sync_burial_involvement, if: :saved_change_to_cemetery_id?
 
   belongs_to :cemetery, optional: true
@@ -11,70 +12,44 @@ class Soldier < ApplicationRecord
 
   #  Do I need this?
   has_many :burials, as: :participant, dependent: :nullify
-
-  has_many :involvements, as: :participant, dependent: :destroy
-  accepts_nested_attributes_for :involvements, allow_destroy: true
-
-  # Directs
-  has_many :awards, inverse_of: :soldier, dependent: :destroy
-
   
+  # Involvements (polymorphic)
+  has_many :involvements, as: :participant, dependent: :destroy
+  
+  # accepts_nested_attributes_for :involvements, allow_destroy: true
+# Which one to use?
+  # Nested attributes used by your form
+  # accepts_nested_attributes_for :awards, :soldier_medals,  :citations,
+  #                               allow_destroy: true, reject_if: :all_blank
 
-  # Medals via join
-  has_many :soldier_medals, inverse_of: :soldier, dependent: :destroy
+  has_many :awards, dependent: :destroy
+
+   # Medals via join
+  has_many :soldier_medals, dependent: :destroy
   has_many :medals, through: :soldier_medals
 
-  # Categories
-  has_many :categorizations, as: :categorizable, dependent: :destroy
-  has_many :categories, through: :categorizations
+  has_many :involvements, as: :participant, dependent: :destroy
+  has_many :battles, through: :involvements, source: :involvable, source_type: "Battle"
+  has_many :wars,    through: :involvements, source: :involvable, source_type: "War"
 
-  # Involvements (polymorphic)
-  has_many :involvements,
-           as: :participant,
-           inverse_of: :participant,
-           dependent: :destroy
-  
-           has_many :battles, through: :involvements, source: :involvable, source_type: "Battle"
-  
-           has_many :wars,    through: :involvements, source: :involvable, source_type: "War"
-
-  # Citations are provided by Citable; don’t redefine here.
-
-  # Nested attributes used by your form
-  accepts_nested_attributes_for :awards, :soldier_medals,  :citations,
-                                allow_destroy: true, reject_if: :all_blank
-
-  # ---- Scopes ----
   scope :by_last_first, -> { order(:last_name, :first_name) }
-
   scope :search_name, ->(q) {
     q = q.to_s.strip
-    if q.blank?
-      all
-    else
-      like = "%#{ActiveRecord::Base.sanitize_sql_like(q)}%"
-      where(
-        "first_name ILIKE :q OR last_name ILIKE :q OR " \
-        "(COALESCE(first_name,'') || ' ' || COALESCE(last_name,'')) ILIKE :q OR " \
-        "COALESCE(unit,'') ILIKE :q OR COALESCE(branch_of_service,'') ILIKE :q OR " \
-        "COALESCE(slug,'') ILIKE :q",
-        q: like
-      )
-    end
+    next all if q.blank?
+    like = "%#{q.downcase}%"
+    where(
+      "LOWER(COALESCE(first_name,'')) LIKE :q OR
+       LOWER(COALESCE(last_name ,'')) LIKE :q OR
+       LOWER(COALESCE(first_name,'') || ' ' || COALESCE(last_name,'')) LIKE :q OR
+       LOWER(COALESCE(slug,'')) LIKE :q",
+      q: like
+    )
   }
+end
 
-  # ---- Presentation helpers ----
-  def display_name
-    return name if respond_to?(:name) && name.present?
-    [first_name, last_name].compact.join(" ").presence || "Soldier ##{id}"
-  end
 
-def slug_source
-    full = [first_name, middle_name, last_name].compact.join(" ").squeeze(" ").strip
-    full.presence || "soldier-#{id || SecureRandom.hex(2)}"
-  end
+def slug_source_changed?
 
-  def slug_source_changed?
     will_save_change_to_first_name? ||
     will_save_change_to_middle_name? ||
     will_save_change_to_last_name?
@@ -109,6 +84,15 @@ def slug_source
     [deathcity, deathstate, deathcountry].reject(&:blank?).join(", ")
   end
 
+  # ---- Presentation helpers ----
+  def display_name
+    return name if respond_to?(:name) && name.present?
+    [first_name, last_name].compact.join(" ").presence || "Soldier ##{id}"
+  end
+  public :display_name
+
+
+
   private
 
   def first_or_last_name_present
@@ -140,5 +124,4 @@ def slug_source
       role: "burial"
     ).delete_all
   end
-end
 end

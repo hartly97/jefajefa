@@ -64,7 +64,7 @@ class CreateCoreEntities < ActiveRecord::Migration[7.1]
     add_index :soldiers, [:last_name, :first_name]
     add_index :soldiers, :slug, unique: true
 
-    # 3) Catalogs without FKs (order here doesn’t matter now)
+    # 3) Catalogs without FKs (order here doesnt matter now)
     create_table :medals do |t|
       t.string  :name, null: false
       t.integer :year

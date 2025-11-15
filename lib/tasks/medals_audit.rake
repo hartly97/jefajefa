@@ -1,7 +1,7 @@
 namespace :medals do
   desc "Report medals recorded both in awards.medal_id and soldier_medals (potential duplicates)"
   task audit: :environment do
-    puts "Scanning for overlapping medal entries…"
+    puts "Scanning for overlapping medal entries"
     sql = <<~SQL
       SELECT a.soldier_id, a.medal_id, a.year,
              COUNT(sm.*) AS soldier_medals_count
@@ -16,9 +16,9 @@ namespace :medals do
 
     rows = ActiveRecord::Base.connection.exec_query(sql)
     if rows.rows.empty?
-      puts "✅ No overlaps detected."
+      puts " No overlaps detected."
     else
-      puts "⚠️ Overlaps found (these exist in BOTH awards and soldier_medals):"
+      puts " Overlaps found (these exist in BOTH awards and soldier_medals):"
       rows.each { |r| puts "  soldier_id=#{r['soldier_id']} medal_id=#{r['medal_id']} year=#{r['year'] || 'NULL'}" }
       puts "\nTip: clear award.medal_id (make it a non-medal award) once you confirm soldier_medals has the record."
     end

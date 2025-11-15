@@ -8,6 +8,5 @@ class Article < ApplicationRecord
   has_many :involvements, as: :involvable, dependent: :destroy, inverse_of: :involvable
 
   validates :title, presence: true
-  def slug_source = title
 end
 

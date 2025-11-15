@@ -18,6 +18,10 @@ Rails.application.routes.draw do
     patch :regenerate_slug, on: :member
   end
 
+  #----- Burials -----
+  resources :burials, only: [:index, :show]
+
+
   #----Categories ----
   resources :categories, only: %i[index show] do
     collection do
@@ -26,6 +30,7 @@ Rails.application.routes.draw do
       get :locations
     end
   end
+
 
   # Taxonomy & joins
   resources :categories
@@ -36,13 +41,12 @@ Rails.application.routes.draw do
     patch :regenerate_slug, on: :member
   end
 
-  "cemeteries#index"
 
   # ---- Cemeteries & Burials ----
   # Nested: index/new/create handled under the cemetery
   resources :cemeteries do
     patch :regenerate_slug, on: :member
-    resources :burials, only: [:index, :new, :create]
+    resources :burials
   end
 
   # Standalone edits for an individual burial

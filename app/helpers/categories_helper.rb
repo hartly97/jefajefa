@@ -28,4 +28,19 @@ module CategoriesHelper
     type = cat.category_type.to_s.titleize.presence || "Category"
     "#{type}: #{cat.name}"
   end
+
+  def category_scope_for(record)
+    case record
+    when Soldier  then Category.respond_to?(:soldiers) ? Category.soldiers : Category.all
+    when War      then Category.respond_to?(:wars)     ? Category.wars     : Category.all
+    when Battle   then Category.respond_to?(:battles)  ? Category.battles  : Category.all
+    when Medal    then Category.respond_to?(:medals)   ? Category.medals   : Category.all
+    when Award    then Category.respond_to?(:awards)   ? Category.awards   : Category.all
+    when Article  then Category.respond_to?(:articles) ? Category.articles : Category.all
+    when Cemetery then Category.respond_to?(:places)   ? Category.places   : Category.all
+    when Census   then Category.where(category_type: "census")
+    else Category.all
+    end.order(:name)
+  end
 end
+

@@ -10,7 +10,7 @@ module CitationsHelper
            .includes(:source)
            .select { |c| c.source.present? }                 # enforce "no orphan citations"
            .group_by(&:source)
-           .sort_by { |src, _| src.title.to_s.downcase }     # sort sources A–Z
+           .sort_by { |src, _| src.title.to_s.downcase }     # sort sources AZ
            .map { |src, cites| [src, cites] }
   end
 
@@ -18,7 +18,7 @@ module CitationsHelper
   # Returns an array of [label, [citations]] pairs, sorted by page label.
   #
   # Example output:
-  #   [["3", [#<Citation ...>]], ["12–15", [#<Citation ...>, #<Citation ...>]], ["(Unpaged)", [...]]]
+  #   [["3", [#<Citation ...>]], ["1215", [#<Citation ...>, #<Citation ...>]], ["(Unpaged)", [...]]]
   def merge_citations_by_page(cites)
     groups = cites.group_by { |c| page_label_for(c) }
     groups

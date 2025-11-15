@@ -1,4 +1,9 @@
 class SoldierMedal < ApplicationRecord
+  include Sluggable
+  include Citable
+  include Categorizable
+
+
   belongs_to :soldier, inverse_of: :soldier_medals
   belongs_to :medal,   inverse_of: :soldier_medals
 

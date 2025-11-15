@@ -17,8 +17,8 @@
     <% @sources.each do |s| %>
       <tr>
         <td><%= link_to s.title, s %></td>
-        # <td><%#= s.pages.presence || "—" %></td>
-        <td><%= s.common ? "✅" : "—" %></td>
+        # <td><%#= s.pages.presence || "" %></td>
+        <td><%= s.common ? "" : "" %></td>
         <td class="text-nowrap">
           <%= link_to "Edit", edit_source_path(s), class: "btn btn-sm btn-outline-secondary" %>
           <%= button_to (s.common ? "Unmark common" : "Mark common"),

@@ -83,15 +83,15 @@ namespace :cat do
         if update
           changed = []
           if cat.name != name
-            changed << "name: #{cat.name.inspect}→#{name.inspect}"
+            changed << "name: #{cat.name.inspect}#{name.inspect}"
             cat.name = name
           end
           if cat.category_type.to_s != ctype.to_s
-            changed << "type: #{cat.category_type.inspect}→#{ctype.inspect}"
+            changed << "type: #{cat.category_type.inspect}#{ctype.inspect}"
             cat.category_type = ctype.presence
           end
           if cat.slug != slug
-            changed << "slug: #{cat.slug.inspect}→#{slug.inspect}"
+            changed << "slug: #{cat.slug.inspect}#{slug.inspect}"
             cat.slug = slug
           end
           if cat.respond_to?(:description) && description.present? && cat.description.to_s != description.to_s
