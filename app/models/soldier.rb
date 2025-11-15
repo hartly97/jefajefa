@@ -6,7 +6,8 @@ class Soldier < ApplicationRecord
   after_commit :sync_burial_involvement, if: :saved_change_to_cemetery_id?
 
   belongs_to :cemetery, optional: true
-
+   has_many :burials, dependent: :nullify
+  #  Do I need this?
   has_many :burials, as: :participant, dependent: :nullify
 
   has_many :involvements, as: :participant, dependent: :destroy

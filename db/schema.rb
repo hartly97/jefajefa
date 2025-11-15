@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_11_11_163111) do
+ActiveRecord::Schema[7.1].define(version: 2025_11_15_101653) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -72,6 +72,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_11_163111) do
     t.integer "year"
     t.text "note"
     t.string "slug"
+    t.index "lower((slug)::text)", name: "idx_awards_lower_slug", unique: true
+    t.index "lower((slug)::text)", name: "index_awards_on_lower_slug", unique: true
     t.index "soldier_id, lower((name)::text), year", name: "index_awards_on_soldier_name_year", unique: true, where: "((name IS NOT NULL) AND (btrim((name)::text) <> ''::text))"
     t.index ["slug"], name: "index_awards_on_slug", unique: true
     t.index ["soldier_id"], name: "index_awards_on_soldier_id"
@@ -84,6 +86,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_11_163111) do
     t.bigint "war_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index "lower((slug)::text)", name: "index_battles_on_lower_slug", unique: true
     t.index ["slug"], name: "index_battles_on_slug", unique: true
     t.index ["war_id"], name: "index_battles_on_war_id"
   end
@@ -118,9 +121,14 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_11_163111) do
     t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "slug"
+    t.bigint "soldier_id"
+    t.index "lower((slug)::text)", name: "idx_burials_lower_slug", unique: true
+    t.index "lower((slug)::text)", name: "indexes_burials_on_lower_slug", unique: true
     t.index ["cemetery_id", "participant_type", "participant_id"], name: "idx_burials_unique_triplet", unique: true
     t.index ["cemetery_id"], name: "index_burials_on_cemetery_id"
     t.index ["participant_type", "participant_id"], name: "index_burials_on_participant_type_and_participant_id"
+    t.index ["soldier_id"], name: "index_burials_on_soldier_id"
   end
 
   create_table "categories", force: :cascade do |t|
@@ -131,6 +139,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_11_163111) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index "lower((name)::text)", name: "idx_categories_lower_name"
+    t.index "lower((slug)::text)", name: "idx_categories_lower_slug", unique: true
+    t.index "lower((slug)::text)", name: "indexes_categories_on_lower_slug", unique: true
     t.index ["category_type", "name"], name: "index_categories_on_category_type_and_name"
     t.index ["name", "category_type"], name: "index_categories_on_name_and_category_type", unique: true
     t.index ["slug"], name: "index_categories_on_slug", unique: true
@@ -154,6 +164,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_11_163111) do
     t.string "slug", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index "lower((slug)::text)", name: "idx_cemeteries_lower_slug", unique: true
+    t.index "lower((slug)::text)", name: "indexes_cemeteries_on_lower_slug", unique: true
     t.index ["slug"], name: "index_cemeteries_on_slug", unique: true
   end
 
@@ -184,6 +196,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_11_163111) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "slug"
+    t.index "lower((slug)::text)", name: "idx_census_entries_lower_slug", unique: true
     t.index ["census_id", "householdid", "linenumber"], name: "idx_census_entries_loc"
     t.index ["census_id"], name: "index_census_entries_on_census_id"
     t.index ["lastname", "firstname"], name: "index_census_entries_on_lastname_and_firstname"
@@ -279,6 +292,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_11_163111) do
     t.string "external_image_url"
     t.string "external_image_caption"
     t.string "external_image_credit"
+    t.index "lower((slug)::text)", name: "idx_censuses_lower_slug", unique: true
+    t.index "lower((slug)::text)", name: "indexes_censuses_on_lower_slug", unique: true
     t.index ["country", "year", "district", "subdistrict", "piece", "folio", "page"], name: "idx_censuses_locator"
     t.index ["slug"], name: "index_censuses_on_slug", unique: true
     t.index ["source_id"], name: "index_censuses_on_source_id"
@@ -336,6 +351,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_11_163111) do
     t.string "slug", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index "lower((slug)::text)", name: "idx_medals_lower_slug", unique: true
+    t.index "lower((slug)::text)", name: "indexes_medals_on_lower_slug", unique: true
     t.index ["slug"], name: "index_medals_on_slug", unique: true
   end
 
@@ -351,6 +368,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_11_163111) do
     t.string "content"
     t.string "image"
     t.string "file_name"
+    t.index "lower((slug)::text)", name: "idx_newsletters_lower_slug", unique: true
+    t.index "lower((slug)::text)", name: "indexes_newsletters_on_lower_slug", unique: true
     t.index ["slug"], name: "index_newsletters_on_slug", unique: true
   end
 
@@ -379,6 +398,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_11_163111) do
     t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "slug"
+    t.index "lower((slug)::text)", name: "idx_soldier_medals_lower_slug", unique: true
+    t.index "lower((slug)::text)", name: "indexes_soldier_medals_on_lower_slug", unique: true
     t.index ["medal_id"], name: "index_soldier_medals_on_medal_id"
     t.index ["soldier_id", "medal_id", "year"], name: "idx_soldier_medals_uniqueish"
     t.index ["soldier_id"], name: "index_soldier_medals_on_soldier_id"
@@ -407,6 +429,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_11_163111) do
     t.string "first_enlisted_place"
     t.string "branch_of_service"
     t.string "unit"
+    t.index "lower((slug)::text)", name: "index_soldiers_on_lower_slug", unique: true
     t.index ["cemetery_id"], name: "index_soldiers_on_cemetery_id"
     t.index ["last_name", "first_name"], name: "index_soldiers_on_last_name_and_first_name"
     t.index ["slug"], name: "index_soldiers_on_slug", unique: true
@@ -427,6 +450,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_11_163111) do
     t.string "pages"
     t.boolean "common", default: false, null: false
     t.integer "citations_count", default: 0, null: false
+    t.index "lower((slug)::text)", name: "indexes_sources_on_lower_slug", unique: true
     t.index ["citations_count"], name: "index_sources_on_citations_count"
     t.index ["common"], name: "index_sources_on_common"
     t.index ["slug"], name: "index_sources_on_slug", unique: true
@@ -438,6 +462,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_11_163111) do
     t.string "slug", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index "lower((slug)::text)", name: "index_wars_on_lower_slug", unique: true
     t.index ["slug"], name: "index_wars_on_slug", unique: true
   end
 
@@ -446,6 +471,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_11_163111) do
   add_foreign_key "awards", "soldiers"
   add_foreign_key "battles", "wars"
   add_foreign_key "burials", "cemeteries"
+  add_foreign_key "burials", "soldiers"
   add_foreign_key "categorizations", "categories"
   add_foreign_key "census_entries", "censuses"
   add_foreign_key "census_entries", "soldiers"

@@ -8,14 +8,21 @@ class Burial < ApplicationRecord
   scope :non_soldiers,  -> { where(participant_id: nil).or(where.not(participant_type: "Soldier")) }
 
   # Name helpers for display/search fallbacks
+  # def display_name
+  #   if participant_type == "Soldier" && participant
+  #     participant.respond_to?(:display_name) ? participant.display_name :
+  #       [participant.first_name, participant.last_name].compact.join(" ")
+  #   else
+  #     [first_name, last_name].compact.join(" ").presence || "Unknown"
+  #   end
+  # end
+
   def display_name
-    if participant_type == "Soldier" && participant
-      participant.respond_to?(:display_name) ? participant.display_name :
-        [participant.first_name, participant.last_name].compact.join(" ")
+    if soldier
+      soldier.respond_to?(:display_name) ? soldier.display_name :
+        [soldier.first_name, soldier.last_name].compact.join(" ").presence || "Soldier ##{soldier.id}"
     else
-      [first_name, last_name].compact.join(" ").presence || "Unknown"
-    end
-  end
+      [first_name, middle_name, last_name].compact.join(" ").presence || "Unnamed"
 
   # Simple search across linked soldier name OR local name fields
   scope :search, ->(q) do
