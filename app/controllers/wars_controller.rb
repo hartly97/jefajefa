@@ -28,6 +28,8 @@ end
   @involvements = @war.involvements.includes(:participant).order(:year, :id)
 end
 
+end
+
 
 
   def create

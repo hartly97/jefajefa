@@ -1,0 +1,16 @@
+<% involvements = local_assigns.fetch(:involvements, []) %>
+
+<ul class="list-unstyled">
+  <% involvements.each do |inv| %>
+    <li>
+      <% if (url = inv.participant_path) %>
+        <%= link_to inv.participant_label, url %>
+      <% else %>
+        <%= inv.participant_label %>
+      <% end %>
+      <%= " — " + content_tag(:strong, inv.role) if inv.role.present? %>
+      <%= " (#{inv.year})" if inv.year.present? %>
+      <%= " — " + content_tag(:em, inv.note) if inv.note.present? %>
+    </li>
+  <% end %>
+</ul>
